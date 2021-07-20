@@ -70,7 +70,7 @@ const options = {
       server: {
         port: 465,
         host: 'smtp.gmail.com',
-        secure: false,
+        secure: true,
         auth: {
           user: process.env.EMAIL_USERNAME,
           pass: process.env.EMAIL_PASSWORD,
