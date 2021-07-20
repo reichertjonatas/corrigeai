@@ -67,20 +67,10 @@ const options = {
     }),
 
     Providers.Email({
-      server: {
-        port: 465,
-        host: 'smtp.gmail.com',
-        secure: true,
-        auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD,
-        },
-        tls: {
-          rejectUnauthorized: false,
-        },
-      },
+      server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
     }),
+    
   ],
   session: {
     jwt: true,
