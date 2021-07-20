@@ -5,6 +5,13 @@ import { connectToDatabase } from '../../../services/mongodb';
 
 const options = {
   site: process.env.NEXTAUTH_URL,
+  pages: {
+    signIn: '/auth/signin',
+    signOut: '/auth/signout',
+    //error: '/auth/error', // Error code passed in query string as ?error=
+    //verifyRequest: '/auth/verify-request', // (used for check email message)
+    newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
+  },
   providers: [
     Providers.Credentials({
       id: 'credentials',
@@ -55,7 +62,7 @@ const options = {
 
           if (userDb) {
             // não seria necessário o bcrypt para uma api já pronta...
-            const match = await bcrypt.compare(credentials.password, userDb.senha);
+            const match = await bcrypt.compare(credentials.password, userDb.password);
             if (userDb && match) {
               const user = { id: 1, name: userDb.name, email: userDb.email, image: userDb.image };
 
@@ -70,7 +77,7 @@ const options = {
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
     }),
-    
+
   ],
   session: {
     jwt: true,

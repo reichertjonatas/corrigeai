@@ -1,0 +1,44 @@
+.grid-painelaluno{display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem}
+.grid-painelaluno .content{display: block; width: 100%;}
+.grid-painelaluno .content .head-box{display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin: 0 0 3.5rem}
+.grid-painelaluno .content .head-box .box{display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 12.3125rem; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 0.8125rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.grid-painelaluno .content .head-box .box .icon{position: absolute; right: 0.8125rem; top: 0.8125rem}
+.grid-painelaluno .content .head-box .box .texto{display: block; width: 100%; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 2.0625em; text-align: center; line-height: 2.476875rem; max-width: 265px; margin: 0 0 0.5rem}
+.grid-painelaluno .content .head-box .box:nth-child(2) .texto{max-width: 14.06rem}
+.grid-painelaluno .content .head-box .box .hr{position: absolute; width: 100%;height: 3px;bottom: 1rem;max-width: calc(100% - 2rem);border-radius: 5px;}
+.grid-painelaluno .content .head-box .box .button{display: block; width: 100%; text-align: center;}
+.grid-painelaluno .content .head-box .box .button a{display: flex; margin: 0 auto; box-shadow: 0px 0px 9px 0px #c68989; align-items: center; justify-content: center;background: #c70500; min-height: 2.8rem; font-weight: 500; width: 11.0625rem; border-radius: 5.53125rem; color: var(--white); font-size: 1.0575em}
+.grid-painelaluno .content .head-box .box .button a:hover{transform: scale(0.9);}
+.grid-painelaluno .content .box-content{display: block; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 1.875rem 1.5625rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.grid-painelaluno .content .box-content .head-content{display: flex;width: 100%;flex-direction: row;align-items: center;gap: 1rem; padding: 0 1.5625rem}
+.grid-painelaluno .content .box-content .head-content .icon{position: relative; top: 4px}
+.grid-painelaluno .content .box-content .head-content .title{display: block; width: 100%; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 2.0625em; color: var(--dark);}
+.grid-painelaluno .content .box-content .graphic{display: block; width: 100%;}
+
+
+.grid-painelaluno .sidebar-panel{display: block; width: 100%;}
+.grid-painelaluno .sidebar-panel .grades{display: block; width: 100%; margin: 0 0 1rem;}
+.grid-painelaluno .sidebar-panel .grades ul{padding: 0; margin: 0;}
+.grid-painelaluno .sidebar-panel .grades ul li{display: inline-block; width: 100%; margin: 0 0 1rem; text-align: center; color: var(--dark); font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 0.75rem; font-size: 1.366875em; background: var(--gray20); padding: 0.5125rem; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.grid-painelaluno .sidebar-panel .grades ul li.desempenho{margin: 0; transition: all 0.5s ease; display: inline-block; width: 100%; margin: 0 0 1rem; text-align: center; color: var(--gray20); font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 0.75rem; font-size: 1.2em; background: var(--dark); padding: 0.5125rem; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.grid-painelaluno .sidebar-panel .grades ul li.desempenho:hover{transform: scale(0.9);}
+.grid-painelaluno .sidebar-panel .grades ul li.desempenho a{display: block; color: var(--gray20);}
+.grid-painelaluno .sidebar-panel .submit-essay{display: block; width: 100%; margin: 0 0 1.8125rem;}
+.grid-painelaluno .sidebar-panel .submit-essay a{display: flex; flex-direction: row; gap: 0.7rem; margin: 0 auto; box-shadow: 0px 0px 9px 0px #407610; align-items: center; justify-content: center;background: var(--dark); min-height: 4.2rem; font-weight: 500; border-radius: 1.2rem; color: var(--gray20); font-size: 1.275em}
+.grid-painelaluno .sidebar-panel .submit-essay a .icon{position: relative; top: 4px}
+.grid-painelaluno .sidebar-panel .submit-essay a:hover{transform: scale(0.9);}
+
+.grid-painelaluno .sidebar-panel .themes{display: block; width: 100%; background: var(--gray20); border-radius: 0.75rem; padding: 1.5625rem 2.1875rem;box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.grid-painelaluno .sidebar-panel .themes ul{padding: 0; margin: 0}
+.grid-painelaluno .sidebar-panel .themes ul li{display: inline-block; width: 100%; margin: 0 0 1rem}
+.grid-painelaluno .sidebar-panel .themes ul li:last-child{margin: 0}
+.grid-painelaluno .sidebar-panel .themes ul li a{display: block; background: var(--gray50); padding: 0.7rem; border-radius: 0.9rem; text-align: center; color: var(--dark); font-size: 1.1em; line-height: 1.1em}
+
+
+@media(max-width: 1200px){
+  .grid-painelaluno{grid-template-columns: 1fr}
+}
+
+@media(max-width: 640px){
+  .grid-painelaluno .content .head-box{grid-template-columns: 1fr}
+}
