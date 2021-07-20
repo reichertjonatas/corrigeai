@@ -1,0 +1,1 @@
+export const ERROR_NOT_LOGGED = 'Solicitação não permitida.';
