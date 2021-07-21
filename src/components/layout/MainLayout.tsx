@@ -1,6 +1,10 @@
+import { useSession } from 'next-auth/client'
+import { useRouter } from 'next/dist/client/router'
 import Image from 'next/image'
 import React from 'react'
 import { IcPainelAlunoGlobal, IcPhoto } from '../icons'
+import LayoutCarregando from './LayoutCarregando'
+import NaoAutenticado from './NaoAutenticado'
 import Sidebar from './Sidebar'
 
 interface MainLayoutProps {
@@ -8,6 +12,18 @@ interface MainLayoutProps {
 }
 
 function MainLayout({ children } : MainLayoutProps) {
+
+    const [ session, loading ] = useSession()
+    const route = useRouter()
+    
+    if (loading) 
+        return  <LayoutCarregando />;
+
+    if(!session) {
+        route.push('/painel/entrar');
+        return <></>;
+    }
+    
     return (
         <>
             <div className="bg-green"></div>
@@ -24,7 +40,7 @@ function MainLayout({ children } : MainLayoutProps) {
                         <span className="user">
                             <ul>
                             <li>
-                                <span className="message">Olá, Ana Paula!</span>
+                                <span className="message">Olá, {session!.user?.name}!</span>
                             </li>
                             <li>
                                 <span className="photo">

@@ -17,6 +17,10 @@ import IcUltimosEnvios from "../../../public/images/ultimos-envios.png";
 import IcRocket from "../../../public/images/rocket.png";
 import IcPlanejamento from "../../../public/images/planejamento.png";
 
+import LogoLogin from "../../../public/images/logo-login.png";
+import TemaEnem from "../../../public/images/tema-enem.png"
+import TemaCorrigeAi from "../../../public/images/tema-corrigeai.png"
+
 
 export { 
     IcPhoto, 
@@ -32,5 +36,8 @@ export {
     IcAlert,
     IcGraphic,
     IcUltimosEnvios,
-    IcRocket
+    IcRocket,
+    LogoLogin,
+    TemaEnem,
+    TemaCorrigeAi
 };
