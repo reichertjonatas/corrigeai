@@ -84,7 +84,6 @@ const options = {
   ],
   session: {
     jwt: true,
-    maxAge: 10,
   },
   database: process.env.MONGODB_URI,
   // callbacks: {
