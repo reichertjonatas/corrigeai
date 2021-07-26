@@ -198,6 +198,7 @@ function Correcao() {
                         border: '1px solid white', 
                         color: cor,
                         //textTransform: 'uppercase',
+                        cursor: 'pointer',
                         fontWeight: 600,
                         fontSize: '0.95rem',
                         'fontFamily': "Poppins, sans-serif"
@@ -453,6 +454,7 @@ function Correcao() {
                     //textTransform: 'uppercase',
                     fontWeight: 600,
                     fontSize: '0.95rem',
+                    cursor: 'pointer',
                     'fontFamily': "Poppins, sans-serif"
 
                 }} onClick={props.onSubmit}>Salvar</button>
