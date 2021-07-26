@@ -1,6 +1,8 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
-import { connectToDatabase } from '../../../services/mongodb';
+import User from '../../../models/user';
+import connectDB from '../../../services/mongodb';
+import bcrypt from 'bcryptjs';
 
 const options = {
   site: process.env.NEXTAUTH_URL,
@@ -26,49 +28,23 @@ const options = {
         email: { label: "E-mail", type: "text", placeholder: "exemplo@gmail.com" },
         password: { label: "Senha", type: "password" }
       },
-      // async authorize(credentials, req) {
-      //     try {
-      //         // buscar na api ou na db
-      //         const { db } = await connectToDatabase();
-      //         const userDb = await db.collection('users').findOne({ email: credentials.email })
-
-      //         if (!userDb)
-      //             return null;
-
-      //         if (userDb) {
-      //             // não seria necessário o bcrypt para uma api já pronta...
-      //             const match = await bcrypt.compare(credentials.senha, userDb.senha);
-      //             if (userDb && match) {
-      //                 const user = { id: 1, name: userDb.name, email: userDb.email };
-
-      //                 return user
-      //             } else {
-      //                 return null;
-      //             }
-      //         }
-      //     } catch (error) {
-      //         return null;
-      //     }
-      // }
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         // try {
         // buscar na api ou na db
-        const { db } = await connectToDatabase();
-        console.log(credentials);
-        const userDb = await db.collection('users').findOne({ email: credentials.email })
+        // console.log(credentials);
+        const userDb = await User.findOne({ email: credentials.email })
 
         if (!userDb)
           return null;
 
         if (userDb) {
-          console.log(userDb);
-          // não seria necessário o bcrypt para uma api já pronta...
-          // const match = await bcrypt.compare(credentials.password, userDb.password);
-          const match = credentials.password == userDb.password;
+          //const match = credentials.password == userDb.password;
+          const match = await bcrypt.compare(credentials.password, userDb.password);
           console.log( 'match ', match );
 
           if (userDb && match) {
-            const user = { id: 1, name: userDb.name, email: userDb.email, image: userDb.image, userType: userDb.userType };
+            const user = { id: userDb._id, name: userDb.name, email: userDb.email, image: userDb.image ?? null, userType: userDb.userType };
+            // console.log(user);
             return user
           }
         }
@@ -96,4 +72,4 @@ const options = {
   // },
 }
 
-export default NextAuth(options)
+export default connectDB(NextAuth(options))
