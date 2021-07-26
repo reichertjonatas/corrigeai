@@ -19,8 +19,7 @@ import { useEffect } from 'react';
 const img = "/images/redacao.jpeg"
 
 const Box = ({ children, geometry, style }: any) => (
-    <div
-        style={{
+    <div style={{
             ...style,
             position: 'absolute',
             left: `${geometry.x}%`,
@@ -28,9 +27,7 @@ const Box = ({ children, geometry, style }: any) => (
             height: `${geometry.height}%`,
             width: `${geometry.width}%`,
         }}
-    >
-        {children}
-    </div>
+    >{children}</div>
 )
 
 function Correcao() {
@@ -91,7 +88,7 @@ function Correcao() {
                 break;
             case 3:
                 boxStyle = {
-                    borderRadius: '1rem',
+                    borderRadius: '0.9rem',
                     border: `solid 1px ${cor}`,
                     backgroundColor: `${cor}90`,
                     // padding: '1rem',
@@ -179,7 +176,7 @@ function Correcao() {
             <div
                 key={annotation.data.id}
                 style={{
-                    marginTop: '0.25rem',
+                    marginTop: '0.1rem',
                     borderRadius: '0.5rem',
                     background: cor,
                     color: 'white',
@@ -205,7 +202,14 @@ function Correcao() {
                         fontSize: '0.95rem',
                         'fontFamily': "Poppins, sans-serif"
 
-                    }}>Exluir</button>
+                    }} onClick={() => {
+                        annotations.splice(
+                            // @ts-ignore
+                            annotations.indexOf(annotation), 1
+                        );
+                        setAnnotation({});
+                        setAnnotations(annotations);
+                    }}>Excluir</button>
                 </div>
             </div>
         )
@@ -302,8 +306,28 @@ function Correcao() {
         )
     }
 
+    function renderOverlay () {
+        return (
+          <div
+            style={{
+              background: 'rgba(0, 0, 0, 0.3)',
+              color: 'white',
+              padding: 5,
+              pointerEvents: 'none',
+              position: 'absolute',
+              top: 5,
+              left: 5,
+              borderRadius: 8,
+            }}
+          >
+            corrigeaí - { (new Date()).toLocaleDateString('pt') }
+          </div>
+        )
+      }
+
     const handlerCompetencia = (nCompetencia: number) => {
         setCompetencia(nCompetencia);
+        setAnnotation({})
     }
 
     const handlerEditorType = (nEditorType: number) => {
@@ -443,7 +467,7 @@ function Correcao() {
                 setType(RectangleSelector.TYPE)
                 break;
             case 3:
-                setType(OvalSelector.TYPE)
+                setType(RectangleSelector.TYPE)
                 break;
             default:
                 setType(PointSelector.TYPE)
@@ -512,6 +536,7 @@ function Correcao() {
                                 alt=''
 
                                 annotations={annotations}
+                                renderOverlay={renderOverlay}
                                 renderContent={renderPopUp}
                                 renderHighlight={renderHighlight}
                                 renderSelector={renderSelector}
