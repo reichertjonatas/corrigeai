@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { TemaCorrigeAi, TemaEnem } from '../../../../components/icons'
 import MainLayout from '../../../../components/layout/MainLayout'
 import styles from './Temas.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
+import { withAuthSession } from '../../../../utils/helpers'
+import Seo from '../../../../components/layout/Seo'
 
 function Temas() {
     return (
         <MainLayout>
+            <Seo title="Temas" />
             <div className={styles["grid-temas"]}>
                 <div className={styles["content"]}>
                     <div className={styles["head-box"]}>
@@ -16,7 +19,7 @@ function Temas() {
                         <Image src={TemaEnem} className={styles["img-responsive"]} alt="" />
                         </span>
                         <span className={styles["texto"]}>
-                        Temas ENEM
+                            Temas ENEM
                         </span>
                     </a>
                     <a href="javascript://" className={styles["box"]}>
@@ -159,5 +162,17 @@ function Temas() {
         </MainLayout>
     )
 }
+
+
+
+export async function getServerSideProps(ctx: any) {
+    const session = await withAuthSession(ctx);
+    
+    if('redirect' in session) {
+        return session;
+    }
+      
+    return { props: {session: session} }
+  }
 
 export default Temas

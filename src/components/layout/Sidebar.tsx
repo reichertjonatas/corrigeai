@@ -44,14 +44,17 @@ function Sidebar({ menuType = 1 } : SidebarProps) {
                 <hr />
 
                 <span className="menu">
-                    <ul>
+                    {menuType == 1 && <ul>
                         <ItemMenu href="/painel/aluno" icon={IcPainelAluno} name="Painel do Aluno" />
                         <ItemMenu href="/painel/aluno/desempenho" icon={IcDesempenho} name="Desempenho" />
                         <ItemMenu href="/painel/aluno/temas" icon={IcTemas} name="Temas" />
                         <ItemMenu href="/painel/aluno/caed" icon={IcCaed} name="Alô, CAED!" />
                         <ItemMenu href="/painel/aluno/sobre" icon={IcSobre} name="Sobre" />
                         <ItemMenu href="/painel/aluno/planejamento" icon={IcPlanejamento} name="Planejamento" />
-                    </ul>
+                    </ul>}
+                    {menuType == 2 && <ul>
+                        <ItemMenu href="/painel/corretor" icon={IcPainelAluno} name="Painel do Corretor" />
+                    </ul>}
                 </span>
             </div>)
 }

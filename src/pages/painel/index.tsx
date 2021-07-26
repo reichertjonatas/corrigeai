@@ -11,11 +11,11 @@ function Painel() {
 
 export async function getServerSideProps(ctx: any) {
     const session = await authRequired(ctx, true);
-    if(!session){
-        return {
-            props: {},
-        }
+
+    if('redirect' in session){
+        return session;
     }
+
     return {
         props: {
             user: session.user,

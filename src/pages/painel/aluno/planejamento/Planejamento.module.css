@@ -1,0 +1,13 @@
+.gridPlanejamento{display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem}
+.gridPlanejamento .content{display: block; width: 100%;}
+.gridPlanejamento .content .box{display: block; width: 100%;border-radius: 0.75rem; background: var(--gray20); padding: 2.8125rem 1.5rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.gridPlanejamento .content .box h1{display: block; width: 100%; text-align: center; font-weight: 500; font-size: 1.6875rem; margin: 0 0 1.5rem}
+.gridPlanejamento .content .box .desc{display: block; width: 100%; text-align: left; font-weight: 400; font-size: 1.175rem; color: #72b01e}
+.gridPlanejamento .side .box{margin: 0 0 1rem; display: block; width: 100%;border-radius: 0.75rem; background: var(--gray20); padding: 1.8125rem 1rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.gridPlanejamento .side .box a{display: block; width: 100%; text-align: center; color: var(--gray20); font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 0.75rem; font-size: 1.2em; background: var(--dark); padding: 0.5125rem; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.gridPlanejamento .side .box a:hover{transform: scale(0.9);}
+
+
+@media(max-width: 500px){
+  .gridPlanejamento{grid-template-columns: 1fr}
+}

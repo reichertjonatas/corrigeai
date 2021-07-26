@@ -4,31 +4,52 @@ export async function authRequired(ctx: any, isIndex?: boolean) {
     const session = await getSession(ctx)
 
     if (!session) {
-        ctx.res.writeHead(302, { Location: '/painel/entrar' })
-        ctx.res.end()
-        return null
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar',
+            }
+        }
     }
 
     if (isIndex) {
         switch (session.user!.userType) {
             case 2:
-                ctx.res.writeHead(302, { Location: '/painel/corretor' })
-                ctx.res.end()
-                break;
+                return {
+                    redirect: {
+                        permanent: false,
+                        destination: '/painel/corretor',
+                    }
+                }
             case 3:
-                ctx.res.writeHead(302, { Location: '/painel/admin' })
-                ctx.res.end()
-                break;
-            
+                return {
+                    redirect: {
+                        permanent: false,
+                        destination: '/painel/admin',
+                    }
+                }
             default:
-                ctx.res.writeHead(302, { Location: '/painel/aluno' })
-                ctx.res.end()
-                break;
+                return {
+                    redirect: {
+                        permanent: false,
+                        destination: '/painel/aluno',
+                    }
+                }
         }
-        return {
-            props: {
-                user: session.user,
-            },
+    }
+    
+    return session;
+}
+
+export async function withAuthSession(ctx: any) {
+    const session = await getSession(ctx)
+
+    if (!session) {
+        return { 
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar'
+            }
         }
     }
 

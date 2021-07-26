@@ -21,8 +21,15 @@ import LogoLogin from "../../../public/images/logo-login.png";
 import TemaEnem from "../../../public/images/tema-enem.png"
 import TemaCorrigeAi from "../../../public/images/tema-corrigeai.png"
 
+import CloseIcon from "../../../public/images/close.png"
+import PencilIcon from "../../../public/images/pencil.png"
+
+import RedacaoPreview from "../../../public/images/redacao.jpeg"
 
 export { 
+    RedacaoPreview,
+    PencilIcon,
+    CloseIcon,
     IcPhoto, 
     IcPainelAlunoGlobal, 
     IcPainelAluno, 
