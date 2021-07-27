@@ -1,6 +1,6 @@
 import { NextApiRequest , NextApiResponse} from 'next'
 import { getSession } from 'next-auth/client'
-import Redacao from '../../../../models/redacoes'
+import Redacao from '../../../../models/redacao'
 import connectDB from '../../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../../constants'
 
