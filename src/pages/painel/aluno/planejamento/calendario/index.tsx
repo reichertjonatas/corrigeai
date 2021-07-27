@@ -48,8 +48,8 @@ function Calendario() {
         const newEvent = {
             id: events.length,
             title: "Escrever redação",
-            start: new Date(new Date().setHours(new Date().getHours())),
-            end: new Date(new Date().setHours(new Date().getHours() + 1)),
+            start, 
+            end,
             eventProps : {
                 color: '#72b01d'
             }
@@ -106,6 +106,7 @@ function Calendario() {
                 margin: 0 auto 0.2rem;
                 max-width: 90%;
               }
+              .tooltipRed { background-color: red}
             `}</style>
             <div className={styles.gridPlanejamento}>
                 <div className={styles.content}>
@@ -144,11 +145,6 @@ function Calendario() {
 }
 
 const EventComponent = ({ id, start, end, title, eventProps } : any) => {
-    <style global jsx>
-      {
-        `.tooltipRed { background-color: red}`
-      }
-    </style>
     return (
       <Popup
           key={id}
@@ -164,10 +160,11 @@ const EventComponent = ({ id, start, end, title, eventProps } : any) => {
           closeOnDocumentClick
         >   
             <div className="tooltipDivPrincial">
-                <span className="tooltipRed"> -- </span>
-                <span className="tooltipBlue"> -- </span>
-                <span className="tooltipYellow"> -- </span>
-                <span className="tooltipMagento"> -- </span>
+                <span className="tooltipOrange"></span>
+                <span className="tooltipYellow"></span>
+                <span className="tooltipRed"></span>
+                <span className="tooltipGreen"></span>
+                <span className="tooltipMagento"></span>
             </div>
         </Popup>
     );
