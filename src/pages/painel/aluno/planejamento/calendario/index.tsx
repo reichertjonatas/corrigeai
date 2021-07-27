@@ -312,7 +312,7 @@ const EventComponent = ({ event, start, end, title }: any) => {
       key={event.id}
       trigger={open => (
         <span>
-          <p>{event.id} - {title}</p>
+          <p>{title}</p>
           <p>{start}</p>
           <p>{end}</p>
         </span>
