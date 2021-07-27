@@ -89,11 +89,6 @@
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.2.0.tgz#f3933a44e365864f4dad5db94158106d511e8131"
   integrity sha512-sqKVVVOe5ivCaXDWivIJYVSaEgdQK9ul7a4Kity5Iw7u9+wBAPbX1RMSnLLmp7O4Vzj0WOWwMAJsTL00xwaNug==
 
-"@hookstate/core@^3.0.8":
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/@hookstate/core/-/core-3.0.8.tgz#d6838153d6d43c2f35cfca475c31248192564e62"
-  integrity sha512-blQagGIVIbNoUiNCRrvaXqFmUe7WGMY35ok/LENfl2pcIsLBjkreYIZiaSFi83tkycwq7ZOmcQz/R1nvLKhH8w==
-
 "@humanwhocodes/config-array@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.5.0.tgz#1407967d4c6eecd7388f83acf1eaf4d0c6e58ef9"
@@ -4112,3 +4107,8 @@ zen-observable@^0.8.15:
   version "0.8.15"
   resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
+
+zustand@^3.5.7:
+  version "3.5.7"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.7.tgz#add5e8d0ba031ce6e0ddf9cb76ef15306efb665f"
+  integrity sha512-DlVFXJavIHyXTOGz6dB+8QHZsPyJcGJSEBtlp2Ivmd5SwtlCnhPo3L8LB6YRfAOJC2PbqzgoD8NMjk+y+vIF0g==
