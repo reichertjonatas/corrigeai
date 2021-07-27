@@ -63,6 +63,49 @@ function Calendario() {
             <style global jsx>{`
                 .rbc-month-view{ border: 1px solid #002400!important; border-radius: 1rem!important;}
                 .rbc-toolbar .rbc-toolbar-label { text-align: right!important; }
+                .Calendario_gridPlanejamento__2khI8 .Calendario_content__1EgyD .Calendario_box__nQ-yB .Calendario_desc__3Qmag{
+                    color: var(--dark) !important;
+                    text-transform: capitalize;
+              }
+              
+              .rbc-month-view {
+                  border: 1px solid #55653d!important;
+                  border-radius: 1rem!important;
+              }
+              
+              .rbc-header{
+                padding: 0.6rem 0;
+                border-bottom: 1px solid #55653d!important;
+                font-weight: 500;
+              }
+              
+              .rbc-header+.rbc-header{
+                border-left: 1px solid #55653d!important;
+              }
+              
+              .rbc-day-bg+.rbc-day-bg{
+                border-left: 1px solid #55653d!important;
+              }
+              
+              .rbc-month-row+.rbc-month-row{
+                border-top: 1px solid #55653d!important;
+              }
+              
+              .rbc-date-cell{
+                text-align: center;
+              }
+              
+              .rbc-date-cell>a, .rbc-date-cell>a:active, .rbc-date-cell>a:visited{
+                font-size: 1rem;
+                color: var(--gray40);
+              }
+              
+              .rbc-day-slot .rbc-background-event, .rbc-event{
+                font-size: 0.8rem !important;
+                padding: 0.3rem 0.5rem;
+                margin: 0 auto 0.2rem;
+                max-width: 90%;
+              }
             `}</style>
             <div className={styles.gridPlanejamento}>
                 <div className={styles.content}>
@@ -100,8 +143,12 @@ function Calendario() {
     )
 }
 
-const EventComponent = ({ id, start, end, title } : any) => {
-      
+const EventComponent = ({ id, start, end, title, eventProps } : any) => {
+    <style global jsx>
+      {
+        `.tooltipRed { background-color: red}`
+      }
+    </style>
     return (
       <Popup
           key={id}
@@ -116,8 +163,11 @@ const EventComponent = ({ id, start, end, title } : any) => {
           on={['hover', 'focus']}
           closeOnDocumentClick
         >   
-            <div>
-                <span style={{ backgroundColor: 'red', color: 'red', minWidth: '120px', minHeight: '40px'}}> -- </span>
+            <div className="tooltipDivPrincial">
+                <span className="tooltipRed"> -- </span>
+                <span className="tooltipBlue"> -- </span>
+                <span className="tooltipYellow"> -- </span>
+                <span className="tooltipMagento"> -- </span>
             </div>
         </Popup>
     );
