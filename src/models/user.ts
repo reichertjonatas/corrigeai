@@ -7,6 +7,8 @@ export interface IUser {
     email: string 
     image?: string | null
     userType: number 
+    nivel: number
+    recompensas: IRecompensa[]
     subscription: {
         envios: number
         subscriptioName: String
@@ -14,6 +16,12 @@ export interface IUser {
         subscriptionDate: string
         subscriptionExpr: string
     }
+}
+
+export interface IRecompensa {
+    data: string,
+    recompensa_id: string, 
+    isActive: boolean,
 }
 
 const MODEL_NAME = 'User';
@@ -28,6 +36,8 @@ const schema = new Schema<IUser>({
     image: {type: String, default: null },
     emailVerified: { type: Date, default: null },
     userType: { type: Number, default: 0 },
+    nivel: { type: Number, default: 1 },
+    recompensas: { type: Array, default: [] },
     subscription: {
         envios: {type: Number, default: 0},
         subscriptionName: {type: String, default: 'Grátis'},

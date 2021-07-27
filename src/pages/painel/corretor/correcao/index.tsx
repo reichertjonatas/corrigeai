@@ -11,7 +11,6 @@ import {
     PointSelector,
     RectangleSelector,
     OvalSelector
-
     // @ts-ignore
 } from 'react-image-annotation/lib/selectors'
 import { useEffect } from 'react';
@@ -20,14 +19,13 @@ const img = "/images/redacao.jpeg"
 
 const Box = ({ children, geometry, style }: any) => (
     <div style={{
-            ...style,
-            position: 'absolute',
-            left: `${geometry.x}%`,
-            top: `${geometry.y}%`,
-            height: `${geometry.height}%`,
-            width: `${geometry.width}%`,
-        }}
-    >{children}</div>
+        ...style,
+        position: 'absolute',
+        left: `${geometry.x}%`,
+        top: `${geometry.y}%`,
+        height: `${geometry.height}%`,
+        width: `${geometry.width}%`,
+    }}>{children}</div>
 )
 
 function Correcao() {
@@ -37,10 +35,6 @@ function Correcao() {
 
     const [annotations, setAnnotations] = useState([])
     const [annotation, setAnnotation] = useState({})
-
-    
-
-
 
     function renderHighlight({ annotation, active }: any) {
         const { geometry } = annotation
@@ -494,8 +488,28 @@ function Correcao() {
     }
 
     return (
+        <>
         <MainLayout menuType={2}>
+            <style global jsx>{`
+                .content-global{
+                    max-width: 95%!important;
+                    margin: 0 auto!important;
+                }
+                
+                .sidebar{ display: none !important; }
+                
+                .gridTemas .content .boxTema .redacao{
+                    display: block;
+                    width: 100%;
+                    height: 60rem;
+                    overflow: scroll;
+                }
+                
+                .gridTemas .content .boxTema .redacao img{
+                    width: 100%!important;
+                }
 
+            `}</style>
             <div className={styles.gridTemas}>
 
                 <div className={styles.content}>
@@ -560,7 +574,7 @@ function Correcao() {
                     <h1>Notas</h1>
                     <span className={styles.criterios}>
                         <span className={styles.criterio}>
-                            <span className={styles.title}>Critério I</span>
+                            <span className={styles.title}>Competência I</span>
                             <span className={styles.subtitle}>Selecione uma nota.</span>
 
                             <span className={styles.notasCriterios}>
@@ -603,6 +617,7 @@ function Correcao() {
                 </div>
             </div>
         </MainLayout>
+        </>
     )
 }
 
