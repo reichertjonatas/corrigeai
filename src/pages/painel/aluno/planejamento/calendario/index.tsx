@@ -32,7 +32,7 @@ function Calendario() {
   const onEventDrop = ({ event, start, end, allDay }: any) => {
 
     const updatedEvent: ICalenderEvents = { ...event, start, end };
-    updateDragDrop(event.event.id, updatedEvent);
+    updateDragDrop(event.id, updatedEvent);
 
     // const nextEvents: any[] = [...calenderEvents.get()];
     // nextEvents.splice(idx, 1, updatedEvent);

@@ -25,7 +25,7 @@ const eventStore = create<IEventState>((set) => ({
     events: [
         initialEvent
     ],
-    addEvent: (event: ICalenderEvents) => { 
+    addEvent: (event: ICalenderEvents) => {
         set((state) => ({
             events: [
                 ...state.events,
@@ -38,11 +38,12 @@ const eventStore = create<IEventState>((set) => ({
             events: state.events.filter((event) => event.id != id)
         }))
     },
-    updateEvent: (id: number, nColor: string) => { 
+    updateEvent: (id: number, nColor: string) => {
         set((state) => ({
-            events: state.events.map((event) => event.id === id ? {...event, eventProps: { color: nColor }} : event) 
+            events: state.events.map((event) => event.id === id ? { ...event, eventProps: { color: nColor } } : event)
         }))
     },
+
     updateDragDrop: (id: number, nEvent: ICalenderEvents) => {
         set((state) => ({
             events: state.events.map((event) => event.id === id ? nEvent : event),
@@ -50,7 +51,7 @@ const eventStore = create<IEventState>((set) => ({
     }
 }));
 
-export const useEventStore = eventStore; 
+export const useEventStore = eventStore;
 
 // interface ISate {
 //     calenderEvents: ICalenderEvents[];
