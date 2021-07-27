@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react'
 import MainLayout from '../../../../components/layout/MainLayout'
 import { withAuthSession } from '../../../../utils/helpers';
@@ -22,10 +23,10 @@ function Planejamento() {
             </div>
             <div className={styles.side}>
                 <div className={styles.box}>
-                <a href="javascript://">Planeje sua semana</a>
+                    <Link href="/painel/aluno/planejamento/calendario">Planeje sua semana</Link>
                 </div>
                 <div className={styles.box}>
-                <a href="javascript://">Planeje sua redação</a>
+                    <Link href="/painel/aluno/planejamento/redacao">Planeje sua redação</Link>
                 </div>
             </div>
             </div>

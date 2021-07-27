@@ -12,6 +12,7 @@
     "@hookstate/core": "^3.0.8",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
+    "moment": "^2.29.1",
     "mongodb": "^3.5.9",
     "mongoose": "^5.13.3",
     "next": "11.0.1",
@@ -21,12 +22,14 @@
     "react-big-calendar": "^0.33.5",
     "react-dom": "17.0.2",
     "react-hook-form": "^7.11.1",
-    "react-image-annotation": "^0.9.10"
+    "react-image-annotation": "^0.9.10",
+    "reactjs-popup": "^2.0.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/mongodb": "^3.6.20",
     "@types/react": "17.0.14",
+    "@types/react-big-calendar": "^0.33.1",
     "eslint": "7.31.0",
     "eslint-config-next": "11.0.1",
     "typescript": "4.3.5"
