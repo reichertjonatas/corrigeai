@@ -23,11 +23,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             if (!user) throw new Error("usuário não encontrado!");
 
-            return res.status(204).send({});
+            res.status(204).send({});
           } catch (error) {
-            return res.status(500).send({ error: true, errorMessage: error.message });
+            res.status(500).send({ error: true, errorMessage: error.message });
           }
         }
+        break;
       case 'removeEvent':
         if (req.method === 'POST') {
           const { evento } = req.body;
@@ -41,13 +42,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             if (!user) throw new Error("usuário não encontrado!");
 
-            return res.status(204).send({});
+            res.status(204).send({});
           } catch (error) {
-            return res.status(500).send({ error: true, errorMessage: error.message });
+            res.status(500).send({ error: true, errorMessage: error.message });
           }
         } else {
-          return res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })
+          res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })
         }
+        break;
       case 'updateEvent':
         if (req.method === 'POST') {
           const { id, color } = req.body;
@@ -58,30 +60,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             if (!user) throw new Error("usuário não encontrado!");
 
-            return res.status(204).send(user);
+            res.status(204).send(user);
           } catch (error) {
-            return res.status(500).send({ error: true, errorMessage: error.message });
+            res.status(500).send({ error: true, errorMessage: error.message });
           }
         } else {
-          return res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })
+          res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })
         }
+        break;
       case 'getEvents':
           if (req.method === 'GET') {
             try {
               const user = await User.findOne({ email: session.user!.email! });
               if (!user) throw new Error("usuário não encontrado!");
   
-              return res.status(200).send({
+              res.status(200).send({
                 error: false, data: user.eventos
               });
             } catch (error) {
-              return res.status(500).send({ error: true, errorMessage: error.message });
+              res.status(500).send({ error: true, errorMessage: error.message });
             }
           } else {
-            return res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })
+            res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })
           }
+          break;
       default:
-        return res.status(404).send({})
+        res.status(404).send({})
+        break;
     }
 
   } else {
