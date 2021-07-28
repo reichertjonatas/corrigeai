@@ -34,8 +34,6 @@ function Calendario() {
   React.useEffect(() => {
     API.get('/painel/calendario/getEvents').then((response) => {
         if(response.status === 200) {
-            console.log(response.data.data);
-
             initialLoad(response.data.data);
         }
     });

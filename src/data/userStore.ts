@@ -1,5 +1,5 @@
 import create from 'zustand'
-import User, { ICalenderEvents } from '../models/user';
+import { ICalenderEvents } from '../models/user';
 import { API } from '../services/api';
 import { initialEvent } from '../utils/helpers';
 
@@ -17,8 +17,7 @@ interface IEventState {
 }
 
 
-const userStore = create<IEventState>((set) => ({
-
+const userStore = create<IEventState>((set, get) => ({
     userInfo: {
         events: [
             initialEvent
@@ -26,7 +25,7 @@ const userStore = create<IEventState>((set) => ({
     },
 
     initialLoad: (events) => {
-        if(events){
+        if (events && !(get().userInfo.events.length > 1)) {
             const eventsFormated = events.map(event => {
                 return { ...event, start: new Date(event.start), end: new Date(event.end) };
             });
@@ -51,11 +50,15 @@ const userStore = create<IEventState>((set) => ({
     },
 
     removeEvent: (id: number) => {
-        set((state) => ({
-            userInfo: {
-                events: state.userInfo.events.filter((event) => event.id != id)
+        API.post('/painel/calendario/removeEvent', { id }).then((response) => {
+            if (response.status === 200) {
+                set((state) => ({
+                    userInfo: {
+                        events: state.userInfo.events.filter((event) => event.id != id)
+                    }
+                }))
             }
-        }))
+        })
     },
 
     updateEvent: (id: number, nColor: string) => {
@@ -71,11 +74,18 @@ const userStore = create<IEventState>((set) => ({
     },
 
     updateDragDrop: (id: number, nEvent: ICalenderEvents) => {
-        set((state) => ({
-            userInfo: {
-                events: state.userInfo.events.map((event) => event.id === id ? nEvent : event)
+        console.log('updateDragDrop', { id, evento: { ...nEvent } });
+
+        API.post('/painel/calendario/updateDragDrop', { id, evento: { ...nEvent } }).then((response) => {
+            if (response.status === 200) {
+                set((state) => ({
+                    userInfo: {
+                        events: state.userInfo.events.map((event) => event.id === id ? nEvent : event)
+                    }
+                }))
             }
-        }))
+        })
+
     }
 
 }));

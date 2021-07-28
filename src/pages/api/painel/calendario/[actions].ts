@@ -16,14 +16,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (req.method === 'POST') {
           const { evento } = req.body;
           try {
-            const user = await User.updateOne({ email: session.user!.email! }, {
+            await User.updateOne({ email: session.user!.email! }, {
               $push: {
                 eventos: {
                   $each: [evento],
                 }
               }
             });
-            if (!user) throw new Error("usuário não encontrado!");
 
             res.status(200).send({error: false, data: { message: 'Adicionado com sucesso! '}});
           } catch (error) {
@@ -33,17 +32,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         break;
       case 'removeEvent':
         if (req.method === 'POST') {
-          const { evento } = req.body;
+          const { id } = req.body;
           try {
-            const user = await User.updateOne({ email: session.user!.email! }, {
-              $push: {
-                eventos: {
-                  $each: [evento],
-                }
-              }
+            await User.updateOne({ email: session.user!.email! }, {
+              $pull: { 'eventos' : {'id' : id } }
             });
-            if (!user) throw new Error("usuário não encontrado!");
-
             res.status(200).send({ error: false, data: { message: 'Removido com suceso!'}});
           } catch (error) {
             res.status(500).send({ error: true, errorMessage: error.message });
@@ -57,10 +50,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           const { id, color } = req.body;
           
           try {
-            const user = await User.updateOne({ email: session.user!.email!, 'eventos.id': id as number }, {
+            await User.updateOne({ email: session.user!.email!, 'eventos.id': id as number }, {
               $set: { 'eventos.$.eventProps.color' : color }
             });
-            if (!user) throw new Error("usuário não encontrado!");
 
             res.status(200).send({ error: false, data: { message : 'Atualizado com suceso'}});
           } catch (error) {
@@ -70,6 +62,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })
         }
         break;
+      case 'updateDragDrop':
+          if (req.method === 'POST') {
+            const { id, evento } = req.body;
+            
+            try {
+              await User.updateOne({ email: session.user!.email!, 'eventos.id': id as number }, {
+                $set: { 'eventos.$' : evento }
+              });
+  
+              res.status(200).send({ error: false, data: { message : 'Atualizado com suceso'}});
+            } catch (error) {
+              res.status(500).send({ error: true, errorMessage: error.message });
+            }
+          } else {
+            res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })
+          }
+          break;
       case 'getEvents':
           if (req.method === 'GET') {
             try {

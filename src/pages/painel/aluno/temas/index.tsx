@@ -14,22 +14,26 @@ function Temas() {
             <div className={styles["grid-temas"]}>
                 <div className={styles["content"]}>
                     <div className={styles["head-box"]}>
-                    <a href="javascript://" className={styles["box"]}>
-                        <span className={styles["icon"]}>
-                        <Image src={TemaEnem} className={styles["img-responsive"]} alt="" />
-                        </span>
-                        <span className={styles["texto"]}>
-                            Temas ENEM
-                        </span>
-                    </a>
-                    <a href="javascript://" className={styles["box"]}>
-                        <span className={styles["icon"]}>
-                        <Image src={TemaCorrigeAi} className={styles["img-responsive"]} alt="" />
-                        </span>
-                        <span className={styles["texto"]}>
-                        Temas Corrige Aí
-                        </span>
-                    </a>
+                    <Link href="/" passHref>
+                        <a className={styles["box"]}>
+                            <span className={styles["icon"]}>
+                            <Image src={TemaEnem} className={styles["img-responsive"]} alt="" />
+                            </span>
+                            <span className={styles["texto"]}>
+                                Temas ENEM
+                            </span>
+                        </a>
+                    </Link>
+                    <Link href="/" passHref>
+                        <a className={styles["box"]}>
+                            <span className={styles["icon"]}>
+                            <Image src={TemaCorrigeAi} className={styles["img-responsive"]} alt="" />
+                            </span>
+                            <span className={styles["texto"]}>
+                            Temas Corrige Aí
+                            </span>
+                        </a>
+                    </Link>
                     </div>
 
                     <div className={styles["box-tema"]}>
