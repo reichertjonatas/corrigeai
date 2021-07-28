@@ -1,8 +1,20 @@
 import mongoose, { Schema } from 'mongoose';
 
+export interface ICompetencias {
+    title: string;
+    nota: number;
+    obs: string;
+    obs_enem: any[];
+}
+
+export interface ICorrecoes {
+    competencias: ICompetencias[];
+    marcacoes: any[];
+}
+
 export interface IRedacoes {
     redacao: string;
-    competencias: any[];
+    nota_final: number;
     correcoes: any[];
     tema_redacao: string;
     user_owner: string;

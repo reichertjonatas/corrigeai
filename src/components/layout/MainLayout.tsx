@@ -34,7 +34,10 @@ function MainLayout({ children, menuType = 1}: MainLayoutProps) {
                     <div className="head">
                         <h1>
                             <Image src={IcPainelAlunoGlobal} className="img-responsive" alt="" />
-                            Painel do { menuType == 1 && 'aluno'} { menuType == 2 && 'corretor'} { menuType == 3 && 'admin'}
+                            
+                            <span className="titleH1">
+                                Painel do { menuType == 1 && 'aluno'} { menuType == 2 && 'corretor'} { menuType == 3 && 'admin'}
+                            </span>
                         </h1>
                         <span className="user">
                             <ul>

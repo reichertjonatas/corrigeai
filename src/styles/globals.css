@@ -124,4 +124,9 @@ a:hover{color: #0a9bff;}
   .content-global .head h1{margin: -1.1rem 0 0}
 }
 
+.titleH1 {
+  position: relative;
+  top: -5px;
+  left: 8px;
+}
 /* .a{} */

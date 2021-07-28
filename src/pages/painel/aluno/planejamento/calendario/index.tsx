@@ -5,14 +5,14 @@ import styles from './Calendario.module.css'
 import BigCalendar, { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
-
 import 'moment/locale/pt-br';
-
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { msToTime } from '../../../../../utils/helpers';
-import { ICalenderEvents, useEventStore } from '../../../../../data/eventStore';
+import { ICalenderEvents } from '../../../../../models/user';
+import { useUserStore } from '../../../../../data/userStore';
+import { API } from '../../../../../services/api';
 
 
 const localizer = momentLocalizer(moment)
@@ -20,24 +20,31 @@ const localizer = momentLocalizer(moment)
 const CorrigeAiCalendar = withDragAndDrop(Calendar);
 
 function Calendario() {
-  const events = useEventStore(state => state.events);
-  const addNewEvent = useEventStore((state) => state.addEvent);
-  const removeEvent = useEventStore((state) => state.removeEvent);
-  const updateDragDrop = useEventStore((state) => state.updateDragDrop);
+
+  const events = useUserStore(state => state.userInfo.events);
+  const initialLoad = useUserStore((state) => state.initialLoad);
+  const addNewEvent = useUserStore((state) => state.addEvent);
+  const updateDragDrop = useUserStore((state) => state.updateDragDrop);
 
   const [open, setOpen] = React.useState(false);
   const closeModal = () => setOpen(false);
   const [event, setEvent] = React.useState({});
 
-  const onEventDrop = ({ event, start, end, allDay }: any) => {
+  // @ts-nocheck
+  React.useEffect(() => {
+    API.get('/painel/calendario/getEvents').then((response) => {
+        if(response.status === 200) {
+            console.log(response.data.data);
 
+            initialLoad(response.data.data);
+        }
+    });
+    // @ts-ignore
+  }, [])
+
+  const onEventDrop = ({ event, start, end, allDay }: any) => {
     const updatedEvent: ICalenderEvents = { ...event, start, end };
     updateDragDrop(event.id, updatedEvent);
-
-    // const nextEvents: any[] = [...calenderEvents.get()];
-    // nextEvents.splice(idx, 1, updatedEvent);
-
-    // calenderEvents.set(nextEvents);
   };
 
 
@@ -58,7 +65,6 @@ function Calendario() {
           color: '#72b01d'
         }
       }
-      //calenderEvents.merge(newEvent);
       addNewEvent(newEvent);
     } else {
       const title = window.prompt('Digite seu texto:');
@@ -77,30 +83,6 @@ function Calendario() {
       }
     }
   }
-
-  // const changeColor = (event : any, color: string) => {
-
-  //   const idx = events.indexOf(event);
-  //   console.log('idx: ', idx, ' events ', JSON.stringify(events).toString());
-  //   if(idx != -1) {
-  //     const updatedEvent = { ...event, eventProps: { color }};
-
-  //     const nextEvents = [...events];
-  //     nextEvents.splice(idx, 0, updatedEvent);
-
-  //     setEvents(nextEvents);
-  //   }
-  // };
-
-  // const eventComponent = (event: any) => {
-  //   return (
-  //     <span>
-  //       <p>{event.title}</p>
-  //       <p>{event.start}</p>
-  //       <p>{event.end}</p>
-  //     </span>
-  //   )
-  // };
 
   return (
     <MainLayout>
@@ -309,8 +291,10 @@ function Calendario() {
 
 
 const EventComponent = ({ event, start, end, title }: any) => {
-  const updateEvent = useEventStore((state) => state.updateEvent);
-  const removeEvent = useEventStore((state) => state.removeEvent);
+
+  const updateEvent = useUserStore((state) => state.updateEvent);
+  const removeEvent = useUserStore((state) => state.removeEvent);
+
   return (
     <Popup
       contentStyle={{
