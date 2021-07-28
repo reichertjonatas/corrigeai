@@ -1,7 +1,6 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
 import User from '../../../models/user';
-import connectDB from '../../../services/mongodb';
 import bcrypt from 'bcryptjs';
 
 const options = {
@@ -72,4 +71,4 @@ const options = {
   // },
 }
 
-export default connectDB(NextAuth(options))
+export default NextAuth(options)

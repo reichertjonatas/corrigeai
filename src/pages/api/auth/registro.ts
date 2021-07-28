@@ -1,11 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import User from "../../../models/user";
-import connectDB from "../../../services/mongodb";
+import dbConnect from "../../../services/mongodb";
 import bcrypt from 'bcryptjs';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === 'POST') {
       const { name, email, password } = req.body;
+
+      await dbConnect();
       
       if (name && email && password) {
           try {
@@ -29,4 +31,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   };
   
-  export default connectDB(handler);
+  export default handler;

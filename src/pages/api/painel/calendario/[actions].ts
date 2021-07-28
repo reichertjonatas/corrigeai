@@ -1,13 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
 import User from '../../../../models/user'
-import connectDB from '../../../../services/mongodb'
+import dbConnect from '../../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../../constants'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
   const { actions } = req.query;
-  console.log('actions', actions)
+
+  await dbConnect();
+
   if (session) {
     switch (actions) {
       case 'addEvent':
@@ -23,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             if (!user) throw new Error("usuário não encontrado!");
 
-            res.status(204).send({});
+            res.status(200).send({error: false, data: { message: 'Adicionado com sucesso! '}});
           } catch (error) {
             res.status(500).send({ error: true, errorMessage: error.message });
           }
@@ -42,7 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             if (!user) throw new Error("usuário não encontrado!");
 
-            res.status(204).send({});
+            res.status(200).send({ error: false, data: { message: 'Removido com suceso!'}});
           } catch (error) {
             res.status(500).send({ error: true, errorMessage: error.message });
           }
@@ -60,7 +62,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             if (!user) throw new Error("usuário não encontrado!");
 
-            res.status(204).send(user);
+            res.status(200).send({ error: false, data: { message : 'Atualizado com suceso'}});
           } catch (error) {
             res.status(500).send({ error: true, errorMessage: error.message });
           }
@@ -94,4 +96,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
-export default connectDB(handler);
+export default handler;

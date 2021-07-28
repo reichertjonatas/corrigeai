@@ -37,7 +37,7 @@ const userStore = create<IEventState>((set) => ({
 
     addEvent: async (event: ICalenderEvents) => {
         API.post('/painel/calendario/addEvent', { evento: event }).then((response) => {
-            if (response.status === 204) {
+            if (response.status === 200) {
                 set((state) => ({
                     userInfo: {
                         events: [
@@ -60,7 +60,7 @@ const userStore = create<IEventState>((set) => ({
 
     updateEvent: (id: number, nColor: string) => {
         API.post('/painel/calendario/updateEvent', { id, color: nColor }).then((response) => {
-            if (response.status === 204) {
+            if (response.status === 200) {
                 set((state) => ({
                     userInfo: {
                         events: state.userInfo.events.map((event) => event.id === id ? { ...event, eventProps: { color: nColor } } : event)

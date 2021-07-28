@@ -1,11 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import connectDB from '../../../services/mongodb'
+import dbConnect from '../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../constants'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req })
     const { actions } = req.query;
+
+
+    await dbConnect();
     
     console.log('actions', actions)
     if (session) {
@@ -45,4 +48,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 }
 
-export default connectDB(handler);
+export default handler;
