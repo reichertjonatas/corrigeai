@@ -5,8 +5,9 @@ import dbConnect from '../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../constants'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req })
   await dbConnect();
+  
+  const session = await getSession({ req })
 
   if (session) {
     try {
