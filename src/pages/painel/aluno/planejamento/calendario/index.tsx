@@ -12,7 +12,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { msToTime } from '../../../../../utils/helpers';
-import { ICalenderEvents, useEventStore } from '../../../../../store';
+import { ICalenderEvents, useEventStore } from '../../../../../data/eventStore';
 
 
 const localizer = momentLocalizer(moment)
@@ -157,7 +157,7 @@ function Calendario() {
       <Popup open={open} closeOnDocumentClick onClose={closeModal} contentStyle={{
         width: 'auto',
         borderRadius: '1rem',
-        padding: '3.5rem 1rem 2rem'
+        padding: '2rem 1rem 2rem'
       }}>
         <div className="modal">
           <a className="close" onClick={closeModal}>
@@ -243,23 +243,28 @@ function Calendario() {
               }
               
               
-              .tooltipDivPrincial .tooltipOrange{background: #f08026}
-              .tooltipDivPrincial .tooltipYellow{background: #e5d501}
-              .tooltipDivPrincial .tooltipRed{background: #c0272d}
-              .tooltipDivPrincial .tooltipGreen{background: #72b01e}
-              .tooltipDivPrincial .tooltipMagento{background: #93278f}
-
-              // .popup-content{
-              //   width: auto;
-              //   border-radius: 1rem;
-              //   padding: 3.5rem 1rem 2rem;
-              // }
+              .tooltipDivPrincial .tooltipOrange{background: #f08026; cursor: pointer}
+              .tooltipDivPrincial .tooltipYellow{background: #e5d501; cursor: pointer}
+              .tooltipDivPrincial .tooltipRed{background: #c0272d; cursor: pointer}
+              .tooltipDivPrincial .tooltipGreen{background: #72b01e; cursor: pointer}
+              .tooltipDivPrincial .tooltipMagento{background: #93278f; cursor: pointer}
               
-              .close{
-                font-size: 2.5rem;
-                position: absolute;
-                left: 1rem;
-                top: 0;
+              .close {
+                  font-size: 2.5rem;
+                  position: absolute;
+                  right: -6%;
+                  top: -3%;
+                  background: #ffff;
+                  border-radius: 50%;
+                  width: 40px;
+                  height: 40px;
+                  text-align: center;
+                  line-height: 40px;
+                  cursor: pointer;
+              }
+
+              .noActive {
+                  background: var(--gray40) !important;
               }
               
               .title{
@@ -296,6 +301,7 @@ function Calendario() {
               .opcoes .opcao:hover{
                 background: var(--dark);
               }
+
             `}</style>
     </MainLayout>
   )
@@ -304,6 +310,7 @@ function Calendario() {
 
 const EventComponent = ({ event, start, end, title }: any) => {
   const updateEvent = useEventStore((state) => state.updateEvent);
+  const removeEvent = useEventStore((state) => state.removeEvent);
   return (
     <Popup
       contentStyle={{
@@ -311,7 +318,13 @@ const EventComponent = ({ event, start, end, title }: any) => {
       }}
       key={event.id}
       trigger={open => (
-        <span>
+        <span onContextMenu={(e) =>{ 
+          e.preventDefault();
+          if (confirm('Deseja excluir?')) {
+            // Save it!
+            removeEvent(event.id);
+          }
+        } }>
           <p>{title}</p>
           <p>{start}</p>
           <p>{end}</p>
@@ -319,7 +332,7 @@ const EventComponent = ({ event, start, end, title }: any) => {
       )}
       position="right center"
       on={['hover']}
-      closeOnDocumentClick>
+      closeOnDocumentClick={false}>
       <div className="tooltipDivPrincial">
         <span className="tooltipOrange" onClick={() => updateEvent(event.id, '#f08026')}></span>
         <span className="tooltipYellow" onClick={() => updateEvent(event.id, '#e5d501')}></span>

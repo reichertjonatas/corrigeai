@@ -1,5 +1,5 @@
 import create from 'zustand'
-import { initialEvent } from './utils/helpers';
+import { initialEvent } from '../utils/helpers';
 
 export interface ICalenderEvents {
     id: number;
