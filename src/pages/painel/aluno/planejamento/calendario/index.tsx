@@ -32,13 +32,8 @@ function Calendario() {
 
   // @ts-nocheck
   React.useEffect(() => {
-    API.get('/painel/calendario/getEvents').then((response) => {
-        if(response.status === 200) {
-            initialLoad(response.data.data);
-        }
-    });
-    // @ts-ignore
-  }, [])
+    initialLoad()
+  }, [initialLoad])
 
   const onEventDrop = ({ event, start, end, allDay }: any) => {
     const updatedEvent: ICalenderEvents = { ...event, start, end };

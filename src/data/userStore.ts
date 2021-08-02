@@ -1,5 +1,5 @@
 import create from 'zustand'
-import { ICalenderEvents } from '../models/user';
+import { ICalenderEvents, IRedacoes, IUser } from '../models/user';
 import { API } from '../services/api';
 import { initialEvent } from '../utils/helpers';
 
@@ -7,13 +7,20 @@ interface IEventState {
     userInfo: {
         events: ICalenderEvents[];
     }
+    redacoes: IRedacoes[];
+
+    user: IUser;
+
+    me: () => Promise<boolean>;
+
+    createRedacao: (redacao: IRedacoes) => Promise<{ error: boolean; data: any; }>;
 
     addEvent: (event: ICalenderEvents) => void;
     removeEvent: (id: number) => void;
     updateEvent: (id: number, nColor: string) => void;
     updateDragDrop: (id: number, nEvent: ICalenderEvents) => void;
 
-    initialLoad: (events: ICalenderEvents[]) => void;
+    initialLoad: () => void;
 }
 
 
@@ -23,15 +30,49 @@ const userStore = create<IEventState>((set, get) => ({
             initialEvent
         ]
     },
+    redacoes: [],
+    user: {} as IUser,
 
-    initialLoad: (events) => {
-        if (events && !(get().userInfo.events.length > 1)) {
-            const eventsFormated = events.map(event => {
-                return { ...event, start: new Date(event.start), end: new Date(event.end) };
+    me: async () => {
+        const response = await API.post('/painel/me');
+        if (response.status === 200) {
+            set({ user: response.data.data })
+            return true;
+        }
+        return false;
+    },
+
+    createRedacao: async (redacao: IRedacoes) => {
+        if (get().user.subscription.envios > 0) {
+            const response = await API.post('/painel/redacao/create', {
+                "redacao": redacao.redacao,
+                "nota_final": 0,
+                "correcoes": [],
+                "tema_redacao": redacao.tema_redacao,
             });
 
-            set((state) => ({ userInfo: { events: [...state.userInfo.events, ...eventsFormated] } }))
+            console.log('data', response.data);
+
+            if (response.status === 200 && !response.data.error ) {
+                await get().me();
+                return { error: false, data: {}};
+            } else {
+                return response.data.data;
+            }
         }
+
+        return {error: true, data: { message: 'Você não possui envios disponíveis!' }};
+    },
+
+    initialLoad: () => {
+        API.get('/painel/calendario/getEvents').then((response) => {
+            if (response.status === 200) {
+                const eventsFormated = (response.data.data as ICalenderEvents[]).map(event => {
+                    return { ...event, start: new Date(event.start), end: new Date(event.end) };
+                });
+                set({ userInfo: { events: eventsFormated } })
+            }
+        });
     },
 
     addEvent: async (event: ICalenderEvents) => {

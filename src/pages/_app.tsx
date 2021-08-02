@@ -1,8 +1,10 @@
 import '../styles/globals.css'
+import "react-toastify/dist/ReactToastify.css";
 import type { AppProps } from 'next/app'
 import { Provider } from 'next-auth/client'
 import NextNprogress from 'nextjs-progressbar';
 import React from 'react';
+import { ToastContainer } from 'react-toastify'
 
 function CorrigeAiApp({ Component, pageProps }: AppProps) {
   return (
@@ -15,6 +17,14 @@ function CorrigeAiApp({ Component, pageProps }: AppProps) {
             showOnShallow={true}
           />
         <Component {...pageProps} />
+        <ToastContainer 
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          closeOnClick={true}
+          pauseOnHover={true}
+          draggable={true}
+        />
     </Provider>
   )
 }

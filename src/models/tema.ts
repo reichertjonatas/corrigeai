@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 export interface ITemas {
+    _id: string;
     tema: string;
     content: string;
     category: number;
@@ -10,8 +11,8 @@ export interface ITemas {
 const MODEL_NAME = 'Tema';
 
 const schema = new Schema<ITemas>({
-    tema: String,
-    content: String,
+    tema: {type: String, required: true},
+    content: {type: String, required: true},
     category: {type: Number, default: 1},
     visible: {type: Boolean, default: true}
 });

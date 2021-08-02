@@ -26,20 +26,25 @@ import PencilIcon from "../../../public/images/pencil.png"
 
 import RedacaoPreview from "../../../public/images/redacao.jpeg"
 
-export { 
+import IcPen from "../../../public/images/pen.png"
+import IcTrash from "../../../public/images/trash.png"
+
+export {
+    IcPen, 
+    IcTrash,
     RedacaoPreview,
     PencilIcon,
     CloseIcon,
-    IcPhoto, 
-    IcPainelAlunoGlobal, 
-    IcPainelAluno, 
+    IcPhoto,
+    IcPainelAlunoGlobal,
+    IcPainelAluno,
     Logo,
-    IcDesempenho, 
-    IcTemas, 
-    IcCaed, 
-    IcPlanejamento, 
-    IcSobre, 
-    IcLike,  
+    IcDesempenho,
+    IcTemas,
+    IcCaed,
+    IcPlanejamento,
+    IcSobre,
+    IcLike,
     IcAlert,
     IcGraphic,
     IcUltimosEnvios,

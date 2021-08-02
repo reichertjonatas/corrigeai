@@ -55,6 +55,10 @@ function Sidebar({ menuType = 1 } : SidebarProps) {
                     {menuType == 2 && <ul>
                         <ItemMenu href="/painel/corretor" icon={IcPainelAluno} name="Painel do Corretor" />
                     </ul>}
+                    {menuType == 3 && <ul>
+                        <ItemMenu href="/painel/admin/comuns/paginas" icon={IcPainelAluno} name="Páginas" />
+                        <ItemMenu href="/painel/admin/comuns/faq" icon={IcPainelAluno} name="FAQ" />
+                    </ul>}
                 </span>
             </div>)
 }

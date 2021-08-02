@@ -19,6 +19,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 image: me.image,
                 email: me.email,
                 subscription: me.subscription,
+                redacoes: me.redacoes,
+                recompensas: me.recompensas,
                 userType: me.userType,
             }})
         }else

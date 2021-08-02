@@ -29,26 +29,30 @@ export interface ICompetencias {
 }
 
 export interface ICorrecoes {
+    id: string;
     competencias: ICompetencias[];
     marcacoes: any[];
+    corretor: string;
+    createdAt: string;
 }
 
 export interface IRedacoes {
+    id: string;
     redacao: string;
     nota_final: number;
-    correcoes: any[];
+    correcoes: ICorrecoes[];
     tema_redacao: string;
-    user_owner: string;
+    createdAt: string;
 }
 
 
 export interface IUser {
-    id: string 
+    id: string
     name: string
     password: string,
-    email: string 
+    email: string
     image?: string | null
-    userType: number 
+    userType: number
     nivel: number
     recompensas: IRecompensa[]
     redacoes: IRedacoes[]
@@ -64,7 +68,7 @@ export interface IUser {
 
 export interface IRecompensa {
     data: string,
-    recompensa_id: string, 
+    recompensa_id: string,
     isActive: boolean,
 }
 
@@ -76,32 +80,38 @@ const schema = new Schema<IUser>({
         index: { unique: true }
     },
     password: String,
-    name: {type: String, default: '' },
-    image: {type: String, default: null },
+    name: { type: String, default: '' },
+    image: { type: String, default: null },
     emailVerified: { type: Date, default: null },
     userType: { type: Number, default: 0 },
     nivel: { type: Number, default: 1 },
     recompensas: { type: Array, default: [] },
     redacoes: { type: Array, default: [] },
-    eventos: { type: Array, default: [] },
-    //     {
-    //         id: Number,
-    //         title: String,
-    //         start: Date,
-    //         end: Date,
-    //         eventProps: {
-    //             color: String,
-    //         },
-    //         allDay: { type: Boolean, default: false }
-    //     }
-    // ],
+    eventos: {
+        type: Array, default: [{
+            id: new mongoose.Types.ObjectId,
+            redacao: String,
+            nota_final: Number,
+            correcoes: [
+                {
+                    id: new mongoose.Types.ObjectId,
+                    competencias: Array,
+                    marcacoes: Array,
+                    corretor: String,
+                    createdAt: { type: Date, default: Date.now }
+                }
+            ],
+            tema_redacao: String,
+            createdAt: { type: Date, default: Date.now }
+        }]
+    },
     subscription: {
-        envios: {type: Number, default: 0},
-        subscriptionName: {type: String, default: 'Grátis'},
-        subscriptionType: {type: Number, default: 0},
-        subscriptionDate: {type: Date, default: null},
-        subscriptionExpr: {type: Date, default: null}
-    } 
+        envios: { type: Number, default: 0 },
+        subscriptionName: { type: String, default: 'Grátis' },
+        subscriptionType: { type: Number, default: 0 },
+        subscriptionDate: { type: Date, default: null },
+        subscriptionExpr: { type: Date, default: null }
+    }
 });
 
 schema.set('timestamps', true);
