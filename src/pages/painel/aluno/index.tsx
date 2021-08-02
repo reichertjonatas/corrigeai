@@ -279,7 +279,7 @@ function Aluno() {
 
                       <span className="upload">
                         <label className="custom-file-upload">
-                          <input type="file" accept=".jpef, .png, .jpg" onChange={photoUpload} />
+                          <input type="file"className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={photoUpload} disabled={!(tema.length > 3)}/>
                           ESCOLHER ARQUIVO
                         </label>
                       </span>
@@ -345,6 +345,15 @@ function Aluno() {
         ul.react-autosuggest__suggestions-list li:hover{
           background: var(--dark);
           color: var(--white);
+        }
+        .uploadRemove{
+          border: none;
+          background: none;
+          border-bottom: 2px solid var(--dark);
+          font-size: 1rem;
+          font-weight: 400;
+          margin: 1rem 0 0;
+          font-family: 'Poppins',sans-serif;
         }
           `
       } </style>
