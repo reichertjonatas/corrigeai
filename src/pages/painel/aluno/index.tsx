@@ -279,7 +279,7 @@ function Aluno() {
 
                       <span className="upload">
                         <label className="custom-file-upload">
-                          <input type="file"className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={photoUpload} disabled={!(tema.length > 3)}/>
+                          <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={photoUpload} disabled={!(tema.length > 3)}/>
                           ESCOLHER ARQUIVO
                         </label>
                       </span>
@@ -356,8 +356,8 @@ function Aluno() {
           font-family: 'Poppins',sans-serif;
         }
 
-        .upload input[type="file"]:disabled+label {
-          background: #ccc !important;
+        .inputUploadRedacao:disabled ~ label {
+            background: #9c9c9c !important;
         }
           `
       } </style>
