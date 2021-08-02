@@ -286,7 +286,7 @@ function Aluno() {
                       <br />
                       {imagePreview !== "" &&
                         <>
-                          <button type="button" onClick={remove} >Tentar novamente</button>
+                          <button className="uploadRemove" type="button" onClick={remove} >Tentar novamente</button>
                         </>
                       }
                     </span>
@@ -319,6 +319,33 @@ function Aluno() {
           .popup-overlay {
               background: rgb(0 0 0 / 98%)!important;
           }
+
+          form input[type="text"] {
+            display: block;
+            width: 100%;
+            margin: 0 0 1rem;
+            padding: 0.8rem 0.5rem;
+            border: 1px solid #cccccc;
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+          }
+          ul.react-autosuggest__suggestions-list {
+            list-style: none;
+        }
+        
+        ul.react-autosuggest__suggestions-list li {
+            cursor: pointer;
+            background: var(--gray20);
+            padding: 0.5rem 1rem;
+            margin: 0 0 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.5s ease;
+        }
+        
+        ul.react-autosuggest__suggestions-list li:hover{
+          background: var(--dark);
+          color: var(--white);
+        }
           `
       } </style>
       <style jsx>
