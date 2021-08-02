@@ -355,6 +355,10 @@ function Aluno() {
           margin: 1rem 0 0;
           font-family: 'Poppins',sans-serif;
         }
+
+        .upload input[type="file"]:disabled+label {
+          background: #ccc !important;
+        }
           `
       } </style>
       <style jsx>
