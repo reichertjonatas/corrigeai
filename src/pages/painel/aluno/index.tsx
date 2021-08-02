@@ -278,12 +278,13 @@ function Aluno() {
                       </div>
 
                       <span className="upload">
+                        <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={photoUpload} disabled={!(tema.length > 3)}/>
                         <label className="custom-file-upload">
-                          <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={photoUpload} disabled={!(tema.length > 3)}/>
                           ESCOLHER ARQUIVO
                         </label>
                       </span>
                       <br />
+                      {!(tema.length > 3) && <span>*Selecione primeiro o tema!</span>}
                       {imagePreview !== "" &&
                         <>
                           <button className="uploadRemove" type="button" onClick={remove} >Tentar novamente</button>
