@@ -11,7 +11,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { msToTime } from '../../../../../utils/helpers';
 import { ICalenderEvents } from '../../../../../models/user';
-import { useUserStore } from '../../../../../data/userStore';
+import { useUserStore } from '../../../../../hooks/userStore';
 import { API } from '../../../../../services/api';
 
 

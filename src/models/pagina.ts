@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IPagina } from '../data/paginaStore';
+import { IPagina } from '../hooks/paginaStore';
 // @ts-ignore
 import URLSlug from "mongoose-slug-generator";
 

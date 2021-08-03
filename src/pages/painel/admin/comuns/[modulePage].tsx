@@ -4,7 +4,7 @@ import React from 'react'
 import MainLayout from '../../../../components/layout/MainLayout'
 import Seo from '../../../../components/layout/Seo'
 import { IcPen, IcTrash } from '../../../../components/icons'
-import {usePaginaStore} from '../../../../data/paginaStore'
+import {usePaginaStore} from '../../../../hooks/paginaStore'
 import { useRouter } from 'next/router'
 
 function IndexFaq() {

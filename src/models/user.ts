@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { uniqueFileName } from '../utils/helpers';
 
 
 export interface ICalenderEvents {
@@ -89,12 +90,12 @@ const schema = new Schema<IUser>({
     redacoes: { type: Array, default: [] },
     eventos: {
         type: Array, default: [{
-            id: new mongoose.Types.ObjectId,
+            id: String,
             redacao: String,
-            nota_final: Number,
+            nota_final: {type: Number, default: 0 },
             correcoes: [
                 {
-                    id: new mongoose.Types.ObjectId,
+                    id: String,
                     competencias: Array,
                     marcacoes: Array,
                     corretor: String,

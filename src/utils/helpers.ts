@@ -41,6 +41,8 @@ export async function authRequired(ctx: any, isIndex?: boolean) {
     return session;
 }
 
+export const uniqueFileName = () => Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
+
 export const msToTime = (ms : any) => ({
     hours: Math.trunc(ms/3600000),
     minutes: Math.trunc((ms/3600000 - Math.trunc(ms/3600000))*60) + ((ms/3600000 - Math.trunc(ms/3600000))*60 % 1 != 0 ? 1 : 0)

@@ -9,22 +9,22 @@ import { ToastContainer } from 'react-toastify'
 function CorrigeAiApp({ Component, pageProps }: AppProps) {
   return (
     <Provider session={pageProps.session}>
-        <NextNprogress
-            color="#002400"
-            startPosition={0.4}
-            stopDelayMs={200}
-            height={3}
-            showOnShallow={true}
+          <NextNprogress
+              color="#002400"
+              startPosition={0.4}
+              stopDelayMs={200}
+              height={3}
+              showOnShallow={true}
+            />
+          <Component {...pageProps} />
+          <ToastContainer 
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            closeOnClick={true}
+            pauseOnHover={true}
+            draggable={true}
           />
-        <Component {...pageProps} />
-        <ToastContainer 
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          closeOnClick={true}
-          pauseOnHover={true}
-          draggable={true}
-        />
     </Provider>
   )
 }

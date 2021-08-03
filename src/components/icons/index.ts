@@ -5,6 +5,7 @@ import IcPhoto from "../../../public/images/photo.png";
 
 import IcPainelAluno from "../../../public/images/painel_aluno.png";
 import Logo from "../../../public/images/logo.png";
+import LogoLampada from "../../../public/images/lampada.png";
 import IcDesempenho from "../../../public/images/desempenho.png";
 import IcTemas from "../../../public/images/temas.png";
 import IcCaed from "../../../public/images/caed.png";
@@ -28,8 +29,26 @@ import RedacaoPreview from "../../../public/images/redacao.jpeg"
 
 import IcPen from "../../../public/images/pen.png"
 import IcTrash from "../../../public/images/trash.png"
+import IcEnvios from "../../../public/images/envios.png"
+
+import TheKingHenrique from "../../../public/images/henrique.png"
+import LogoCorrige from "../../../public/images/logo_corrige.png"
+import passo1_img from "../../../public/images/passo1_img.png"
+import passo2_img from "../../../public/images/passo2_img.png"
+import passo3_discrepancia from "../../../public/images/passo3_discrepancia.png"
+import passo3_match from "../../../public/images/passo3_match.png"
+import check from "../../../public/images/check.png"
 
 export {
+    check,
+    passo3_match,
+    passo3_discrepancia,
+    passo1_img,
+    passo2_img,
+    LogoCorrige,
+    TheKingHenrique,
+    LogoLampada,
+    IcEnvios,
     IcPen, 
     IcTrash,
     RedacaoPreview,

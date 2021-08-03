@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import { IPagina } from '../../../../../data/paginaStore'
+import { IPagina } from '../../../../../hooks/paginaStore'
 import Pagina from '../../../../../models/pagina'
 import dbConnect from '../../../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../../../constants'

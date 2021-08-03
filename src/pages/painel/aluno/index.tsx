@@ -13,10 +13,11 @@ import Link from 'next/link'
 import Seo from '../../../components/layout/Seo'
 import Popup from 'reactjs-popup'
 import 'reactjs-popup/dist/index.css';
-import { useUserStore } from '../../../data/userStore'
+import { useUserStore } from '../../../hooks/userStore'
 import { toast, ToastContainer } from 'react-toastify'
 import { ITemas } from '../../../models/tema'
 import Autosuggest from 'react-autosuggest';
+import { PointSymbolProps, ResponsiveLine } from "@nivo/line";
 
 function Aluno() {
   const [loadingProfile, setLoadingProfile] = React.useState(true);
@@ -35,13 +36,9 @@ function Aluno() {
 
   /// upload
 
-  const [file, setFile] = React.useState<string>();
-  const [imagePreview, setImagePreview] = React.useState<any>("");
-  const [base64, setBase64] = React.useState<string>();
-  const [name, setName] = React.useState<string>('');
-  const [size, setSize] = React.useState<string>('');
+  const [file, setFile] = React.useState<any | null>(null);
+  const [createObjectURL, setCreateObjectURL] = React.useState<any | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
   const router = useRouter()
 
   useEffect(() => {
@@ -50,15 +47,13 @@ function Aluno() {
       setLoadingProfile(false);
     }
     initData();
-    console.log('useEffect - index aluno');
   }, [me])
 
   useEffect(() => {
     async function initData() {
       API.post('/painel/tema/getAll').then((response) => {
-        if(response.status === 200){
-          if(!response.data.error) setTemas(response.data.data);
-          console.log('temas', response.data.data);
+        if (response.status === 200) {
+          if (!response.data.error) setTemas(response.data.data);
         }
       })
     }
@@ -73,67 +68,49 @@ function Aluno() {
     return <></>
   }
 
-  const onChangeUpload = (e: any) => {
-
-    if(e.target.files != null){
-      console.log("file", e.target.files[0]);
-
-      let file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = _handleReaderLoaded
-        reader.readAsBinaryString(file)
-      }
+  const uploadFileClient = (e: any) => {
+    if (e.target.files && e.target.files[0]) {
+      const i: any = e.target.files[0];
+      setFile(i);
+      setCreateObjectURL(URL.createObjectURL(i));
     }
-  }
-
-  const _handleReaderLoaded = (readerEvt: any) => {
-    let binaryString = readerEvt.target.result;
-    setBase64(btoa(binaryString))
   }
 
   const onFileSubmit = async (e: any) => {
     setIsLoading(true);
     e.preventDefault()
-    const success = await createRedacao({ redacao: base64, tema_redacao: tema } as IRedacoes);
-    if (!success.error) {
-      toast.success('Redação enviada com sucesso!');
+
+
+    const body = new FormData();
+    body.append("file", file);
+    const responseUpload = await API.post("/painel/upload/redacao", body);
+
+    if (responseUpload.status === 200) {
+      const success = await createRedacao({ redacao: responseUpload.data.data.fileName, tema_redacao: tema } as IRedacoes);
+      if (!success.error) {
+        toast.success('Redação enviada com sucesso!');
+      } else {
+        toast.error(success.data.message);
+      }
     } else {
-      toast.error(success.data.message);
+      toast.error(responseUpload.data.message);
     }
+
     closeModal();
     remove();
     setIsLoading(false);
   }
 
-  const photoUpload = (e: any) => {
-    e.preventDefault();
-    const reader = new FileReader();
-    const file = e.target.files[0];
-
-    if (reader !== undefined && file !== undefined) {
-      reader.onloadend = () => {
-        setFile(file)
-        setSize(file.size);
-        setName(file.name)
-        setImagePreview(reader.result)
-      }
-      reader.readAsDataURL(file);
-    }
-  }
-
   const remove = () => {
-    setFile("")
-    setImagePreview("")
-    setBase64("")
-    setName("")
-    setSize("")
+    setFile(null);
+    setCreateObjectURL(null);
+    setTema("");
   }
 
-  const getSuggestions = (value: any)  => {
+  const getSuggestions = (value: any) => {
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
-    return inputLength === 0 ? [] : temas.filter((tema : ITemas) =>{
+    return inputLength === 0 ? [] : temas.filter((tema: ITemas) => {
       return tema.tema.toLowerCase().includes(inputValue);
     });
   };
@@ -147,7 +124,7 @@ function Aluno() {
     </div>
   );
 
-  const onChange = (event : any, { newValue } : any) => {
+  const onChange = (event: any, { newValue }: any) => {
     setTema(newValue);
   };
 
@@ -158,19 +135,20 @@ function Aluno() {
   };
 
 
-  const onSuggestionsFetchRequested = ({ value } : any) => {
+  const onSuggestionsFetchRequested = ({ value }: any) => {
     if (timer) {
       clearTimeout(timer!);
       setTimer(null);
     }
 
-    setTimer(() => { 
-      setTimeout(() => { 
+    setTimer(() => {
+      setTimeout(() => {
         var i = 0;
-        const firtResults = getSuggestions(value).filter((item: ITemas) => { i++; 
-          return i <= 3; 
+        const firtResults = getSuggestions(value).filter((item: ITemas) => {
+          i++;
+          return i <= 3;
         })
-        if(value.trim().length > 3) setSuggestions(firtResults);
+        if (value.trim().length > 3) setSuggestions(firtResults);
       }, 1000)
     })
   };
@@ -178,6 +156,22 @@ function Aluno() {
   const onSuggestionsClearRequested = () => {
     setSuggestions([]);
   };
+
+  const CustomSymbol = ({ size, color, borderWidth, borderColor, datum }: PointSymbolProps) => (
+      <g>
+          
+          <circle fill={color} r={size / 2} strokeWidth={borderWidth} stroke={borderColor}>
+            <p style={{fontSize: 32, color: 'white'}}> kellvem </p>
+          </circle>
+          <circle
+              r={size / 5}
+              strokeWidth={borderWidth}
+              stroke={borderColor}
+              fill={color}
+              fillOpacity={0.35}
+          />
+      </g>
+  )
 
   return (
     <MainLayout>
@@ -216,7 +210,42 @@ function Aluno() {
             </span>
             <div className={styles["graphic"]}>
               {user.redacoes.length > 0 ? (
-                <Image src={IcGraphic} className={styles["img-responsive"]} alt="" />
+                <div style={{ height: 330, width: '100%' }}>
+                  <ResponsiveLine
+                    data={[
+                      {
+                        id: "envios",
+                        data: [
+                          { x: "2019-05-01", y: 9.18 },
+                          { x: "2019-06-01", y: 9.2 },
+                          { x: "2020-03-01", y: 9.14 }
+                        ]
+                      }
+                    ]}
+                    margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+                    xScale={{ type: 'point' }}
+                    yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false }}
+                    yFormat=" >-.2f"
+                    curve="cardinal"
+                    pointSymbol={CustomSymbol}
+                    axisTop={null}
+                    axisRight={null}
+                    axisBottom={null}
+                    axisLeft={null}
+                    enableGridX={false}
+                    enableGridY={false}
+                    colors={['#72b01d']}
+                    lineWidth={4}
+                    pointSize={30}
+                    pointColor={{ from: 'color', modifiers: [] }}
+                    pointBorderWidth={20}
+                    pointBorderColor={{ from: 'color', modifiers: [] }}
+                    enablePointLabel={true}
+                    pointLabelYOffset={42}
+                    isInteractive={false}
+                    legends={[]}
+                  />
+                </div>
               ) : (
                 <div style={{ padding: 50, textAlign: 'center' }}>Envie a primeira redação para gerar estátisticas!</div>
               )}
@@ -238,12 +267,12 @@ function Aluno() {
 
 
           <div className={styles["submit-essay"]}>
-            <span className={styles["icon"]}>
-              <Image src={IcRocket} className={styles["img-responsive"]} alt="" />
-            </span>
-
             <span className={styles["name"]}>
-              <a style={{ cursor: "pointer" }} onClick={() => user.subscription.envios > 0 ? setOpen(true) : toast.error('Você não possui envios disponíveis!')}>Enviar redação</a>
+              <a style={{ cursor: "pointer" }} onClick={() => user.subscription.envios > 0 ? setOpen(true) : toast.error('Você não possui envios disponíveis!')}>
+              <span className={styles["icon"]}>
+                <Image src={IcRocket} className={styles["img-responsive"]} alt="" />
+              </span>
+                Enviar redação</a>
             </span>
 
             <Popup
@@ -256,36 +285,36 @@ function Aluno() {
               <div className="popRedacao">
                 <h1>ENVIAR REDAÇÃO</h1>
 
-                <form onSubmit={(e) => onFileSubmit(e)} onChange={(e) => onChangeUpload(e)}>
+                <form onSubmit={(e) => onFileSubmit(e)}>
 
 
                   {!isLoading ? (
                     <span className="formulario">
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem' }}>
-                        {imagePreview != '' ?
-                          <Image src={imagePreview} width="80px" height="80px" alt="Icone adicionar" />
-                          :(<>
-                              <Autosuggest
-                                  suggestions={suggestions}
-                                  onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                                  onSuggestionsClearRequested={onSuggestionsClearRequested}
-                                  getSuggestionValue={getSuggestionValue}
-                                  renderSuggestion={renderSuggestion}
-                                  inputProps={inputProps}
-                              />
+                        {createObjectURL != null ?
+                          <Image src={createObjectURL} width="80px" height="80px" alt="Icone adicionar" />
+                          : (<>
+                            <Autosuggest
+                              suggestions={suggestions}
+                              onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                              onSuggestionsClearRequested={onSuggestionsClearRequested}
+                              getSuggestionValue={getSuggestionValue}
+                              renderSuggestion={renderSuggestion}
+                              inputProps={inputProps}
+                            />
                           </>)
                         }
                       </div>
 
                       <span className="upload">
-                        <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={photoUpload} disabled={!(tema.length > 3)}/>
+                        <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={uploadFileClient} disabled={!(tema.length > 3)} />
                         <label className="custom-file-upload">
                           ESCOLHER ARQUIVO
                         </label>
                       </span>
                       <br />
                       {!(tema.length > 3) && <span>*Selecione primeiro o tema!</span>}
-                      {imagePreview !== "" &&
+                      {createObjectURL !== null &&
                         <>
                           <button className="uploadRemove" type="button" onClick={remove} >Tentar novamente</button>
                         </>
@@ -299,7 +328,7 @@ function Aluno() {
 
                   {!isLoading && <span className="botoes">
                     <a className="enviar cancelar" style={{ cursor: "pointer" }} onClick={() => { remove(); closeModal(); }}>CANCELAR</a>
-                    <button type="submit" className="enviar" disabled={size!.length <= 0 ?? true}>ENVIAR</button>
+                    <button type="submit" className="enviar" disabled={file?.length <= 0 ?? true}>ENVIAR</button>
                   </span>
                   }
                 </form>
@@ -316,9 +345,27 @@ function Aluno() {
         </div>
       </div>
       <style global jsx>{` 
+
+          .chart {
+            height:50vh;
+            width:60vw;
+            background: white;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+          }
+
+          .chart:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+          }
+
+
           .popup-content{ border-radius: 0.5rem !important;}
           .popup-overlay {
               background: rgb(0 0 0 / 98%)!important;
+          }
+
+          .react-autosuggest__container {
+            width: 100%;
           }
 
           form input[type="text"] {
@@ -380,7 +427,9 @@ function Aluno() {
           .popRedacao .botoes a.cancelar:hover{color: #002400; background: transparent}
 
           input[type="file"] {
-              display: none;
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
           }
                     `}
       </style>

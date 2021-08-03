@@ -1,8 +1,17 @@
 import Link from 'next/link'
 import React from 'react'
 import MainLayout from '../../../components/layout/MainLayout'
+import { useRedacaoStore } from '../../../hooks/redacaoStore';
+import { IRedacoes } from '../../../models/user';
 
 function DashboardCorretor() {
+    const redacoes = useRedacaoStore( state => state.redacoes);
+    const getAllCorretor = useRedacaoStore( state => state.getAllCorretor);
+
+    React.useEffect(() => {
+        getAllCorretor();
+    }, [getAllCorretor]);
+
     return (
         <MainLayout menuType={2}>
             <div className="redacoes-box">
@@ -15,18 +24,22 @@ function DashboardCorretor() {
                     </div>
 
                     <div className="list-item">
-                        
-                        <Link href="/painel/corretor/correcao/id" passHref>
-                            <div className="item" style={{cursor: 'pointer'}}>
-                                <div className="data">05/05</div>
-                                <div className="tema">Democratização do acesso ao cinema no Brasil</div>
-                                <div className="estudante">aluno@gmail.com</div>
+                        {redacoes.length > 0 && redacoes.map((redacaosPerUser: any, index: number) => {
+                            console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
+                            return redacaosPerUser.redacoes.map((redacao: IRedacoes, index: number) => {
+                                return (
+                                    <Link href={`/painel/corretor/correcao/${redacao.id}`} key={index} passHref>
+                                        <div className="item" style={{cursor: 'pointer'}}>
+                                            <div className="data">05/05</div>
+                                            <div className="tema">{redacao.tema_redacao}</div>
+                                            <div className="estudante">{redacaosPerUser.email}</div>
 
-                                <div className="circle">
-                                    <span className="ic" style={{"background": "#72b01e"}}>&nbsp;</span>
-                                </div>
-                            </div>
-                        </Link>
+                                            <div className="circle">
+                                                <span className="ic" style={{"background": "#72b01e"}}>&nbsp;</span>
+                                            </div>
+                                        </div>
+                                    </Link>)});
+                        })}
                     </div>
                 </div>
             </div>

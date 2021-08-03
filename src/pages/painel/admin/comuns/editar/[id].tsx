@@ -4,7 +4,7 @@ import Seo from '../../../../../components/layout/Seo'
 import 'react-quill/dist/quill.snow.css'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { IPagina, usePaginaStore } from '../../../../../data/paginaStore'
+import { IPagina, usePaginaStore } from '../../../../../hooks/paginaStore'
 import { useRouter } from 'next/dist/client/router'
 
 const QuillNoSSRWrapper = dynamic(import('react-quill'), {
@@ -75,7 +75,6 @@ function EditarFaq() {
             <style jsx>
                 {
                     `
-
                         .gridPlanejamento{display: grid; grid-template-columns: 1fr;}
                         .gridPlanejamento .content{display: block; width: 100%;}
                         .gridPlanejamento .content .box{display: block; width: 100%;border-radius: 0.75rem; background: var(--gray20); padding: 2.8125rem 1.5rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}

@@ -25,7 +25,7 @@
 .grid-painelaluno .sidebar-panel .grades ul li.desempenho a{display: block; color: var(--gray20);}
 .grid-painelaluno .sidebar-panel .submit-essay{display: block; width: 100%; margin: 0 0 1.8125rem;}
 .grid-painelaluno .sidebar-panel .submit-essay a{display: flex; flex-direction: row; gap: 0.7rem; margin: 0 auto; box-shadow: 0px 0px 9px 0px #407610; align-items: center; justify-content: center;background: var(--dark); min-height: 4.2rem; font-weight: 500; border-radius: 1.2rem; color: var(--gray20); font-size: 1.275em}
-.grid-painelaluno .sidebar-panel .submit-essay a .icon{position: relative; top: 4px}
+.grid-painelaluno .sidebar-panel .submit-essay .icon{position: relative; top: 4px}
 .grid-painelaluno .sidebar-panel .submit-essay a:hover{transform: scale(0.9);}
 
 .grid-painelaluno .sidebar-panel .themes{display: block; width: 100%; background: var(--gray20); border-radius: 0.75rem; padding: 1.5625rem 2.1875rem;box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
