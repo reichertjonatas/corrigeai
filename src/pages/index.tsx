@@ -249,11 +249,13 @@ export default function Home() {
         </div>
       </div>
 
-      <style jsx>
-        { 
+      <style global jsx>
+        {
           `
-
           body{background: #F2F2F2 !important;}
+
+          .container-full{ display: block !important;}
+
           .container{display: block; width: 100%; max-width: 80%; margin: 0 auto;}
           ul{padding: 0; margin: 0}
           .gridtwo{display: grid; width: 100%; max-width: 90%; margin: 0 auto 0 0; grid-template-columns: 1fr 1fr; gap: 1rem}
