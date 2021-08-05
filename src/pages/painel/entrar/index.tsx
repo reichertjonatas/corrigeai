@@ -48,6 +48,7 @@ function Entrar({ csrfToken} : any) {
                     <span className={styles["esqueceu"]}>
                         <Link href="/painel/registrar">Registrar</Link> 
                         <br />
+                        <br />
                         <Link href="/painel/registrar">Esqueci minha senha</Link>
                     </span>
                 </div>
