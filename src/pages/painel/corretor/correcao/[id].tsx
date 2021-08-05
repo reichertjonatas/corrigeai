@@ -1,21 +1,19 @@
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CloseIcon, PencilIcon, RedacaoPreview } from '../../../../components/icons';
 import MainLayout from '../../../../components/layout/MainLayout'
 import { withAuthSession } from '../../../../utils/helpers';
 import styles from './Correcao.module.css';
+import shallow from 'zustand/shallow'
+
+// @ts-ignore
+import { PointSelector, RectangleSelector } from 'react-image-annotation/lib/selectors'
 
 // @ts-ignore
 import Annotation from 'react-image-annotation'
-import {
-    PointSelector,
-    RectangleSelector,
-    OvalSelector
-    // @ts-ignore
-} from 'react-image-annotation/lib/selectors'
-import { useEffect } from 'react';
-
-const img = "/images/redacao.jpeg"
+import { useCorretorStore } from '../../../../hooks/corretorStore';
+import { useRouter } from 'next/router';
+import { ICompetencias, IItemObsEnem, IObsEnem } from '../../../../models/user';
 
 const Box = ({ children, geometry, style }: any) => (
     <div style={{
@@ -29,12 +27,41 @@ const Box = ({ children, geometry, style }: any) => (
 )
 
 function Correcao() {
-    const [competencia, setCompetencia] = useState(1);
-    const [editorType, setEditorType] = useState(1);
-    const [type, setType] = useState(RectangleSelector.TYPE);
+    const router = useRouter()
+    const { id } = router.query;
 
-    const [annotations, setAnnotations] = useState([])
-    const [annotation, setAnnotation] = useState({})
+    const [initData,
+        redacao,
+        annotations, setAnnotations,
+        annotation, setAnnotation,
+        type, setType,
+        editorType, setEditorType,
+        competencia, setCompetencia,
+        competenciasOffline,
+        setNota,
+        setCorrecaoNull
+    ] = useCorretorStore(state => ([
+        state.initData,
+        state.redacao,
+        state.annotations, state.setAnnotations,
+        state.annotation, state.setAnnotation,
+        state.type, state.setType,
+        state.editorType, state.setEditorType,
+        state.competencia, state.setCompetencia,
+        state.competenciasOffline,
+        state.setNota,
+        state.setCorrecaoNull
+    ]), shallow);
+
+
+    React.useEffect(() => {
+        if (router.asPath !== router.route) {
+            // router.query.lang is defined
+            initData(id as string);
+        }
+        return () => setCorrecaoNull()
+        // eslint-disable-next-line
+    }, [router])
 
     function renderHighlight({ annotation, active }: any) {
         const { geometry } = annotation
@@ -183,13 +210,13 @@ function Correcao() {
             >
                 <div style={{ marginBottom: '0.25rem', fontSize: '0.8rem', fontWeight: 'bold' }}>{nomeCompetencia}</div>
                 {annotation.data && annotation.data.text}
-                <div style={{textAlign: 'center', marginTop: '0.4rem'}}>
-                    <button style={{ 
+                <div style={{ textAlign: 'center', marginTop: '0.4rem' }}>
+                    <button style={{
                         padding: 2,
                         minWidth: '50%',
-                        borderRadius: '0.5rem', 
-                        backgroundColor: `white`, 
-                        border: '1px solid white', 
+                        borderRadius: '0.5rem',
+                        backgroundColor: `white`,
+                        border: '1px solid white',
                         color: cor,
                         //textTransform: 'uppercase',
                         cursor: 'pointer',
@@ -294,31 +321,30 @@ function Correcao() {
         return (
             <Box
                 geometry={geometry}
-                style={boxStyle}
-            >
+                style={boxStyle}>
                 {annotation.data.editorType == 1 && 'X'}
             </Box>
         )
     }
 
-    function renderOverlay () {
+    function renderOverlay() {
         return (
-          <div
-            style={{
-              background: 'rgba(0, 0, 0, 0.3)',
-              color: 'white',
-              padding: 5,
-              pointerEvents: 'none',
-              position: 'absolute',
-              top: 5,
-              left: 5,
-              borderRadius: 8,
-            }}
-          >
-            corrigeaí - { (new Date()).toLocaleDateString('pt') }
-          </div>
+            <div
+                style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    color: 'white',
+                    padding: 5,
+                    pointerEvents: 'none',
+                    position: 'absolute',
+                    top: 5,
+                    left: 5,
+                    borderRadius: 8,
+                }}
+            >
+                corrigeaí - {(new Date()).toLocaleDateString('pt')}
+            </div>
         )
-      }
+    }
 
     const handlerCompetencia = (nCompetencia: number) => {
         setCompetencia(nCompetencia);
@@ -355,7 +381,7 @@ function Correcao() {
         }))
     }
 
-    function renderEditor (props : any) {
+    function renderEditor(props: any) {
         const { geometry } = props.annotation
         if (!geometry) return null
 
@@ -399,77 +425,63 @@ function Correcao() {
         }
 
         const inputStyle = {
-            "&:focus" : { outline: "none" },
+            "&:focus": { outline: "none" },
             borderRadius: '0.25rem',
             border: 'none',
             padding: '0.2rem 0.4rem',
             minWidth: '100%',
             fontSize: '0.8rem'
         };
-      
+
         return (
-          <div
-            style={{
-              background: 'white',
-              padding: 10,
-              marginTop: 4,
-              boxShadow: '7px 7px 5px 0px rgba(50, 50, 50, 0.75); inset',
-              backgroundColor: cor,
-              borderRadius: 6,
-              position: 'absolute',
-              left: `${geometry.x}%`,
-              top: `${geometry.y + geometry.height}%`,
-            }}
-          >
-            <div style={{ fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'start', color: 'white' }}>{nomeCompetencia}</div>
-            <div style={{ fontSize: '0.75rem', color: 'white'}}>Descreva o motivo da nota:</div>
-            <div style={{marginTop: 10, marginBottom: 10}}>
-            <textarea
-                rows={4}
-                cols={30}
-                style={inputStyle}
-              onChange={e => props.onChange({
-                ...props.annotation,
-                data: {
-                  ...props.annotation.data,
-                  text: e.target.value
-                }
-              })}
-            />
-            </div>
-            <div style={{textAlign: 'center'}}>
-                <button style={{ 
-                    padding: 2,
-                    minWidth: '50%',
-                    borderRadius: '0.5rem', 
-                    backgroundColor: `white`, 
-                    border: '1px solid white', 
-                    color: cor,
-                    //textTransform: 'uppercase',
-                    fontWeight: 600,
-                    fontSize: '0.95rem',
-                    cursor: 'pointer',
-                    'fontFamily': "Poppins, sans-serif"
+            <div
+                style={{
+                    background: 'white',
+                    padding: 10,
+                    marginTop: 4,
+                    boxShadow: '7px 7px 5px 0px rgba(50, 50, 50, 0.75); inset',
+                    backgroundColor: cor,
+                    borderRadius: 6,
+                    position: 'absolute',
+                    left: `${geometry.x}%`,
+                    top: `${geometry.y + geometry.height}%`,
+                }}
+            >
+                <div style={{ fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'start', color: 'white' }}>{nomeCompetencia}</div>
+                <div style={{ fontSize: '0.75rem', color: 'white' }}>Descreva o motivo da nota:</div>
+                <div style={{ marginTop: 10, marginBottom: 10 }}>
+                    <textarea
+                        rows={4}
+                        cols={30}
+                        style={inputStyle}
+                        onChange={e => props.onChange({
+                            ...props.annotation,
+                            data: {
+                                ...props.annotation.data,
+                                text: e.target.value
+                            }
+                        })}
+                    />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                    <button style={{
+                        padding: 2,
+                        minWidth: '50%',
+                        borderRadius: '0.5rem',
+                        backgroundColor: `white`,
+                        border: '1px solid white',
+                        color: cor,
+                        //textTransform: 'uppercase',
+                        fontWeight: 600,
+                        fontSize: '0.95rem',
+                        cursor: 'pointer',
+                        'fontFamily': "Poppins, sans-serif"
 
-                }} onClick={props.onSubmit}>Salvar</button>
+                    }} onClick={props.onSubmit}>Salvar</button>
+                </div>
             </div>
-          </div>
         )
-      }
-
-    useEffect(() => {
-        switch (editorType) {
-            case 2:
-                setType(RectangleSelector.TYPE)
-                break;
-            case 3:
-                setType(RectangleSelector.TYPE)
-                break;
-            default:
-                setType(PointSelector.TYPE)
-                break;
-        }
-    }, [editorType])
+    }
 
     const getColorActivite = () => {
         switch (competencia) {
@@ -487,10 +499,37 @@ function Correcao() {
         }
     }
 
+    useEffect(() => {
+        switch (editorType) {
+            case 2:
+                setType(RectangleSelector.TYPE)
+                break;
+            case 3:
+                setType(RectangleSelector.TYPE)
+                break;
+            default:
+                setType(PointSelector.TYPE)
+                break;
+        }
+    }, [editorType])
+
+    if (!redacao) return (<h1></h1>);
+
+    const RowObsEnem = ({ item, ...rest } : any) => {
+        return (
+            <>
+                {item.section && <span className="number">{item.section}</span>}
+                <span className="text">{item.text}</span>
+            </>
+        )
+    }
+
+
+
     return (
         <>
-        <MainLayout menuType={2}>
-            <style global jsx>{`
+            <MainLayout menuType={2}>
+                <style global jsx>{`
                 .content-global{
                     max-width: 95%!important;
                     margin: 0 auto!important;
@@ -510,113 +549,180 @@ function Correcao() {
                 }
 
             `}</style>
-            <div className={styles.gridTemas}>
+                <div className={styles.gridTemas}>
 
-                <div className={styles.content}>
-                    <div className={styles.boxTema}>
+                    <div className={styles.content}>
+                        <div className={styles.boxTema}>
 
-                        <div className={styles.competencia}>
-                            <span onClick={() => handlerCompetencia(1)} className={competencia == 1 ? styles.active : ''} style={{ "background": "#3f37c9" }}>Competência I</span>
-                            <span onClick={() => handlerCompetencia(2)} className={competencia == 2 ? styles.active : ''} style={{ "background": "#fb5400" }}>Competência II</span>
-                            <span onClick={() => handlerCompetencia(3)} className={competencia == 3 ? styles.active : ''} style={{ "background": "#b5179e" }}>Competência III</span>
-                            <span onClick={() => handlerCompetencia(4)} className={competencia == 4 ? styles.active : ''} style={{ "background": "#fcbe21" }}>Competência IV</span>
-                            <span onClick={() => handlerCompetencia(5)} className={competencia == 5 ? styles.active : ''} style={{ "background": "#8ac925" }}>Competência V</span>
-                        </div>
+                            <div className={styles.competencia}>
+                                <span onClick={() => handlerCompetencia(1)} className={competencia == 1 ? styles.active : ''} style={{ "background": "#3f37c9" }}>Competência I</span>
+                                <span onClick={() => handlerCompetencia(2)} className={competencia == 2 ? styles.active : ''} style={{ "background": "#fb5400" }}>Competência II</span>
+                                <span onClick={() => handlerCompetencia(3)} className={competencia == 3 ? styles.active : ''} style={{ "background": "#b5179e" }}>Competência III</span>
+                                <span onClick={() => handlerCompetencia(4)} className={competencia == 4 ? styles.active : ''} style={{ "background": "#fcbe21" }}>Competência IV</span>
+                                <span onClick={() => handlerCompetencia(5)} className={competencia == 5 ? styles.active : ''} style={{ "background": "#8ac925" }}>Competência V</span>
+                            </div>
 
-                        <div className={styles.tasks}>
+                            <div className={styles.tasks}>
 
-                            <span onClick={() => handlerEditorType(1)} className={editorType == 1 ? `${styles.task}` : styles.task} style={{ border: editorType == 1 ? `2px solid ${getColorActivite()}` : 'none' }}>
-                                <span className={styles.img}>
-                                    <Image src={CloseIcon} className={styles["img-responsive"]} alt="" />
+                                <span onClick={() => handlerEditorType(1)} className={editorType == 1 ? `${styles.task}` : styles.task} style={{ border: editorType == 1 ? `2px solid ${getColorActivite()}` : 'none' }}>
+                                    <span className={styles.img}>
+                                        <Image src={CloseIcon} className={styles["img-responsive"]} alt="" />
+                                    </span>
+                                    <span className={styles.text}>Adicionar &quot;x&quot;</span>
                                 </span>
-                                <span className={styles.text}>Adicionar &quot;x&quot;</span>
-                            </span>
 
-                            <span onClick={() => handlerEditorType(2)} className={editorType == 2 ? `${styles.task}` : styles.task} style={{ border: editorType == 2 ? `2px solid ${getColorActivite()}` : 'none' }} >
-                                <span className={styles.img}>
-                                    <Image src={PencilIcon} className={styles["img-responsive"]} alt="" />
+                                <span onClick={() => handlerEditorType(2)} className={editorType == 2 ? `${styles.task}` : styles.task} style={{ border: editorType == 2 ? `2px solid ${getColorActivite()}` : 'none' }} >
+                                    <span className={styles.img}>
+                                        <Image src={PencilIcon} className={styles["img-responsive"]} alt="" />
+                                    </span>
+                                    <span className={styles.text}>Traçado de lápis</span>
                                 </span>
-                                <span className={styles.text}>Traçado de lápis</span>
-                            </span>
-                            <span onClick={() => handlerEditorType(3)} className={editorType == 3 ? `${styles.task}` : styles.task} style={{ border: editorType == 3 ? `2px solid ${getColorActivite()}` : 'none' }}>
-                                <span className={styles.img}>
-                                    <Image src={PencilIcon} className={styles["img-responsive"]} alt="" />
+                                <span onClick={() => handlerEditorType(3)} className={editorType == 3 ? `${styles.task}` : styles.task} style={{ border: editorType == 3 ? `2px solid ${getColorActivite()}` : 'none' }}>
+                                    <span className={styles.img}>
+                                        <Image src={PencilIcon} className={styles["img-responsive"]} alt="" />
+                                    </span>
+                                    <span className={styles.text}>Destacar texto</span>
                                 </span>
-                                <span className={styles.text}>Destacar texto</span>
-                            </span>
-                        </div>
+                            </div>
+                            <div className={styles.redacao}>
+                                <Annotation
+                                    src={`${process.env.NEXT_PUBLIC_URL_PUBLICA}${process.env.NEXT_PUBLIC_URL_REDACAO}${redacao?.redacao}`}
+                                    alt=''
+                                    annotations={annotations}
+                                    renderOverlay={renderOverlay}
+                                    renderContent={renderPopUp}
+                                    renderHighlight={renderHighlight}
+                                    renderSelector={renderSelector}
+                                    renderEditor={renderEditor}
 
-                        <div className={styles.redacao}>
-                            <Annotation
-                                src={img}
-                                alt=''
-
-                                annotations={annotations}
-                                renderOverlay={renderOverlay}
-                                renderContent={renderPopUp}
-                                renderHighlight={renderHighlight}
-                                renderSelector={renderSelector}
-                                renderEditor={renderEditor}
-
-                                type={type}
-                                value={annotation}
-                                onChange={onChange}
-                                onSubmit={onSubmit}
-                                className={styles["img-responsive"]}
-                            />
-                            {/* <Image src={RedacaoPreview}  alt="" /> */}
+                                    type={type}
+                                    value={annotation}
+                                    onChange={onChange}
+                                    onSubmit={onSubmit}
+                                    className={styles["img-responsive"]}
+                                />
+                                {/* <Image src={RedacaoPreview}  alt="" /> */}
+                            </div>
                         </div>
                     </div>
-                </div>
 
 
-                <div className={styles.notas}>
-                    <h1>Notas</h1>
-                    <span className={styles.criterios}>
-                        <span className={styles.criterio}>
-                            <span className={styles.title}>Competência I</span>
-                            <span className={styles.subtitle}>Selecione uma nota.</span>
+                    <div className={styles.notas}>
+                        <h1>Notas</h1>
+                        <span className={styles.criterios}>
 
-                            <span className={styles.notasCriterios}>
-                                <span className={styles.nota}>
-                                    <input type="radio" id="00" name="fav_language" value="0" />
-                                    <label htmlFor="00">0</label>
-                                </span>
+                            {competenciasOffline.map((competenciaItem: ICompetencias, index: number) => (
+                                <span className={styles.criterio} key={index}>
+                                    <span className={styles.title}>{competenciaItem.title}</span>
+                                    <span className={styles.subtitle}>Selecione uma nota.</span>
 
-                                <span className={styles.nota}>
-                                    <input type="radio" id="040" name="fav_language" value="40" />
-                                    <label htmlFor="040">40</label>
-                                </span>
+                                    <span className={styles.notasCriterios} onChange={(e: any) => {
+                                        console.log('competencia: ', index, ' - ', parseInt(e.target.value));
+                                        setNota(parseInt(e.target.value), index);
+                                    }}>
+                                        <span className={styles.nota}>
+                                            <input type="radio" id="00" name={`${index}`} value="0" />
+                                            <label htmlFor="00">0</label>
+                                        </span>
 
-                                <span className={styles.nota}>
-                                    <input type="radio" id="080" name="fav_language" value="80" />
-                                    <label htmlFor="080">80</label>
-                                </span>
+                                        <span className={styles.nota}>
+                                            <input type="radio" id="040" name={`${index}`} value="40" />
+                                            <label htmlFor="040">40</label>
+                                        </span>
 
-                                <span className={styles.nota}>
-                                    <input type="radio" id="0120" name="fav_language" value="120" />
-                                    <label htmlFor="0120">120</label>
-                                </span>
+                                        <span className={styles.nota}>
+                                            <input type="radio" id="080" name={`${index}`} value="80" />
+                                            <label htmlFor="080">80</label>
+                                        </span>
 
-                                <span className={styles.nota}>
-                                    <input type="radio" id="0160" name="fav_language" value="160" />
-                                    <label htmlFor="0160">160</label>
-                                </span>
+                                        <span className={styles.nota}>
+                                            <input type="radio" id="0120" name={`${index}`} value="120" />
+                                            <label htmlFor="0120">120</label>
+                                        </span>
 
-                                <span className={styles.nota}>
-                                    <input type="radio" id="0200" name="fav_language" value="200" />
-                                    <label htmlFor="0200">200</label>
-                                </span>
+                                        <span className={styles.nota}>
+                                            <input type="radio" id="0160" name={`${index}`} value="160" />
+                                            <label htmlFor="0160">160</label>
+                                        </span>
+
+                                        <span className={styles.nota}>
+                                            <input type="radio" id="0200" name={`${index}`} value="200" />
+                                            <label htmlFor="0200">200</label>
+                                        </span>
+                                    </span>
+                                    {(competenciaItem.nota >= 0 && competenciaItem.nota < 200) && (
+                                        <textarea rows={5} style={{
+                                            width: '100%',
+                                            marginTop: '10px',
+                                            borderRadius: '0.5rem'
+                                        }}>
+
+                                        </textarea>
+                                    )}
+                                    <br />
+                                    {competenciaItem.obs_enem != null && <div className={`popCompetencia ${competenciaItem.obs_enem!.color}`}>
+                                        {competenciaItem.obs_enem != null && competenciaItem.obs_enem.items.map((item: IItemObsEnem, index: number) => <RowObsEnem key={index} item={item} />
+                                        )}
+                                    </div>}
+
+                                </span>))}
+
+                            <span className={styles.botao}>
+                                <button>Enviar correção</button>
                             </span>
                         </span>
-
-                        <span className={styles.botao}>
-                            <button>Enviar correção</button>
-                        </span>
-                    </span>
+                    </div>
                 </div>
-            </div>
-        </MainLayout>
+                <style global jsx>
+                    {`
+                    .popCompetencia {
+                        display: flex;
+                        flex-direction: row;
+                        background: #c3ddea;
+                        align-items: center;
+                        margin: 1rem 0;
+                    }
+                    
+                    .popCompetencia .number{
+                      display: flex;
+                      flex: 1;
+                      font-weight: 700;
+                      font-size: 1.2rem;
+                      padding: 1rem 0.5rem;
+                      justify-content: center;
+                    }
+                    
+                    .popCompetencia .text{
+                      display: flex;
+                      flex: 5;
+                      font-weight: 300;
+                      font-size: 0.8rem;
+                      padding: 1rem 0.5rem;
+                      border-right: 2px solid #fff;
+                      border-left: 2px solid #fff;
+                    }
+                    
+                    .popCompetencia .divisor{
+                      display: flex;
+                      flex: 1;
+                      font-weight: 700;
+                      font-size: 1.2rem;
+                      padding: 1rem 0.5rem;
+                      justify-content: center;
+                    }
+                    
+                    .popCompetencia .text:last-child{
+                      border-right: none;
+                    }
+                    
+                    .ciano{background: #dfbad6;}
+                    .blue{background: #dfeef5;}
+                    .green{background: #cde1d4;}
+                    .orange{background: #f8d2c5;}
+                    .pink{background: #f9e2e8;}
+                    `}
+                </style>
+            </MainLayout>
         </>
     )
 }

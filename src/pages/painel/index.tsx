@@ -15,6 +15,8 @@ export async function getServerSideProps(ctx: any) {
     if('redirect' in session){
         return session;
     }
+    
+    console.log('getServerSideProps called index.tsx', session.user)
 
     return {
         props: {

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import User from '../../../../models/user'
+import User, { ICalenderEvents } from '../../../../models/user'
 import dbConnect from '../../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../../constants'
 
@@ -14,12 +14,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (actions) {
       case 'addEvent':
         if (req.method === 'POST') {
-          const { evento } = req.body;
+          const { evento: { title, start, end, eventProps } } = req.body;
           try {
             await User.updateOne({ email: session.user!.email! }, {
               $push: {
                 eventos: {
-                  $each: [evento],
+                  $each: [{ title, start, end, eventProps }],
                 }
               }
             });
@@ -32,10 +32,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         break;
       case 'removeEvent':
         if (req.method === 'POST') {
-          const { id } = req.body;
+          const { _id } = req.body;
           try {
             await User.updateOne({ email: session.user!.email! }, {
-              $pull: { 'eventos' : {'id' : id } }
+              $pull: { 'eventos' : {'id' : _id } }
             });
             res.status(200).send({ error: false, data: { message: 'Removido com suceso!'}});
           } catch (error) {
@@ -47,10 +47,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         break;
       case 'updateEvent':
         if (req.method === 'POST') {
-          const { id, color } = req.body;
+          const { _id, color } = req.body;
           
           try {
-            await User.updateOne({ email: session.user!.email!, 'eventos.id': id as number }, {
+            await User.updateOne({ email: session.user!.email!, 'eventos._id': _id }, {
               $set: { 'eventos.$.eventProps.color' : color }
             });
 
@@ -64,10 +64,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         break;
       case 'updateDragDrop':
           if (req.method === 'POST') {
-            const { id, evento } = req.body;
+            const { _id, evento } = req.body;
             
             try {
-              await User.updateOne({ email: session.user!.email!, 'eventos.id': id as number }, {
+              await User.updateOne({ email: session.user!.email!, 'eventos._id': _id }, {
                 $set: { 'eventos.$' : evento }
               });
   

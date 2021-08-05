@@ -16,9 +16,9 @@ interface IEventState {
     createRedacao: (redacao: IRedacoes) => Promise<{ error: boolean; data: any; }>;
 
     addEvent: (event: ICalenderEvents) => void;
-    removeEvent: (id: number) => void;
-    updateEvent: (id: number, nColor: string) => void;
-    updateDragDrop: (id: number, nEvent: ICalenderEvents) => void;
+    removeEvent: (_id: string) => void;
+    updateEvent: (_id: string, nColor: string) => void;
+    updateDragDrop: (_id: string, nEvent: ICalenderEvents) => void;
 
     initialLoad: () => void;
 }
@@ -46,8 +46,6 @@ const userStore = create<IEventState>((set, get) => ({
         if (get().user.subscription.envios > 0) {
             const response = await API.post('/painel/redacao/create', {
                 "redacao": redacao.redacao,
-                "nota_final": 0,
-                "correcoes": [],
                 "tema_redacao": redacao.tema_redacao,
             });
 
@@ -70,7 +68,8 @@ const userStore = create<IEventState>((set, get) => ({
                 const eventsFormated = (response.data.data as ICalenderEvents[]).map(event => {
                     return { ...event, start: new Date(event.start), end: new Date(event.end) };
                 });
-                set({ userInfo: { events: eventsFormated } })
+
+                set((state) => ({ userInfo: { events: [...eventsFormated, ...state.userInfo.events]}}))
             }
         });
     },
@@ -90,38 +89,38 @@ const userStore = create<IEventState>((set, get) => ({
         })
     },
 
-    removeEvent: (id: number) => {
-        API.post('/painel/calendario/removeEvent', { id }).then((response) => {
+    removeEvent: (_id: string) => {
+        if(_id != '1') API.post('/painel/calendario/removeEvent', { _id }).then((response) => {
             if (response.status === 200) {
                 set((state) => ({
                     userInfo: {
-                        events: state.userInfo.events.filter((event) => event.id != id)
+                        events: state.userInfo.events.filter((event) => event._id != _id)
                     }
                 }))
             }
         })
     },
 
-    updateEvent: (id: number, nColor: string) => {
-        API.post('/painel/calendario/updateEvent', { id, color: nColor }).then((response) => {
+    updateEvent: (_id: string, nColor: string) => {
+        if(_id != '1') API.post('/painel/calendario/updateEvent', { _id, color: nColor }).then((response) => {
             if (response.status === 200) {
                 set((state) => ({
                     userInfo: {
-                        events: state.userInfo.events.map((event) => event.id === id ? { ...event, eventProps: { color: nColor } } : event)
+                        events: state.userInfo.events.map((event) => event._id === _id ? { ...event, eventProps: { color: nColor } } : event)
                     }
                 }))
             }
         })
     },
 
-    updateDragDrop: (id: number, nEvent: ICalenderEvents) => {
-        console.log('updateDragDrop', { id, evento: { ...nEvent } });
+    updateDragDrop: (_id: string, nEvent: ICalenderEvents) => {
+        console.log('updateDragDrop', { _id, evento: { ...nEvent } });
 
-        API.post('/painel/calendario/updateDragDrop', { id, evento: { ...nEvent } }).then((response) => {
+        if(_id != '1') API.post('/painel/calendario/updateDragDrop', { _id, evento: { ...nEvent } }).then((response) => {
             if (response.status === 200) {
                 set((state) => ({
                     userInfo: {
-                        events: state.userInfo.events.map((event) => event.id === id ? nEvent : event)
+                        events: state.userInfo.events.map((event) => event._id === _id ? nEvent : event)
                     }
                 }))
             }

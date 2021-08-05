@@ -28,7 +28,7 @@ function DashboardCorretor() {
                             console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
                             return redacaosPerUser.redacoes.map((redacao: IRedacoes, index: number) => {
                                 return (
-                                    <Link href={`/painel/corretor/correcao/${redacao.id}`} key={index} passHref>
+                                    <Link href={`/painel/corretor/correcao/${redacao._id}`} key={index} passHref>
                                         <div className="item" style={{cursor: 'pointer'}}>
                                             <div className="data">05/05</div>
                                             <div className="tema">{redacao.tema_redacao}</div>

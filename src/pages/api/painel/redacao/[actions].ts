@@ -1,10 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import { IPagina } from '../../../../hooks/paginaStore'
 import Pagina from '../../../../models/pagina'
-import User, { IRedacoes } from '../../../../models/user'
+import User, { ICorrecoes, IRedacoes } from '../../../../models/user'
 import dbConnect from '../../../../services/mongodb'
-import { uniqueFileName } from '../../../../utils/helpers'
 import { ERROR_NOT_LOGGED } from '../../constants'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -17,7 +15,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('actions', actions)
     if (session) {
         switch (actions) {
-
             case 'getAll':
                 if (req.method === 'POST') {
                     try {
@@ -29,8 +26,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 }
                 break;
-
-            
             case 'getAllCorretor':
                 if (req.method === 'POST') {
                     const { page } = req.body;
@@ -49,13 +44,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 }
                 break;
+            case 'readCorretor':
+                if (req.method === 'POST') {
+                    const { _id } = req.body;
+                    try {
+                        // if(session.user!.userType! <= 1) throw new Error("Ação não permitida!");
+                        
+                        const response = await User.findOne({ 'redacoes._id': _id });
+                        if (!response) throw new Error("Redação não encontrada!");
+
+                        return res.status(200).send({ error: false, data: response.redacoes[0] });
+                    } catch (error) {
+                        return res.status(500).send({ error: true, errorMessage: error.message });
+                    }
+                }
+                break;
 
             case 'read':
                 if (req.method === 'POST') {
-                    const { id } = req.body;
+                    const { _id } = req.body;
                     try {
-                        const response = await User.findOne({ email: session.user!.email, 'redacoes.id': id as number });
-                        if (!response) throw new Error("Página não encontrada!");
+                        const response = await User.findOne({ email: session.user!.email, 'redacoes._id': _id });
+                        if (!response) throw new Error("Redação não encontrada!");
                         return res.status(200).send({ error: false, data: response.redacoes });
                     } catch (error) {
                         return res.status(500).send({ error: true, errorMessage: error.message });
@@ -86,7 +96,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         await User.updateOne({ email: session.user!.email }, {
                             $push: {
                                 redacoes: {
-                                    $each: [{id: uniqueFileName().toString(), redacao, tema_redacao, correcoes: [], ...{createdAt: new Date()}}],
+                                    $each: [{ redacao, tema_redacao }],
                                 }
                             }
                         });
@@ -96,6 +106,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         });
 
                         return res.status(200).send({ error: false, data: { message: 'criada com sucesso! ' } });
+                    } catch (error) {
+                        return res.status(500).send({ error: true, errorMessage: error.message });
+                    }
+                }
+                break;
+            
+
+            case 'updateCorretor':
+                if (req.method === 'POST') {
+                    const { _id, correcao } : {correcao: ICorrecoes, _id: string} = req.body;
+                    try {
+                        await User.updateOne({ email: session.user!.email, 'redacoes._id': _id }, {
+                            $push: {
+                                $each: [correcao],
+                            }
+                        });
+                        return res.status(200).send({ error: false, data: { message: 'Salvo com sucesso!' } });
                     } catch (error) {
                         return res.status(500).send({ error: true, errorMessage: error.message });
                     }

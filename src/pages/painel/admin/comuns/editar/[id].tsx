@@ -13,6 +13,7 @@ const QuillNoSSRWrapper = dynamic(import('react-quill'), {
 
 function EditarFaq() {
     const router = useRouter()
+
     const { id } = router.query;
 
     React.useEffect(() => {
@@ -45,6 +46,15 @@ function EditarFaq() {
         setTitle(pagina?.title ?? '');
         setIsFaq(pagina?.isFaq ?? false)
     }, [pagina])
+
+    // React.useEffect(() => {
+    //     initData();
+    //     // async function initDataAsync() {
+          
+    //     // }
+
+    //     // initDataAsync();
+    // }, [initData])
 
     return (
         <MainLayout menuType={3}>

@@ -32,9 +32,9 @@ function Entrar({ csrfToken} : any) {
             <div className={styles["login"]}>
                 <div className={styles["box"]}>
                     <div className={styles["logo"]}>
-                        <Link href="/" passHref>
+                        <a>
                             <Image src={LogoLogin} className={styles["img-responsive"]} alt="" />
-                        </Link>
+                        </a>
                     </div>
     
                     <form onSubmit={handleSubmit(onSubmit)}>

@@ -37,7 +37,7 @@ function Calendario() {
 
   const onEventDrop = ({ event, start, end, allDay }: any) => {
     const updatedEvent: ICalenderEvents = { ...event, start, end };
-    updateDragDrop(event.id, updatedEvent);
+    updateDragDrop(event._id, updatedEvent);
   };
 
 
@@ -50,7 +50,6 @@ function Calendario() {
 
     if (title) {
       const newEvent = {
-        id: Date.now() + 1,
         title: title,
         start,
         end: isLongTime ? new Date(new Date(start).setHours(new Date(start).getHours() + 1)) : end,
@@ -63,7 +62,6 @@ function Calendario() {
       const title = window.prompt('Digite seu texto:');
       if (title) {
         const newEvent = {
-          id: Date.now() + 1,
           title: title,
           start,
           end: isLongTime ? new Date(new Date(start).setHours(new Date(start).getHours() + 1)) : end,
@@ -289,17 +287,17 @@ const EventComponent = ({ event, start, end, title }: any) => {
   const removeEvent = useUserStore((state) => state.removeEvent);
 
   return (
-    <Popup
+    event._id != '1' ? <Popup
       contentStyle={{
         width: '60px'
       }}
-      key={event.id}
+      key={event._id}
       trigger={open => (
         <span onContextMenu={(e) =>{ 
           e.preventDefault();
           if (confirm('Deseja excluir?')) {
             // Save it!
-            removeEvent(event.id);
+            removeEvent(event._id);
           }
         } }>
           <p>{title}</p>
@@ -311,13 +309,25 @@ const EventComponent = ({ event, start, end, title }: any) => {
       on={['hover']}
       closeOnDocumentClick={false}>
       <div className="tooltipDivPrincial">
-        <span className="tooltipOrange" onClick={() => updateEvent(event.id, '#f08026')}></span>
-        <span className="tooltipYellow" onClick={() => updateEvent(event.id, '#e5d501')}></span>
-        <span className="tooltipRed" onClick={() => updateEvent(event.id, '#c0272d')}></span>
-        <span className="tooltipGreen" onClick={() => updateEvent(event.id, '#72b01e')}></span>
-        <span className="tooltipMagento" onClick={() => updateEvent(event.id, '#93278f')}></span>
-      </div>
-    </Popup>
+        <span className="tooltipOrange" onClick={() => updateEvent(event._id, '#f08026')}></span>
+        <span className="tooltipYellow" onClick={() => updateEvent(event._id, '#e5d501')}></span>
+        <span className="tooltipRed" onClick={() => updateEvent(event._id, '#c0272d')}></span>
+        <span className="tooltipGreen" onClick={() => updateEvent(event._id, '#72b01e')}></span>
+        <span className="tooltipMagento" onClick={() => updateEvent(event._id, '#93278f')}></span>
+      </div> 
+    </Popup>: (
+        <span key={event._id} onContextMenu={(e) =>{ 
+          e.preventDefault();
+          if (confirm('Deseja excluir?')) {
+            // Save it!
+            removeEvent(event._id);
+          }
+        } }>
+          <p>{title}</p>
+          <p>{start}</p>
+          <p>{end}</p>
+        </span>
+      )
   );
 };
 
