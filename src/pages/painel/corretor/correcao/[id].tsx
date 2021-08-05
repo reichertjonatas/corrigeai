@@ -14,6 +14,7 @@ import Annotation from 'react-image-annotation'
 import { useCorretorStore } from '../../../../hooks/corretorStore';
 import { useRouter } from 'next/router';
 import { ICompetencias, IItemObsEnem, IObsEnem } from '../../../../models/user';
+import NoSSRWrapper from '../../../../components/layout/NoSSRWrapper';
 
 const Box = ({ children, geometry, style }: any) => (
     <div style={{
@@ -527,7 +528,7 @@ function Correcao() {
 
 
     return (
-        <>
+        <NoSSRWrapper>
             <MainLayout menuType={2}>
                 <style global jsx>{`
                 .content-global{
@@ -722,7 +723,7 @@ function Correcao() {
                     `}
                 </style>
             </MainLayout>
-        </>
+        </NoSSRWrapper>
     )
 }
 
