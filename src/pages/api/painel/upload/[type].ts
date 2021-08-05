@@ -86,8 +86,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                             return res.status(200).send({
                                 error: false, data: {
                                     fileName,
-                                    pathT: `${__dirname}/../../../../public/`,
-                                    pathD: `./public/`,
                                 }
                             });
                         });
