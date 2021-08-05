@@ -64,7 +64,6 @@ const options = {
   //     return Promise.resolve(`/api/auth/signin`)
   //   },
   // },
-  callbacks: {}
 }
 
 export default NextAuth(options)
