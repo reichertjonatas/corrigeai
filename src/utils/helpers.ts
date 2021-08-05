@@ -217,7 +217,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'pink',
             items: [
                 {
-                    section: '1',
+                    section: '3',
                     text: 'Abordagem completa do tema',
                 },
                 {
@@ -235,7 +235,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'pink',
             items: [
                 {
-                    section: 'E',
+                    section: '4',
                     text: 'Abordagem completa do tema',
                 },
                 {
@@ -253,7 +253,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'pink',
             items: [
                 {
-                    section: 'E',
+                    section: '5',
                     text: 'Abordagem completa do tema',
                 },
                 {
@@ -404,7 +404,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'orange',
             items: [
                 {
-                    section: '1',
+                    section: '4',
                     text: 'Presença constante de elementos coesivos inter* e intraparágrafos E/OU poucas repetições E/OU poucas inadequações. \n*Havendo elemento coesivo de tipo "operador argumentativo" entre parágrafos em, pelo menos, 01 momento do texto.',
                 }
             ]
@@ -414,7 +414,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'orange',
             items: [
                 {
-                    section: '1',
+                    section: '5',
                     text: 'Presença constante de elementos coesivos inter* e intraparágrafos E raras repetições ou ausentes repetições E sem inadequação. \n*Havendo elemento coesivo de tipo "operador argumentativo" entre parágrafos em, pelo menos, 02 momento do texto e, pelo menos, 01 elemento coesivo de qualquer tipo dentro de todos os parágrafos.',
                 }
             ]
