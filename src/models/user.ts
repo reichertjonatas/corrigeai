@@ -1,9 +1,15 @@
 import mongoose, { Schema } from 'mongoose';
-import { uniqueFileName } from '../utils/helpers';
 
+export interface ISubscription {
+    envios: number;
+    subscriptionName: string;
+    subscriptionType: number;
+    subscriptionDate?: string | null;
+    subscriptionExpr?: string | null;
+}
 
 export interface ICalenderEvents {
-    id: number;
+    _id?: string;
     title: string;
     start: any;
     end: any;
@@ -15,6 +21,7 @@ export interface ICalenderEvents {
 
 
 export interface IRecompensa {
+    _id?: string;
     title: string;
     description: string;
     icon: string;
@@ -22,15 +29,27 @@ export interface IRecompensa {
     isActive: boolean;
 }
 
+export interface IItemObsEnem {
+    section?: string | null;
+    text: string;
+}
+
+export interface IObsEnem {
+    color: string;
+    nota: number;
+    items: IItemObsEnem[]
+}
+
 export interface ICompetencias {
+    _id?: string;
     title: string;
     nota: number;
     obs: string;
-    obs_enem: any[];
+    obs_enem?: IObsEnem | null;
 }
 
 export interface ICorrecoes {
-    id: string;
+    _id: string;
     competencias: ICompetencias[];
     marcacoes: any[];
     corretor: string;
@@ -38,9 +57,10 @@ export interface ICorrecoes {
 }
 
 export interface IRedacoes {
-    id: string;
+    _id: string;
     redacao: string;
     nota_final: number;
+    in_review: number;
     correcoes: ICorrecoes[];
     tema_redacao: string;
     createdAt: string;
@@ -48,7 +68,7 @@ export interface IRedacoes {
 
 
 export interface IUser {
-    id: string
+    _id: string
     name: string
     password: string,
     email: string
@@ -58,13 +78,7 @@ export interface IUser {
     recompensas: IRecompensa[]
     redacoes: IRedacoes[]
     eventos: ICalenderEvents[]
-    subscription: {
-        envios: number
-        subscriptioName: String
-        subscriptionType: number
-        subscriptionDate: string
-        subscriptionExpr: string
-    }
+    subscription: ISubscription
 }
 
 export interface IRecompensa {
@@ -87,25 +101,52 @@ const schema = new Schema<IUser>({
     userType: { type: Number, default: 0 },
     nivel: { type: Number, default: 1 },
     recompensas: { type: Array, default: [] },
-    redacoes: { type: Array, default: [] },
-    eventos: {
-        type: Array, default: [{
-            id: String,
-            redacao: String,
-            nota_final: {type: Number, default: 0 },
+    redacoes: [
+        {
+            redacao: { type: String, required: true },
+            nota_final: { type: Number, default: 0 },
+            in_review: { type: Number, default: 0 },
             correcoes: [
                 {
-                    id: String,
-                    competencias: Array,
+                    competencias: {
+                        type: Array, default: [
+                            {
+                                title: String,
+                                nota: { type: Number, required: true },
+                                obs: String,
+                                obs_enem: {
+                                    type: {
+                                        nota: { type: Number, required: true },
+                                        color: { type: String, required: true },
+                                        items: [{
+                                            section: { type: String, required: null },
+                                            text: { type: String, required: true },
+                                        }]
+                                    }, default: null
+                                },
+                            }
+                        ]
+                    },
                     marcacoes: Array,
                     corretor: String,
-                    createdAt: { type: Date, default: Date.now }
+                    createdAt: { type: Date, default: Date.now },
                 }
             ],
             tema_redacao: String,
-            createdAt: { type: Date, default: Date.now }
-        }]
-    },
+            createdAt: { type: Date, default: Date.now },
+        }
+    ],
+    eventos: [
+        {
+            title: String,
+            start: Date,
+            end: Date,
+            eventProps: {
+                color: String,
+            },
+            allDay: Boolean,
+        }
+    ],
     subscription: {
         envios: { type: Number, default: 0 },
         subscriptionName: { type: String, default: 'Grátis' },
