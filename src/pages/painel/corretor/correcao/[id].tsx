@@ -653,14 +653,13 @@ function Correcao() {
                                     {(competenciaItem.nota >= 0 && competenciaItem.nota < 200) && (
                                         <textarea rows={5} style={{
                                             width: '100%',
-                                            marginTop: '10px',
+                                            marginTop: '12px',
                                             borderRadius: '0.5rem'
                                         }}>
 
                                         </textarea>
                                     )}
-                                    <br />
-                                    {competenciaItem.obs_enem != null && <div className={`popCompetencia ${competenciaItem.obs_enem!.color}`}>
+                                    {competenciaItem.obs_enem != null && <div className={`popCompetencia ${competenciaItem.obs_enem!.color}`} style={{marginTop: '12px'}}>
                                         {competenciaItem.obs_enem != null && competenciaItem.obs_enem.items.map((item: IItemObsEnem, index: number) => <RowObsEnem key={index} item={item} />
                                         )}
                                     </div>}

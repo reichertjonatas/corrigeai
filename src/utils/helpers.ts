@@ -169,10 +169,20 @@ export const obs_enem: IObsEnemFilter[][] = [
                 }
             ]
         },
+        {
+            nota: 200,
+            color: 'ciano',
+            items: [
+                {
+                    section: '5',
+                    text: 'Estrutura sintática excelente (no máximo, uma falha) E, no máximo, dois desvios',
+                }
+            ]
+        },
     ],
     [
         {
-            nota: 0,
+            nota: 40,
             color: 'pink',
             items: [
                 {
@@ -186,7 +196,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             ]
         },
         {
-            nota: 40,
+            nota: 80,
             color: 'pink',
             items: [
                 {
@@ -203,7 +213,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             ]
         },
         {
-            nota: 80,
+            nota: 120,
             color: 'pink',
             items: [
                 {
@@ -221,7 +231,25 @@ export const obs_enem: IObsEnemFilter[][] = [
             ]
         },
         {
-            nota: 120,
+            nota: 160,
+            color: 'pink',
+            items: [
+                {
+                    section: 'E',
+                    text: 'Abordagem completa do tema',
+                },
+                {
+                    section: 'E',
+                    text: '* 3 partes do texto (nenhuma delas embrionária)',
+                },
+                {
+                    section: 'E',
+                    text: '*Repertório legitimado E pertinente ao tema, COM uso produtivo',
+                }
+            ]
+        },
+        {
+            nota: 200,
             color: 'pink',
             items: [
                 {
@@ -235,16 +263,6 @@ export const obs_enem: IObsEnemFilter[][] = [
                 {
                     section: 'E',
                     text: '*Repertório legitimado E pertinente ao tema, COM uso produtivo',
-                }
-            ]
-        },
-        {
-            nota: 160,
-            color: 'pink',
-            items: [
-                {
-                    section: '1',
-                    text: 'Competencia 2',
                 }
             ]
         },
@@ -320,7 +338,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             ]
         },
         {
-            nota: 160,
+            nota: 200,
             color: 'blue',
             items: [
                 {
@@ -340,51 +358,64 @@ export const obs_enem: IObsEnemFilter[][] = [
     [
         {
             nota: 0,
-            color: 'green',
+            color: 'orange',
             items: [
                 {
-                    section: '1',
-                    text: 'Projeto de texto com poucas falhas',
+                    section: '0',
+                    text: 'Palavras e períodos justapostos e desconexos ao longo de todo o texto, o que demonstra ausência de articulação.',
                 }
             ]
         },
         {
             nota: 40,
-            color: 'green',
+            color: 'orange',
             items: [
                 {
                     section: '1',
-                    text: 'Competencia 1',
+                    text: 'Presença rara de elementos coesivos inter e/ou intraparágrafos E/OU excessivas repetições E/OU excessivas inadequações.',
                 }
             ]
         },
         {
             nota: 80,
-            color: 'green',
+            color: 'orange',
             items: [
                 {
-                    section: '1',
-                    text: 'Competencia 1',
+                    section: '2',
+                    text: 'Presença pontual de elementos coesivos inter e/ou intraparágrafos E/OU muitas repetições E/OU muitas inadequações.',
+                },
+                {
+                    text: 'Textos em forma de monobloco não devem ultrapassar este nível.'
                 }
             ]
         },
         {
             nota: 120,
-            color: 'green',
+            color: 'orange',
             items: [
                 {
-                    section: '1',
-                    text: 'Competencia 1',
+                    section: '3',
+                    text: 'Presença regular de elementos coesivos inter E/OU intraparágrafos E/OU algumas repetições E/OU algumas inadequações.',
                 }
             ]
         },
         {
             nota: 160,
-            color: 'green',
+            color: 'orange',
             items: [
                 {
                     section: '1',
-                    text: 'Competencia 1',
+                    text: 'Presença constante de elementos coesivos inter* e intraparágrafos E/OU poucas repetições E/OU poucas inadequações. \n*Havendo elemento coesivo de tipo "operador argumentativo" entre parágrafos em, pelo menos, 01 momento do texto.',
+                }
+            ]
+        },
+        {
+            nota: 200,
+            color: 'orange',
+            items: [
+                {
+                    section: '1',
+                    text: 'Presença constante de elementos coesivos inter* e intraparágrafos E raras repetições ou ausentes repetições E sem inadequação. \n*Havendo elemento coesivo de tipo "operador argumentativo" entre parágrafos em, pelo menos, 02 momento do texto e, pelo menos, 01 elemento coesivo de qualquer tipo dentro de todos os parágrafos.',
                 }
             ]
         },
@@ -395,8 +426,8 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'green',
             items: [
                 {
-                    section: '1',
-                    text: 'Competencia 1',
+                    section: '0',
+                    text: '*Ausência de proposta ou cópia integral de proposta OU \n*Proposta de intervenção que desrespeita os direitos humanos OU \n*Proposta de intervenção não relacionada sequer ao assunto.',
                 }
             ]
         },
@@ -406,7 +437,7 @@ export const obs_enem: IObsEnemFilter[][] = [
             items: [
                 {
                     section: '1',
-                    text: 'Competencia 1',
+                    text: '*Tangenciamento do tema OU \n*Apenas elemento(s) nulo(s) OU \n*1 elemento válido',
                 }
             ]
         },
@@ -415,8 +446,11 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'green',
             items: [
                 {
-                    section: '1',
-                    text: 'Competencia 1',
+                    section: '2',
+                    text: '2 elemenos válidos',
+                },
+                {
+                    text: 'Estruturas condicionais com 2 ou mais elemntos válidos não devem ultrapassar este nível',
                 }
             ]
         },
@@ -425,8 +459,8 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'green',
             items: [
                 {
-                    section: '1',
-                    text: 'Competencia 1',
+                    section: '3',
+                    text: '3 elementos válidos',
                 }
             ]
         },
@@ -435,8 +469,18 @@ export const obs_enem: IObsEnemFilter[][] = [
             color: 'green',
             items: [
                 {
-                    section: '1',
-                    text: 'Competencia 1',
+                    section: '4',
+                    text: '4 elementos válidos',
+                }
+            ]
+        },
+        {
+            nota: 200,
+            color: 'green',
+            items: [
+                {
+                    section: '5',
+                    text: '5 elementos válidos',
                 }
             ]
         },

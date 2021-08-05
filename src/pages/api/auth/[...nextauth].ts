@@ -1,11 +1,11 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
-import {default as UserMongoose} from '../../../models/user';
+import User from '../../../models/user';
 import bcrypt from 'bcryptjs';
-import Adapters from 'next-auth/adapters';
 
 const options = {
-  site: process.env.NEXTAUTH_URL!,
+  database: process.env.MONGODB_URI,
+  site: process.env.NEXTAUTH_URL,
   pages: {
     signIn: '/painel/entrar',
     signOut: '/painel/sair',
@@ -25,7 +25,7 @@ const options = {
         // try {
         // buscar na api ou na db
         // console.log(credentials);
-        const userDb = await UserMongoose.findOne({ email: credentials.email })
+        const userDb = await User.findOne({ email: credentials.email })
 
         if (!userDb)
           return null;
@@ -54,16 +54,7 @@ const options = {
   session: {
     jwt: true,
     maxAge: 24 * 60 * 60,
-  },
-  database: process.env.MONGODB_URI,
-  // callbacks: {
-  //   redirect: async (url: string, _: any) => {
-  //     if (url === '/api/auth/signin') {
-  //       return Promise.resolve('/painel')
-  //     }
-  //     return Promise.resolve(`/api/auth/signin`)
-  //   },
-  // },
+  }
 }
 
 export default NextAuth(options)

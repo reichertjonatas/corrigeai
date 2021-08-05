@@ -56,7 +56,7 @@ const corretorStore = create<{
             // item.nota == nota ?
             //     { ...item, nota: item.nota = -1 }
             //     :
-                { ...item, nota: item.nota = nota, obs_enem: nota === 200 ? null : filterObsEnem[0] }
+                { ...item, nota: item.nota = nota, obs_enem: filterObsEnem.length <= 0 ? null : filterObsEnem[0] }
             :
             item);})
     })),
