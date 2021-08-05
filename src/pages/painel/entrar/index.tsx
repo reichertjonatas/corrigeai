@@ -46,7 +46,8 @@ function Entrar({ csrfToken} : any) {
                         <button type="submit">Entrar</button>
                     </form>
                     <span className={styles["esqueceu"]}>
-                        <Link href="/painel/registrar">Registrar</Link>
+                        <Link href="/painel/registrar">Registrar</Link> 
+                        <br />
                         <Link href="/painel/registrar">Esqueci minha senha</Link>
                     </span>
                 </div>
