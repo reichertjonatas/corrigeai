@@ -65,31 +65,31 @@ export const initialEvent: ICalenderEvents = {
 
 export const initialCompetencias = [
     {
-        title: 'Competências I',
+        title: 'Competência I',
         nota: -1,
         obs: '',
         obs_enem: null,
     },
     {
-        title: 'Competências II',
+        title: 'Competência II',
         nota: -1,
         obs: '',
         obs_enem: null,
     },
     {
-        title: 'Competências III',
+        title: 'Competência III',
         nota: -1,
         obs: '',
         obs_enem: null,
     },
     {
-        title: 'Competências IV',
+        title: 'Competência IV',
         nota: -1,
         obs: '',
         obs_enem: null,
     },
     {
-        title: 'Competências V',
+        title: 'Competência V',
         nota: -1,
         obs: '',
         obs_enem: null,

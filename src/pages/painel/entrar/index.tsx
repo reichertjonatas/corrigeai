@@ -14,7 +14,7 @@ interface DataProps {
 }
 
 
-function Entrar({ csrfToken} : any) {
+function Entrar() {
     const { register, handleSubmit } = useForm();
 
     const onSubmit = (data : DataProps) => {
@@ -38,7 +38,6 @@ function Entrar({ csrfToken} : any) {
                     </div>
     
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <input name='csrfToken' type='hidden' defaultValue={csrfToken}/>
                         <span className={styles["name"]}>E-mail</span>
                         <input {...register("email")} type="text" />
                         <span className={styles["name"]}>Senha</span>
@@ -56,14 +55,6 @@ function Entrar({ csrfToken} : any) {
         </div>
     )
 }
-
-export async function getServerSideProps(context: any) {
-    return {
-      props: {
-        csrfToken: await getCsrfToken(context)
-      }
-    }
-  }
 
 
 export default Entrar

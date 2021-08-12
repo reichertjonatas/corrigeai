@@ -12,20 +12,22 @@ import { API } from '../../../services/api'
 import Link from 'next/link'
 import Seo from '../../../components/layout/Seo'
 import Popup from 'reactjs-popup'
-import 'reactjs-popup/dist/index.css';
 import { useUserStore } from '../../../hooks/userStore'
 import { toast, ToastContainer } from 'react-toastify'
 import { ITemas } from '../../../models/tema'
-import Autosuggest from 'react-autosuggest';
-import { PointSymbolProps, ResponsiveLine } from "@nivo/line";
+import { PointSymbolProps, PointTooltipProps, ResponsiveLine } from "@nivo/line";
+import PreLoader from '../../../components/PreLoader'
+import Select from 'react-select'
+import NoSSRWrapper from '../../../components/layout/NoSSRWrapper'
+import { debugPrint } from '../../../utils/debugPrint'
 
 function Aluno() {
   const [loadingProfile, setLoadingProfile] = React.useState(true);
   const user = useUserStore((state) => state.user)
   const [session, loading] = useSession()
-  const [tema, setTema] = React.useState('')
-  const [temas, setTemas] = React.useState<ITemas[]>([])
-  const [suggestions, setSuggestions] = React.useState<ITemas[]>([])
+  const [tema, setTema] = React.useState<string | null>(null)
+  const [temas, setTemas] = React.useState<{ value: string, label: string }[]>([])
+  // const [suggestions, setSuggestions] = React.useState<ITemas[]>([])
   const createRedacao = useUserStore((state) => state.createRedacao);
   const me = useUserStore((state) => state.me);
   const [timer, setTimer] = React.useState<null | any>(null);
@@ -53,7 +55,11 @@ function Aluno() {
     async function initData() {
       API.post('/painel/tema/getAll').then((response) => {
         if (response.status === 200) {
-          if (!response.data.error) setTemas(response.data.data);
+          if (!response.data.error) {
+
+            const options: { value: string, label: string }[] = response.data.data.map((item: ITemas) => ({ value: item.tema, label: item.tema }));
+            setTemas(options);
+          }
         }
       })
     }
@@ -86,7 +92,7 @@ function Aluno() {
     const responseUpload = await API.post("/painel/upload/redacao", body);
 
     if (responseUpload.status === 200) {
-      const success = await createRedacao({ redacao: responseUpload.data.data.fileName, tema_redacao: tema } as IRedacoes);
+      const success = await createRedacao({ redacao: responseUpload.data.data.fileName, tema_redacao: tema ?? '' } as IRedacoes);
       if (!success.error) {
         toast.success('Redação enviada com sucesso!');
       } else {
@@ -104,25 +110,8 @@ function Aluno() {
   const remove = () => {
     setFile(null);
     setCreateObjectURL(null);
-    setTema("");
+    setTema(null);
   }
-
-  const getSuggestions = (value: any) => {
-    const inputValue = value.trim().toLowerCase();
-    const inputLength = inputValue.length;
-    return inputLength === 0 ? [] : temas.filter((tema: ITemas) => {
-      return tema.tema.toLowerCase().includes(inputValue);
-    });
-  };
-
-
-  const getSuggestionValue = (tema: ITemas) => tema.tema;
-
-  const renderSuggestion = (tema: ITemas) => (
-    <div>
-      {tema.tema}
-    </div>
-  );
 
   const onChange = (event: any, { newValue }: any) => {
     setTema(newValue);
@@ -134,44 +123,95 @@ function Aluno() {
     onChange
   };
 
+  const CustomSymbol = ({ size, borderColor, datum }: PointSymbolProps) => {
 
-  const onSuggestionsFetchRequested = ({ value }: any) => {
-    if (timer) {
-      clearTimeout(timer!);
-      setTimer(null);
+    return (
+      <g style={{
+        overflowWrap: 'break-word',
+        wordWrap: 'break-word',
+        width: 120,
+      }}>
+
+        <circle
+          r={size}
+          stroke={borderColor}
+          fill={borderColor} />
+        <text textAnchor="middle" y="6" style={{
+          fontFamily: "Poppins",
+          fontSize: "16px",
+          fill: "#fff",
+          fontWeight: 500,
+        }}>
+          {datum.y as number}
+        </text>
+        <switch>
+          <foreignObject x="-60" y="36" width="120" height="100">
+            <text textAnchor="middle" y={46} style={{
+              fontFamily: "Poppins",
+              fontSize: "12px",
+              fill: "#000",
+              fontWeight: 500,
+              textAlign: "center",
+              display: "inline-block",
+            }}>
+              {datum.tema.slice(0, 64) + '...'}
+            </text>
+          </foreignObject>
+        </switch>
+      </g>
+    )
+  }
+
+
+  const ultimaNota = () => {
+    if (user.redacoes.length > 0) {
+      const redacoes = user.redacoes.filter(item => item.nota_final != 0);
+      console.log("redacoes", redacoes.length)
+      if(redacoes.length <= 0) return '---' 
+      return redacoes[redacoes.length - 1].nota_final == 0 ? '---' : redacoes[redacoes.length - 1].nota_final;
     }
 
-    setTimer(() => {
-      setTimeout(() => {
-        var i = 0;
-        const firtResults = getSuggestions(value).filter((item: ITemas) => {
-          i++;
-          return i <= 3;
+    return "---";
+  }
+
+  const mediaGeral = () => {
+    if (user.redacoes.length > 0) {
+        var ultimasNotas:number[] = [];
+
+        user.redacoes.filter(item => item.nota_final != 0).map(item => {
+          ultimasNotas.push(item.nota_final);
+          return item;
         })
-        if (value.trim().length > 3) setSuggestions(firtResults);
-      }, 1000)
-    })
-  };
 
-  const onSuggestionsClearRequested = () => {
-    setSuggestions([]);
-  };
+        if(ultimasNotas.length > 0) {
+          var mediaGeralCalc = 0;
+          ultimasNotas.map(item => {
+            mediaGeralCalc = mediaGeralCalc + item
+            return item;
+          });
+          return Math.round(mediaGeralCalc / ultimasNotas.length) == 0 ? '---' : Math.round(mediaGeralCalc / ultimasNotas.length);
+        } else {
+          return "---";
+        }
+    }
+  }
 
-  const CustomSymbol = ({ size, color, borderWidth, borderColor, datum }: PointSymbolProps) => (
-      <g>
-          
-          <circle fill={color} r={size / 2} strokeWidth={borderWidth} stroke={borderColor}>
-            <p style={{fontSize: 32, color: 'white'}}> kellvem </p>
-          </circle>
-          <circle
-              r={size / 5}
-              strokeWidth={borderWidth}
-              stroke={borderColor}
-              fill={color}
-              fillOpacity={0.35}
-          />
-      </g>
-  )
+  const dataEnvios = () => {
+    var data:{ x: string, y: number, tema: string }[] = [];
+
+    if (user.redacoes.length > 0) {
+      const redacoes = user.redacoes.filter(item => item.nota_final != 0);
+      console.log("redacoes", redacoes.length)
+      if(redacoes.length <= 0) return [];
+      redacoes.slice((redacoes.length - 4), redacoes.length).map(item => {
+        data.push({ x: item.createdAt, y: item.nota_final, tema: item.tema_redacao });
+        return item;
+      });
+    }
+    
+    return data
+  }
+
 
   return (
     <MainLayout>
@@ -210,22 +250,22 @@ function Aluno() {
             </span>
             <div className={styles["graphic"]}>
               {user.redacoes.length > 0 ? (
-                <div style={{ height: 330, width: '100%' }}>
-                  <ResponsiveLine
+                <div style={{ height: 230, width: '100%' }}>
+                    <ResponsiveLine
                     data={[
                       {
                         id: "envios",
-                        data: [
-                          { x: "2019-05-01", y: 9.18 },
-                          { x: "2019-06-01", y: 9.2 },
-                          { x: "2020-03-01", y: 9.14 }
-                        ]
+                        data: false ?
+                            [
+                              { x: "2019-05-01", y: 500, tema: `Democratização do acesso ao cinema no Brasil` },
+                              { x: "2019-06-01", y: 600, tema: `Democratização do acesso ao cinema no Brasil` },
+                            ]
+                          :
+                          dataEnvios()
                       }
                     ]}
-                    margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-                    xScale={{ type: 'point' }}
+                    margin={{ top: 50, right: 120, bottom: 100, left: 120 }}
                     yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false }}
-                    yFormat=" >-.2f"
                     curve="cardinal"
                     pointSymbol={CustomSymbol}
                     axisTop={null}
@@ -238,16 +278,16 @@ function Aluno() {
                     lineWidth={4}
                     pointSize={30}
                     pointColor={{ from: 'color', modifiers: [] }}
-                    pointBorderWidth={20}
                     pointBorderColor={{ from: 'color', modifiers: [] }}
-                    enablePointLabel={true}
+                    enablePointLabel={false}
                     pointLabelYOffset={42}
                     isInteractive={false}
+                    useMesh
                     legends={[]}
                   />
                 </div>
               ) : (
-                <div style={{ padding: 50, textAlign: 'center' }}>Envie a primeira redação para gerar estátisticas!</div>
+                <div style={{ padding: 50, textAlign: 'center' }}>Envie a primeira redação para gerar estatísticas!</div>
               )}
             </div>
           </div>
@@ -256,8 +296,8 @@ function Aluno() {
         <div className={styles["sidebar-panel"]}>
           <div className={styles["grades"]}>
             <ul>
-              <li>Sua última nota: ---</li>
-              <li>Sua média geral: ---</li>
+              <li>Sua última nota: { ultimaNota() }</li>
+              <li>Sua média geral: { mediaGeral() } </li>
               <li>Média Corrige Aí: ---</li>
               <li className={styles["desempenho"]}>
                 <Link href="/painel/aluno/desempenho">VER DESEMPENHO COMPLETO</Link>
@@ -269,9 +309,9 @@ function Aluno() {
           <div className={styles["submit-essay"]}>
             <span className={styles["name"]}>
               <a style={{ cursor: "pointer" }} onClick={() => user.subscription.envios > 0 ? setOpen(true) : toast.error('Você não possui envios disponíveis!')}>
-              <span className={styles["icon"]}>
-                <Image src={IcRocket} className={styles["img-responsive"]} alt="" />
-              </span>
+                <span className={styles["icon"]}>
+                  <Image src={IcRocket} className={styles["img-responsive"]} alt="" />
+                </span>
                 Enviar redação</a>
             </span>
 
@@ -285,35 +325,29 @@ function Aluno() {
               <div className="popRedacao">
                 <h1>ENVIAR REDAÇÃO</h1>
 
-                <form onSubmit={(e) => onFileSubmit(e)}>
-
+                <form onSubmit={(e) => onFileSubmit(e)} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 
                   {!isLoading ? (
                     <span className="formulario">
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem' }}>
                         {createObjectURL != null ?
-                          <Image src={createObjectURL} width="80px" height="80px" alt="Icone adicionar" />
+                          <Image src={createObjectURL} loader={() => createObjectURL} width="320px" height="240px" alt="Icone adicionar" />
                           : (<>
-                            <Autosuggest
-                              suggestions={suggestions}
-                              onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                              onSuggestionsClearRequested={onSuggestionsClearRequested}
-                              getSuggestionValue={getSuggestionValue}
-                              renderSuggestion={renderSuggestion}
-                              inputProps={inputProps}
-                            />
+                            <NoSSRWrapper>
+                              <Select placeholder="Escolha o tema" onChange={(selecionado) => selecionado ? setTema(selecionado.value) : setTema(null)} noOptionsMessage={() => "Tema não encontrado!"} className='react-select-container' options={temas} isSearchable isClearable />
+                            </NoSSRWrapper>
                           </>)
                         }
                       </div>
 
-                      <span className="upload">
-                        <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={uploadFileClient} disabled={!(tema.length > 3)} />
+                      {!createObjectURL && <span className="upload">
+                        <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={uploadFileClient} disabled={tema == null} />
                         <label className="custom-file-upload">
                           ESCOLHER ARQUIVO
                         </label>
-                      </span>
+                      </span>}
                       <br />
-                      {!(tema.length > 3) && <span>*Selecione primeiro o tema!</span>}
+                      {tema == null && <span>*Selecione primeiro o tema!</span>}
                       {createObjectURL !== null &&
                         <>
                           <button className="uploadRemove" type="button" onClick={remove} >Tentar novamente</button>
@@ -322,7 +356,7 @@ function Aluno() {
                     </span>
                   ) : (
                     <div className="popLoading">
-                      <span>Carregando</span>
+                      <PreLoader />
                     </div>
                   )}
 
@@ -344,7 +378,8 @@ function Aluno() {
           </div>
         </div>
       </div>
-      <style global jsx>{` 
+      <style global jsx>{`
+          .react-select-container { flex: 1 } 
 
           .chart {
             height:50vh;
@@ -368,15 +403,6 @@ function Aluno() {
             width: 100%;
           }
 
-          form input[type="text"] {
-            display: block;
-            width: 100%;
-            margin: 0 0 1rem;
-            padding: 0.8rem 0.5rem;
-            border: 1px solid #cccccc;
-            border-radius: 0.5rem;
-            font-family: 'Poppins', sans-serif;
-          }
           ul.react-autosuggest__suggestions-list {
             list-style: none;
         }
@@ -411,7 +437,7 @@ function Aluno() {
       } </style>
       <style jsx>
         {`
-          .popRedacao{display: block; width: 100%; padding: 1rem 0;}
+          .popRedacao{display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; padding: 1rem 0;}
           .popRedacao h1{display: block; width: 100%; text-align: center; color: #002400; font-weight: 700; font-size: 1.4rem; font-family: 'Poppins', sans-serif; margin-bottom: 1rem}
           .popRedacao .formulario{display: block;width: 100%;max-width: 480px;margin: 0 auto;padding: 2rem 1rem 1.5rem;border: 2px dashed #cccccc;text-align: center; border-radius: 0.5rem}
           .popRedacao .formulario form{display: block; width: 100%}
@@ -420,7 +446,7 @@ function Aluno() {
           .upload .custom-file-upload:hover{background: #002400; }
           .popRedacao .botoes{display: flex; width: 100%; flex-direction: row; justify-content: center; margin: 2rem 0 0; gap: 1rem}
           
-          .enviar {cursor: pointer; display: block; transition: all 0.5s ease;padding: 0.5rem 1rem; background: #002400; color: #fff; text-decoration: none; border-radius: 0.5rem; font-family: 'Poppins', sans-serif}
+          .enviar {cursor: pointer; border:none; display: block; transition: all 0.5s ease;padding: 0.5rem 1rem; background: #002400; color: #fff; text-decoration: none; border-radius: 0.5rem; font-family: 'Poppins', sans-serif}
           .enviar :hover{background: #72b01d;}
 
           .popRedacao .botoes a.cancelar{background: transparent; color: #002400}

@@ -15,6 +15,8 @@ import { useCorretorStore } from '../../../../hooks/corretorStore';
 import { useRouter } from 'next/router';
 import { ICompetencias, IItemObsEnem, IObsEnem } from '../../../../models/user';
 import NoSSRWrapper from '../../../../components/layout/NoSSRWrapper';
+import { debugPrint } from '../../../../utils/debugPrint';
+import { toast } from 'react-toastify';
 
 const Box = ({ children, geometry, style }: any) => (
     <div style={{
@@ -40,6 +42,8 @@ function Correcao() {
         competencia, setCompetencia,
         competenciasOffline,
         setNota,
+        setObs,
+        salvarCorrecao,
         setCorrecaoNull
     ] = useCorretorStore(state => ([
         state.initData,
@@ -51,6 +55,8 @@ function Correcao() {
         state.competencia, state.setCompetencia,
         state.competenciasOffline,
         state.setNota,
+        state.setObs,
+        state.salvarCorrecao,
         state.setCorrecaoNull
     ]), shallow);
 
@@ -252,7 +258,7 @@ function Correcao() {
 
         var cor = 'red';
 
-        console.log(annotation)
+        debugPrint(annotation)
 
         switch (annotation.data.competencia ?? 1) {
             case 2:
@@ -526,6 +532,35 @@ function Correcao() {
     }
 
 
+    const handlerEnviarCorrecao = async () => {
+        debugPrint('handlerEnviarCorrecao', 'preenchidos ===> ', competenciasOffline.length, ' ===> ', ); 
+        var errorMessage:string[] = [];
+
+        
+        competenciasOffline.map((itemCompentencia:ICompetencias, index: number) => {
+            if(itemCompentencia.nota < 0){
+                errorMessage.push(`${itemCompentencia.title} - Selecione a nota`)
+            } else if (itemCompentencia.nota != 200 ) {
+                debugPrint(itemCompentencia.obs.length , ' <======= ')
+                if(itemCompentencia.obs.length <= 3){
+                    errorMessage.push(`${itemCompentencia.title} - Preencher observação da competência`)
+                }
+            }
+        })
+
+        if(errorMessage.length > 0 ) {
+            errorMessage.map( message => message.includes("nota") ? toast.error(message) : toast.warning(message))
+        } else {
+            const response = await salvarCorrecao(id as string);
+            debugPrint('salvar response', response)
+            if(response.error)
+                toast.error(response.message)
+             else {
+                toast.success(response.message)
+                router.push('/painel/corretor')
+            }
+        }
+    }
 
     return (
         <NoSSRWrapper>
@@ -618,44 +653,47 @@ function Correcao() {
                                     <span className={styles.subtitle}>Selecione uma nota.</span>
 
                                     <span className={styles.notasCriterios} onChange={(e: any) => {
-                                        console.log('competencia: ', index, ' - ', parseInt(e.target.value));
+                                        debugPrint('competencia: ', index, ' - ', parseInt(e.target.value));
                                         setNota(parseInt(e.target.value), index);
                                     }}>
                                         <span className={styles.nota}>
-                                            <input type="radio" id="00" name={`${index}`} value="0" />
-                                            <label htmlFor="00">0</label>
+                                            <input type="radio" id={`${index}0`} name={`${index}`} value="0" />
+                                            <label htmlFor={`${index}0`}>0</label>
                                         </span>
 
                                         <span className={styles.nota}>
-                                            <input type="radio" id="040" name={`${index}`} value="40" />
-                                            <label htmlFor="040">40</label>
+                                            <input type="radio" id={`${index}40`} name={`${index}`} value="40" />
+                                            <label htmlFor={`${index}40`}>40</label>
                                         </span>
 
                                         <span className={styles.nota}>
-                                            <input type="radio" id="080" name={`${index}`} value="80" />
-                                            <label htmlFor="080">80</label>
+                                            <input type="radio" id={`${index}80`} name={`${index}`} value="80" />
+                                            <label htmlFor={`${index}80`}>80</label>
                                         </span>
 
                                         <span className={styles.nota}>
-                                            <input type="radio" id="0120" name={`${index}`} value="120" />
-                                            <label htmlFor="0120">120</label>
+                                            <input type="radio" id={`${index}120`} name={`${index}`} value="120" />
+                                            <label htmlFor={`${index}120`}>120</label>
                                         </span>
 
                                         <span className={styles.nota}>
-                                            <input type="radio" id="0160" name={`${index}`} value="160" />
-                                            <label htmlFor="0160">160</label>
+                                            <input type="radio" id={`${index}160`} name={`${index}`} value="160" />
+                                            <label htmlFor={`${index}160`}>160</label>
                                         </span>
 
                                         <span className={styles.nota}>
-                                            <input type="radio" id="0200" name={`${index}`} value="200" />
-                                            <label htmlFor="0200">200</label>
+                                            <input type="radio" id={`${index}200`} name={`${index}`} value="200" />
+                                            <label htmlFor={`${index}200`}>200</label>
                                         </span>
                                     </span>
                                     {(competenciaItem.nota >= 0 && competenciaItem.nota < 200) && (
-                                        <textarea rows={5} style={{
+                                        <textarea onChange={(e) => {
+                                            debugPrint("teste =====> ", e.target.value[0])
+                                            setObs(e.target.value as string, index); 
+                                        }} rows={5} style={{
                                             width: '100%',
                                             marginTop: '12px',
-                                            borderRadius: '0.5rem'
+                                            borderRadius: '0.5rem',
                                         }}>
 
                                         </textarea>
@@ -668,7 +706,7 @@ function Correcao() {
                                 </span>))}
 
                             <span className={styles.botao}>
-                                <button>Enviar correção</button>
+                                <button onClick={handlerEnviarCorrecao}>Enviar correção</button>
                             </span>
                         </span>
                     </div>
@@ -681,6 +719,13 @@ function Correcao() {
                         background: #c3ddea;
                         align-items: center;
                         margin: 1rem 0;
+                        min-height: 80px;
+                    }
+
+                    .popCompetencia span {
+                        align-self: stretch;
+                        display: flex;
+                        align-items: center;
                     }
                     
                     .popCompetencia .number{

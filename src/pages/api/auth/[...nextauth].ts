@@ -1,17 +1,15 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
-import User from '../../../models/user';
 import bcrypt from 'bcryptjs';
+import User from '../../../models/user';
 
 const options = {
-  database: process.env.MONGODB_URI,
   site: process.env.NEXTAUTH_URL,
   pages: {
     signIn: '/painel/entrar',
     signOut: '/painel/sair',
-    error: '/painel/entrar', // Error code passed in query string as ?error=
-    //verifyRequest: '/auth/verify-request', // (used for check email message)
-    newUser: '/painel/novo-usuario' // New users will be directed here on first sign in (leave the property out if not of interest)
+    error: '/painel/entrar',
+    newUser: '/painel/novo-usuario'
   },
   providers: [
     Providers.Credentials({
@@ -24,8 +22,9 @@ const options = {
       async authorize(credentials) {
         // try {
         // buscar na api ou na db
-        // console.log(credentials);
+        console.log("credentials ===>", credentials, ' ====> ', credentials.email );
         const userDb = await User.findOne({ email: credentials.email })
+        console.log('userDb ===>', userDb)
 
         if (!userDb)
           return null;
@@ -53,8 +52,8 @@ const options = {
   ],
   session: {
     jwt: true,
-    maxAge: 24 * 60 * 60,
-  }
+  },
+  database: process.env.MONGODB_URI,
 }
 
 export default NextAuth(options)

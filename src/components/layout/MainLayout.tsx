@@ -5,6 +5,9 @@ import React from 'react'
 import { IcPainelAlunoGlobal, IcPhoto } from '../icons'
 import LayoutCarregando from './LayoutCarregando'
 import Sidebar from './Sidebar'
+import Popup from 'reactjs-popup'
+import Link from 'next/link'
+
 
 interface MainLayoutProps {
     children: React.ReactNode
@@ -44,11 +47,26 @@ function MainLayout({ children, menuType = 1}: MainLayoutProps) {
                             <li>
                                 <span className="message">Olá, {session!.user?.name}!</span>
                             </li>
-                            <li>
-                                <span className="photo" onClick={() => signOut()}>
-                                        <Image src={IcPhoto} className="img-responsive" alt=""/>
-                                </span>
-                            </li>
+                            <Popup
+                                    trigger={open => (
+                                <li>
+                                    <span className="photo">
+                                            <Image src={IcPhoto} className="img-responsive" alt=""/>
+                                    </span>
+                                </li>
+                            )}
+                            position="left top"
+                            on={['hover', 'focus']}
+                            closeOnDocumentClick
+                        >
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <Link href="/painel/aluno" passHref> 
+                                    <span style={{ cursor: 'pointer' }}>Meu Perfil</span> 
+                                </Link>
+                                <hr style={{ opacity: 0.3}}/>
+                                <span onClick={() => signOut()} style={{ cursor: 'pointer' }}> Sair </span>
+                            </div>
+                        </Popup>
                             </ul>
                         </span>
                     </div>

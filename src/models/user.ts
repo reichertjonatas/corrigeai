@@ -74,6 +74,7 @@ export interface IUser {
     email: string
     image?: string | null
     userType: number
+    corretorType: number
     nivel: number
     recompensas: IRecompensa[]
     redacoes: IRedacoes[]
@@ -99,6 +100,7 @@ const schema = new Schema<IUser>({
     image: { type: String, default: null },
     emailVerified: { type: Date, default: null },
     userType: { type: Number, default: 0 },
+    corretorType: { type: Number, default: 1 },
     nivel: { type: Number, default: 1 },
     recompensas: { type: Array, default: [] },
     redacoes: [

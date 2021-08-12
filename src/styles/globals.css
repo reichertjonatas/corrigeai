@@ -30,7 +30,7 @@ body{background: var(--gray30) !important; overflow-x: hidden; font-family: 'Pop
 a{text-decoration: none !important; transition: all 0.5s ease;}
 a:hover{color: #0a9bff;}
 
-.container-full{width: 100%; max-width: 1920px; margin: 0 auto; position: relative; display: flex; flex-direction: row; align-items: baseline;}
+.container-full{width: 100%; max-width: 1920px; margin: 0 auto; position: relative; display: flex; flex-direction: row; align-items: self-end;}
 
 .noPadding{padding: 0 !important;}
 .img-responsive{display: inline-block !important; max-width: 100%; height: auto}

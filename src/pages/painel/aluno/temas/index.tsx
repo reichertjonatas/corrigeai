@@ -62,6 +62,7 @@ function Temas() {
                     </ul>
                 </div>
             </div>
+            
             <style jsx>
                 {`
                     .grid-temas{display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem}

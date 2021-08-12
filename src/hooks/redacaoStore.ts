@@ -17,7 +17,7 @@ const redacaoStore = create<IRedacaoStore>((set, get) => ({
     redacoes: [],
     corrigir: null,
     getAllCorretor: (page = 1) => {
-        API.post('/painel/redacao/getAllCorretor', { page }).then((response) => {
+        API.post('/painel/redacao/getAllCorretor', { revisaoType: 0, page }).then((response) => {
             if (response.status === 200) {
                 const redacoes = response.data.data as IRedacoes[];
                 var filtred:any = [];

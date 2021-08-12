@@ -29,16 +29,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             case 'getAllCorretor':
                 if (req.method === 'POST') {
                     const { page } = req.body;
-                    const limitPerPage = 10; 
+                    const limitPerPage = 10;
                     const skip = page == 1 ? 0 : page * limitPerPage;
-                    console.log('isFaq');
 
+                    const revisaoType = 0;
                     try {
-                        const response = await User.find({ 'redacoes' : { $exists: true, $not: {$size: 0} }}).select({
-                            'redacoes': 1, email: 1,
-                        }).limit(limitPerPage).skip(skip).sort({createdAt: 'asc'});
+
+                        const response = await User.find({ 
+                            'redacoes': { $exists: true, $not: { $size: 0 } },
+                        }).select({
+                            'redacoes': 1, email: 1
+                        }).limit(limitPerPage).skip(skip).sort({ createdAt: 'asc' });
+
                         if (!response) throw new Error("Nenhuma página encontrada!");
-                        return res.status(200).send({ error: false, data: response });
+
+                        const responseFiltered = response.map(item => {
+                            console.log('---> item ', item._id );
+                            return {...item, _id: item._id, email: item.email,  redacoes: item.redacoes.filter( (itemFilter: any) => itemFilter.correcoes.length === revisaoType)}
+                        })
+
+                        console.log('====> responseFiltered: ' , responseFiltered);
+
+                        if (!responseFiltered) throw new Error("Nenhuma página encontrada!");
+                        
+                        return res.status(200).send({ error: false, data: responseFiltered });
                     } catch (error) {
                         return res.status(500).send({ error: true, errorMessage: error.message });
                     }
@@ -49,7 +63,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     const { _id } = req.body;
                     try {
                         // if(session.user!.userType! <= 1) throw new Error("Ação não permitida!");
-                        
+
                         const response = await User.findOne({ 'redacoes._id': _id });
                         if (!response) throw new Error("Redação não encontrada!");
 
@@ -111,17 +125,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 }
                 break;
-            
+
 
             case 'updateCorretor':
                 if (req.method === 'POST') {
-                    const { _id, correcao } : {correcao: ICorrecoes, _id: string} = req.body;
+                    const { _id, correcao }: { correcao: ICorrecoes, _id: string } = req.body;
                     try {
-                        await User.updateOne({ email: session.user!.email, 'redacoes._id': _id }, {
-                            $push: {
-                                $each: [correcao],
-                            }
+                        const user = await User.findOne({ email: session.user!.email });
+
+                        var ultimaNotaCalc = 0;
+
+                        correcao.competencias.map(item => {
+                            ultimaNotaCalc = ultimaNotaCalc + item.nota;
+                            return item;
+                        })
+
+                        await User.updateOne({ 'redacoes._id': _id }, {
+                            $set: { 'redacoes.$.nota_final': ultimaNotaCalc }
                         });
+
+                        await User.updateOne({ 'redacoes._id': _id }, {
+                            $set: { 'redacoes.$.correcoes': { ...correcao, corretor: user.id } }
+                        });
+
                         return res.status(200).send({ error: false, data: { message: 'Salvo com sucesso!' } });
                     } catch (error) {
                         return res.status(500).send({ error: true, errorMessage: error.message });

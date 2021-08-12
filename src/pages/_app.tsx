@@ -5,6 +5,7 @@ import { Provider } from 'next-auth/client'
 import NextNprogress from 'nextjs-progressbar';
 import React from 'react';
 import { ToastContainer } from 'react-toastify'
+import 'reactjs-popup/dist/index.css';
 
 function CorrigeAiApp({ Component, pageProps }: AppProps) {
   return (
