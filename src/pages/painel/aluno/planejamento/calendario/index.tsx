@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
 import MainLayout from '../../../../../components/layout/MainLayout'
-import styles from './Calendario.module.css'
 import BigCalendar, { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
@@ -13,6 +12,8 @@ import { msToTime } from '../../../../../utils/helpers';
 import { ICalenderEvents } from '../../../../../models/user';
 import { useUserStore } from '../../../../../hooks/userStore';
 import { API } from '../../../../../services/api';
+import { debugPrint } from '../../../../../utils/debugPrint';
+
 
 
 const localizer = momentLocalizer(moment)
@@ -32,7 +33,10 @@ function Calendario() {
 
   // @ts-nocheck
   React.useEffect(() => {
-    initialLoad()
+    if(events.length == 1)
+      initialLoad()
+
+    debugPrint("==> UseEffects <===");
   }, [initialLoad])
 
   const onEventDrop = ({ event, start, end, allDay }: any) => {
@@ -77,11 +81,11 @@ function Calendario() {
 
   return (
     <MainLayout>
-      <div className={styles.gridPlanejamento}>
-        <div className={styles.content}>
-          <div className={styles.box} >
+      <div className="gridPlanejamento">
+        <div className="content">
+          <div className="box">
             <h1>Planeje sua semana</h1>
-            <span className={styles.desc} style={{ height: 660 }}>
+            <span className="desc" style={{ height: 660 }}>
               <CorrigeAiCalendar
                 localizer={localizer}
                 selectable
@@ -121,8 +125,8 @@ function Calendario() {
               />
             </span>
           </div>
-          <span className={styles.botao}>
-            <Link href="#">Planeje sua redação</Link>
+          <span className="botao">
+            <Link href="/painel/aluno/planejamento/redacao">Planeje sua redação</Link>
           </span>
         </div>
       </div>
@@ -275,6 +279,22 @@ function Calendario() {
                 background: var(--dark);
               }
 
+              .gridPlanejamento{display: grid; grid-template-columns: 1fr;}
+              .gridPlanejamento .content{display: block; width: 100%;}
+              .gridPlanejamento .content .box{display: block; width: 100%;border-radius: 0.75rem; background: var(--gray20); padding: 2.8125rem 1.5rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+              .gridPlanejamento .content .box h1{display: block; width: 100%; text-align: center; font-weight: 500; font-size: 1.6875rem; margin: 0 0 1.5rem}
+              .gridPlanejamento .content .box .desc{display: block; width: 100%; text-align: left; font-weight: 400; font-size: 1.175rem; color: #72b01e}
+              .gridPlanejamento .content .botao a{display: block; width: 100%; max-width: 400px; margin: 2rem auto; text-align: center; color: var(--gray20); font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 0.75rem; font-size: 1.2em; background: var(--dark); padding: 0.5125rem; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+              .gridPlanejamento .content .botao a:hover{transform: scale(0.9);}
+
+
+
+
+              @media(max-width: 500px){
+                .gridPlanejamento{grid-template-columns: 1fr}
+              }
+
+
             `}</style>
     </MainLayout>
   )
@@ -299,7 +319,7 @@ const EventComponent = ({ event, start, end, title }: any) => {
             // Save it!
             removeEvent(event._id);
           }
-        } }>
+        }}>
           <p>{title}</p>
           <p>{start}</p>
           <p>{end}</p>

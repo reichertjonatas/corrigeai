@@ -1,6 +1,7 @@
 import create from 'zustand'
 import { ICalenderEvents, IRedacoes, IUser } from '../models/user';
 import { API } from '../services/api';
+import { debugPrint } from '../utils/debugPrint';
 import { initialEvent } from '../utils/helpers';
 
 interface IEventState {
@@ -77,11 +78,12 @@ const userStore = create<IEventState>((set, get) => ({
     addEvent: async (event: ICalenderEvents) => {
         API.post('/painel/calendario/addEvent', { evento: event }).then((response) => {
             if (response.status === 200) {
+                debugPrint("==> ", response.data.data , " ==> ID ", response.data.data._id)
                 set((state) => ({
                     userInfo: {
                         events: [
                             ...state.userInfo.events,
-                            event
+                            {_id: response.data.data._id, ...event}
                         ]
                     }
                 }));

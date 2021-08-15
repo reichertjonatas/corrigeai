@@ -9,6 +9,8 @@ interface IRedacaoStore {
     getAllCorretor: (page?: number) => void;
     // delete: (id: string) => void;
 
+    setNullRedacoes: () => void;
+
     setRedacaoNull: () => void;
 
 }
@@ -42,6 +44,10 @@ const redacaoStore = create<IRedacaoStore>((set, get) => ({
     //         get().getAllCorretor();
     //     }
     // },
+
+    setNullRedacoes: () => {
+        set({redacoes: []});
+    },
 
     setRedacaoNull: () => {
         set(() => ({ corrigir: null }))

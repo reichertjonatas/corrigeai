@@ -1,3 +1,4 @@
+import { CallbackError } from 'mongoose'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
 import User, { ICalenderEvents } from '../../../../models/user'
@@ -16,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (req.method === 'POST') {
           const { evento: { title, start, end, eventProps } } = req.body;
           try {
-            await User.updateOne({ email: session.user!.email! }, {
+            const response = await User.updateOne({ email: session.user!.email! }, {
               $push: {
                 eventos: {
                   $each: [{ title, start, end, eventProps }],
@@ -24,7 +25,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               }
             });
 
-            res.status(200).send({error: false, data: { message: 'Adicionado com sucesso! '}});
+            const user = await User.findOne({ email: session.user!.email });
+
+            res.status(200).send({error: false, data: user.eventos[user.eventos.length - 1] });
           } catch (error) {
             res.status(500).send({ error: true, errorMessage: error.message });
           }
@@ -35,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           const { _id } = req.body;
           try {
             await User.updateOne({ email: session.user!.email! }, {
-              $pull: { 'eventos' : {'id' : _id } }
+              $pull: { 'eventos' : {'_id' : _id } }
             });
             res.status(200).send({ error: false, data: { message: 'Removido com suceso!'}});
           } catch (error) {

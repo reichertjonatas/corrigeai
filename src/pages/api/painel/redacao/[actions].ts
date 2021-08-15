@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     const revisaoType = 0;
                     try {
 
-                        const response = await User.find({ 
+                        const response = await User.find({
                             'redacoes': { $exists: true, $not: { $size: 0 } },
                         }).select({
                             'redacoes': 1, email: 1
@@ -44,15 +44,45 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         if (!response) throw new Error("Nenhuma página encontrada!");
 
                         const responseFiltered = response.map(item => {
-                            console.log('---> item ', item._id );
-                            return {...item, _id: item._id, email: item.email,  redacoes: item.redacoes.filter( (itemFilter: any) => itemFilter.correcoes.length === revisaoType)}
+                            return { ...item, _id: item._id, email: item.email, redacoes: item.redacoes.filter((itemFilter: any) => itemFilter.correcoes.length === revisaoType) }
                         })
 
-                        console.log('====> responseFiltered: ' , responseFiltered);
-
                         if (!responseFiltered) throw new Error("Nenhuma página encontrada!");
-                        
+
                         return res.status(200).send({ error: false, data: responseFiltered });
+                    } catch (error) {
+                        return res.status(500).send({ error: true, errorMessage: error.message });
+                    }
+                }
+                break;
+            case 'getMinhasCorrecoes':
+                if (req.method === 'POST') {
+                    const { page } = req.body;
+                    const limitPerPage = 10;
+                    const skip = page == 1 ? 0 : page * limitPerPage;
+
+                    const revisaoType = 0;
+                    try {
+                        const user = await User.findOne({ email: session.user!.email });
+                        const response = await User.find({
+                            'redacoes': { $exists: true, $not: { $size: 0 } },
+                            'redacoes.correcoes.corretor' : user._id
+                        }).select({
+                            'redacoes': 1, email: 1
+                        }).limit(limitPerPage).skip(skip).sort({ createdAt: 'desc' });
+
+                        if (!response) throw new Error("Nenhuma página encontrada!");
+
+                        const responseFiltered = response.map(item => {
+                            return {_id: item._id, email: item.email, redacoes: item.redacoes.filter((redacao:any) => {
+                                const correcaoFiltered = redacao.correcoes.filter((correcao : any) => correcao.corretor == user._id);
+                                return correcaoFiltered.length > 0
+                            })}
+                        })
+
+                        if (!responseFiltered) throw new Error("Nenhuma redação corrigida!");
+
+                        return res.status(200).send({ error: false, data: response });
                     } catch (error) {
                         return res.status(500).send({ error: true, errorMessage: error.message });
                     }

@@ -249,7 +249,7 @@ function Aluno() {
               <span className={styles["title"]}>Seus últimos envios</span>
             </span>
             <div className={styles["graphic"]}>
-              {user.redacoes.length > 0 ? (
+              {user.redacoes.length > 0 && dataEnvios().length ? (
                 <div style={{ height: 230, width: '100%' }}>
                     <ResponsiveLine
                     data={[
@@ -287,7 +287,7 @@ function Aluno() {
                   />
                 </div>
               ) : (
-                <div style={{ padding: 50, textAlign: 'center' }}>Envie a primeira redação para gerar estatísticas!</div>
+                <div style={{ padding: 50, textAlign: 'center' }}>{user.redacoes.length == 0 ? 'Envie a primeira redação para gerar estatísticas!' : 'O gráfico será exibido quando receber a primeira correção.'}</div>
               )}
             </div>
           </div>

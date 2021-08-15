@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import { Logo, IcPainelAluno, IcDesempenho, IcTemas, IcCaed, IcSobre, IcPlanejamento, IcEnvios, LogoLampada } from '../icons'
+import { Logo, IcPainelAluno, IcDesempenho, IcTemas, IcCaed, IcSobre, IcPlanejamento, IcEnvios, LogoLampada, suas_correcoes } from '../icons'
 import Link from 'next/link'
 import { Cookie, withCookie, useCookie } from 'next-cookie'
 import { useMenuStore } from '../../hooks/menuStore'
@@ -57,6 +57,7 @@ function Sidebar(props: any) {
                 {menuType == 1 && <ul>
                     <ItemMenu href="/painel/aluno" icon={IcPainelAluno} name="Painel do Aluno" />
                     <ItemMenu href="/painel/aluno/desempenho" icon={IcDesempenho} name="Desempenho" />
+                    <ItemMenu href="/painel/aluno/seus-envios" icon={IcEnvios} name="Envios" />
                     <ItemMenu href="/painel/aluno/temas" icon={IcTemas} name="Temas" />
                     <ItemMenu href="/painel/aluno/caed" icon={IcCaed} name="Alô, CAED!" />
                     <ItemMenu href="/painel/aluno/sobre" icon={IcSobre} name="Sobre" />
@@ -75,6 +76,7 @@ function Sidebar(props: any) {
                 </ul>}
                 {menuType == 2 && <ul>
                     <ItemMenu href="/painel/corretor" icon={IcPainelAluno} name="Painel do Corretor" />
+                    <ItemMenu href="/painel/corretor/suas-correcoes" icon={suas_correcoes} name="Suas correções" />
                     <hr />
                     <li className="itemFechado" >
                         <a onClick={() => { setMenuOpen() }}>
@@ -86,6 +88,7 @@ function Sidebar(props: any) {
                             </span>
                         </a>
                     </li>
+                    
                 </ul>}
                 {menuType == 3 && <ul>
                     <ItemMenu href="/painel/admin/comuns/paginas" icon={IcPainelAluno} name="Páginas" />

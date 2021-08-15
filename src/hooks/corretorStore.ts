@@ -10,6 +10,12 @@ import {
 import { initialCompetencias, IObsEnemFilter, obs_enem } from "../utils/helpers";
 import { debugPrint } from "../utils/debugPrint";
 
+export interface ICorrecoesCorretor{
+    _id: string;
+    email: string;
+    redacoes: IRedacoes[]
+}
+
 const corretorStore = create<{
     redacao: IRedacoes | null,
     annotations: any[],
@@ -18,6 +24,9 @@ const corretorStore = create<{
     editorType: number,
     competencia: number,
     competenciasOffline: ICompetencias[],
+
+    minhasCorrecoes: ICorrecoesCorretor[],
+
     initData: (id: string) => void,
     setAnnotations: (annotations: any[]) => void,
     setAnnotation: (annotation: any) => void,
@@ -30,6 +39,11 @@ const corretorStore = create<{
     salvarCorrecao: (id: string) => Promise<{ error: boolean, message: string}>,
 
     setCorrecaoNull: () => void,
+
+    getMinhasCorrecoes: () => void,
+    setNullCorrecoes: () => void,
+
+
 }>((set, get) => ({
     redacao: null,
     annotations: [],
@@ -38,6 +52,7 @@ const corretorStore = create<{
     editorType: 1,
     competencia: 1,
     competenciasOffline: initialCompetencias,
+    minhasCorrecoes: [],
     initData: async (id: string) => {
         API.post('/painel/redacao/readCorretor', { _id: id }).then(response => {
             if (response.status === 200) {
@@ -46,6 +61,7 @@ const corretorStore = create<{
             }
         })
     },
+
     setAnnotations: (annotations) => set({ annotations: annotations }),
     setAnnotation: (annotation) => set({ annotation: annotation }),
     setType: (type) => set({ type: type }),
@@ -95,6 +111,14 @@ const corretorStore = create<{
     },
 
     setCorrecaoNull: () => set({ redacao: null }),
+
+    getMinhasCorrecoes: async () => {
+        const response = await API.post('/painel/redacao/getMinhasCorrecoes');
+        if(response.status === 200) {
+            set({ minhasCorrecoes: response.data.data as ICorrecoesCorretor[]});
+        }
+    },
+    setNullCorrecoes: () => set({ minhasCorrecoes: [] }),
 }));
 
 export const useCorretorStore = corretorStore;

@@ -45,7 +45,7 @@ function MainLayout({ children, menuType = 1}: MainLayoutProps) {
                         <span className="user">
                             <ul>
                             <li>
-                                <span className="message">Olá, {session!.user?.name}!</span>
+                                <span className="message"><span className="welcomeOla">Olá, </span>{session!.user?.name}!</span>
                             </li>
                             <Popup
                                     trigger={open => (
@@ -60,7 +60,7 @@ function MainLayout({ children, menuType = 1}: MainLayoutProps) {
                             closeOnDocumentClick
                         >
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <Link href="/painel/aluno" passHref> 
+                                <Link href="/painel/aluno/meu-perfil" passHref> 
                                     <span style={{ cursor: 'pointer' }}>Meu Perfil</span> 
                                 </Link>
                                 <hr style={{ opacity: 0.3}}/>

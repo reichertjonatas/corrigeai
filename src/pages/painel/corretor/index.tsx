@@ -3,13 +3,16 @@ import React from 'react'
 import MainLayout from '../../../components/layout/MainLayout'
 import { useRedacaoStore } from '../../../hooks/redacaoStore';
 import { IRedacoes } from '../../../models/user';
+import Moment from 'moment'
 
 function DashboardCorretor() {
     const redacoes = useRedacaoStore( state => state.redacoes);
     const getAllCorretor = useRedacaoStore( state => state.getAllCorretor);
+    const setNullRedacoes = useRedacaoStore( state => state.setNullRedacoes);
 
     React.useEffect(() => {
         getAllCorretor();
+        return setNullRedacoes();
     }, [getAllCorretor]);
 
     return (
@@ -27,10 +30,11 @@ function DashboardCorretor() {
                         {redacoes.length > 0 && redacoes.map((redacaosPerUser: any, index: number) => {
                             console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
                             return redacaosPerUser.redacoes.map((redacao: IRedacoes, index: number) => {
+                                const date = Moment(redacao.createdAt);
                                 return (
                                     <Link href={`/painel/corretor/correcao/${redacao._id}`} key={index} passHref>
                                         <div className="item" style={{cursor: 'pointer'}}>
-                                            <div className="data">05/05</div>
+                                            <div className="data">{ `${date.format("DD/MM")}` }</div>
                                             <div className="tema">{redacao.tema_redacao}</div>
                                             <div className="estudante">{redacaosPerUser.email}</div>
 

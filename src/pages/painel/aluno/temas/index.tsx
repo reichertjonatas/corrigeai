@@ -5,8 +5,36 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { withAuthSession } from '../../../../utils/helpers'
 import Seo from '../../../../components/layout/Seo'
+import { useTemaStore } from '../../../../hooks/temaStore'
+import { ITemas } from '../../../../models/tema'
+import { debugPrint } from '../../../../utils/debugPrint'
+import Viewer, { Worker } from '@phuocng/react-pdf-viewer'
+import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css'
+import shallow from 'zustand/shallow'
+
 
 function Temas() {
+
+    const [
+        temas, currentTema, getAllTemas, setCurrentTema, 
+        numPages, setNumPages,
+        pageNumber, setPagerNumber
+    ] = useTemaStore( state => [
+        state.temas, state.currentTema, state.getAllTemas, state.setCurrentTema,
+        state.numPages, state.setNumPages,
+        state.pageNumber, state.setPagerNumber,
+    ], shallow)
+
+    useEffect(() => {
+        getAllTemas()
+        debugPrint("useEffect")
+    }, [getAllTemas])
+
+
+    function onDocumentLoadSuccess({ numPages } : any) {
+        setNumPages(numPages);
+    }
+
     return (
         <MainLayout>
             <Seo title="Temas" />
@@ -26,7 +54,7 @@ function Temas() {
                     <Link href="/" passHref>
                         <a className="box">
                             <span className="icon">
-                            <Image src={TemaCorrigeAi} className="img-responsive" alt="" />
+                                <Image src={TemaCorrigeAi} className="img-responsive" alt="" />
                             </span>
                             <span className="texto">
                             Temas Corrige Aí
@@ -36,12 +64,14 @@ function Temas() {
                     </div>
 
                     <div className="box-tema">
-                        <h1>Democratização do acesso ao cinema no Brasil</h1>
-                        <div className="conteudo">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sollicitudin id lacus quis tristique. Morbi condimentum in libero ut rhoncus. Sed egestas tellus sit amet venenatis posuere. Cras vel mauris erat. Pellentesque sit amet augue pellentesque, malesuada neque rutrum, laoreet ligula. Aenean iaculis, ante eget faucibus efficitur, sem turpis eleifend orci, at convallis nisi arcu quis lacus. Praesent non dolor urna. Pellentesque rutrum augue turpis, et dictum elit varius ac. Sed turpis turpis, ultrices non leo eget, varius sagittis tellus. Mauris tincidunt dignissim tincidunt. Praesent faucibus a erat sed sodales. Etiam quis tincidunt nisl, in commodo lorem.<br /><br />
-
-                            Pellentesque vitae felis dolor. Mauris vitae est a est posuere suscipit. Fusce vel bibendum ante. Sed id risus tempus, porttitor nibh non, sagittis lacus. Morbi imperdiet sodales finibus. Vestibulum sed semper velit. Maecenas sodales a ligula in maximus.
-                        </div>
+                        {currentTema != null && <h1>{currentTema.tema}</h1>}
+                        {currentTema != null && <div className="conteudo">
+                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
+                                <div style={{ height: '750px' }}>
+                                    <Viewer fileUrl={`/upload/temas/${currentTema.content}`} />
+                                </div>
+                            </Worker>
+                        </div>}
                     </div>
 
                     <span className="botao">
@@ -54,17 +84,43 @@ function Temas() {
 
                 <div className="lista-temas">
                     <ul>
-                        <li>
-                            <Link href="/painel/aluno" passHref>
-                                <a>Democratização do acesso ao cinema no Brasil</a>
-                            </Link>
-                        </li>
+                        {temas.length > 0 && temas.map((temaRow:ITemas, index:number) => {
+                            return (
+                                <li key={index}>
+                                    <a className={currentTema != null ? temaRow._id == currentTema._id ? "activeTema" : "" : ""} onClick={() => setCurrentTema(temaRow) }>
+                                       {temaRow.tema}
+                                    </a>
+                                </li>
+                            )
+                        })}
                     </ul>
                 </div>
             </div>
             
             <style jsx>
                 {`
+                    .navegacao {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-top: 12px;
+                    }
+                    .btnNavegacao {
+                        background: var(--dark);
+                        color: white;
+                        padding: 12px;
+                        border-radius: 12px;
+                        cursor: pointer;
+                    }
+                    .btnNavegacao:hover { background: var(--green)}
+
+
+                    .paginas {
+                        background: white;
+                        padding: 12px;
+                        border-radius: 12px;
+                    }
+
+                    .react-pdf__Page__canvas { width: 100% }
                     .grid-temas{display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem}
                     .grid-temas .content{display: block; width: 100%;}
                     .grid-temas .content .head-box{display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin: 0 0 3.5rem}
@@ -86,6 +142,7 @@ function Temas() {
                     .grid-temas .lista-temas ul li{display: inline-block; width: 100%;}
                     .grid-temas .lista-temas ul li a{display: block; width: 100%; border-radius: 1rem; font-weight: 500; padding: 0.5rem 2rem; font-size: 0.9331rem; text-align: center; color: var(--dark); background: #cbcccc; margin: 0 0 1rem}
                     .grid-temas .lista-temas ul li a:hover{background: var(--dark); color: var(--gray20)}
+                    .grid-temas .lista-temas ul li .activeTema {background: var(--dark); color: var(--gray20)}
                     
                     @media(max-width: 1200px){
                       .grid-temas{grid-template-columns: 1fr}

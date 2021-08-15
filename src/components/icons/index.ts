@@ -38,8 +38,26 @@ import passo2_img from "../../../public/images/passo2_img.png"
 import passo3_discrepancia from "../../../public/images/passo3_discrepancia.png"
 import passo3_match from "../../../public/images/passo3_match.png"
 import check from "../../../public/images/check.png"
+import suas_correcoes from "../../../public/images/suas_correcoes.png"
+import calendar from "../../../public/images/calendar.png"
+import set_ballon from "../../../public/images/set-ballon.png"
+import set_ballon_right from "../../../public/images/set-ballon-right.png"
+import competencia from "../../../public/images/competencia.png"
+import grafico2 from "../../../public/images/grafico2.png"
+import circle_graf from "../../../public/images/circle-graf.png"
+import grafic2_side from "../../../public/images/grafic2-side.png"
+import graf3_side from "../../../public/images/graf3-side.png"
 
 export {
+    graf3_side,
+    grafic2_side,
+    circle_graf,
+    grafico2,
+    competencia,
+    set_ballon_right,
+    set_ballon,
+    calendar,
+    suas_correcoes,
     check,
     passo3_match,
     passo3_discrepancia,
