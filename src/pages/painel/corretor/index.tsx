@@ -23,7 +23,7 @@ function DashboardCorretor() {
                     <div className="data">Data</div>
                     <div className="tema">Tema</div>
                     <div className="estudante">Estudante</div>
-                    <div className="circle">Segunda Correção</div>
+                    {/* <div className="circle">Segunda Correção</div> */}
                     </div>
 
                     <div className="list-item">
@@ -38,9 +38,9 @@ function DashboardCorretor() {
                                             <div className="tema">{redacao.tema_redacao}</div>
                                             <div className="estudante">{redacaosPerUser.email}</div>
 
-                                            <div className="circle">
+                                            {/* <div className="circle">
                                                 <span className="ic" style={{"background": "#72b01e"}}>&nbsp;</span>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </Link>)});
                         })}

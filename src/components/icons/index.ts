@@ -47,8 +47,10 @@ import grafico2 from "../../../public/images/grafico2.png"
 import circle_graf from "../../../public/images/circle-graf.png"
 import grafic2_side from "../../../public/images/grafic2-side.png"
 import graf3_side from "../../../public/images/graf3-side.png"
+import IconRedacoes from "../../../public/images/icon-redacoes.png"
 
 export {
+    IconRedacoes,
     graf3_side,
     grafic2_side,
     circle_graf,

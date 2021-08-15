@@ -60,7 +60,7 @@ function MainLayout({ children, menuType = 1}: MainLayoutProps) {
                             closeOnDocumentClick
                         >
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <Link href="/painel/aluno/meu-perfil" passHref> 
+                                <Link href={`/painel/${menuType == 2 ? 'corretor' : 'aluno'}/meu-perfil`} passHref> 
                                     <span style={{ cursor: 'pointer' }}>Meu Perfil</span> 
                                 </Link>
                                 <hr style={{ opacity: 0.3}}/>

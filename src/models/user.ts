@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 export interface ISubscription {
     envios: number;
+    enviosAvulsos: number;
     subscriptionName: string;
     subscriptionType: number;
     subscriptionDate?: string | null;
@@ -63,6 +64,7 @@ export interface IRedacoes {
     in_review: number;
     correcoes: ICorrecoes[];
     tema_redacao: string;
+    type?: number;
     createdAt: string;
 }
 
@@ -135,6 +137,7 @@ const schema = new Schema<IUser>({
                 }
             ],
             tema_redacao: String,
+            type: { type: Number, default: 0 }, // 0 = a redação simples e 1 igual a redação 2 verificações
             createdAt: { type: Date, default: Date.now },
         }
     ],
@@ -151,6 +154,7 @@ const schema = new Schema<IUser>({
     ],
     subscription: {
         envios: { type: Number, default: 0 },
+        enviosAvulsos: { type: Number, default: 0 },
         subscriptionName: { type: String, default: 'Grátis' },
         subscriptionType: { type: Number, default: 0 },
         subscriptionDate: { type: Date, default: null },
