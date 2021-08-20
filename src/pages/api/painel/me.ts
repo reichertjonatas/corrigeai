@@ -18,15 +18,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 name: me.name,
                 image: me.image,
                 email: me.email,
-                subscription: me.subscription,
+                corretorType: me.corretorType,
+                subscription: {
+                  plano_id: me.subscription.plano_id,
+                  envios: me.subscription.envios,
+                  subscriptionName: me.subscription.subscriptionName,
+                  subscriptionType: me.subscription.subscriptionType,
+                  subscriptionDate: me.subscription.subscriptionDate,
+                  subscriptionExpr: me.subscription.subscriptionExpr,
+                },
                 redacoes: me.redacoes,
                 recompensas: me.recompensas,
                 userType: me.userType,
+                createdAt: me.createdAt,
             }})
         }else
             throw new Error("Usuário não encontrado!");
 
     } catch (error) {
+        if (res) {
+          res.writeHead(302, { // or 301
+            Location: '/painel/sair',
+          });
+          res.end();
+        }
+
         return res.status(500).send({error: true, errorMessage: error.message});
     }
   } else {
