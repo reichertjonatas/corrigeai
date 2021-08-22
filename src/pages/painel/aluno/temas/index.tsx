@@ -3,37 +3,47 @@ import { TemaCorrigeAi, TemaEnem } from '../../../../components/icons'
 import MainLayout from '../../../../components/layout/MainLayout'
 import Image from 'next/image'
 import Link from 'next/link'
-import { withAuthSession } from '../../../../utils/helpers'
 import Seo from '../../../../components/layout/Seo'
 import { useTemaStore } from '../../../../hooks/temaStore'
 import { ITemas } from '../../../../models/tema'
-import { debugPrint } from '../../../../utils/debugPrint'
 import Viewer, { Worker } from '@phuocng/react-pdf-viewer'
 import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css'
 import shallow from 'zustand/shallow'
+import { getSession } from 'next-auth/client'
+import PreLoader from '../../../../components/PreLoader'
+import Markdown, { compiler } from 'markdown-to-jsx';
 
+export async function getServerSideProps(ctx : any) {
+    const session = await getSession(ctx);
+  
+    if(!session) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar',
+            }
+        }
+    }
+  
+    return {
+        props: {
+          session: session,
+        }
+    }
+  }
 
-function Temas() {
-
+function Temas({ session } : any ) {
     const [
-        temas, currentTema, getAllTemas, setCurrentTema, 
-        numPages, setNumPages,
-        pageNumber, setPagerNumber
+        temas, currentTema, categoria, isLoading, getAllTemas, setCurrentTema, setCategoria
     ] = useTemaStore( state => [
-        state.temas, state.currentTema, state.getAllTemas, state.setCurrentTema,
-        state.numPages, state.setNumPages,
-        state.pageNumber, state.setPagerNumber,
+        state.temas, state.currentTema, state.categoria, state.isLoading, state.getAllTemas, state.setCurrentTema,
+        state.setCategoria
     ], shallow)
 
     useEffect(() => {
-        getAllTemas()
-        debugPrint("useEffect")
+        getAllTemas(session.jwt)
     }, [getAllTemas])
 
-
-    function onDocumentLoadSuccess({ numPages } : any) {
-        setNumPages(numPages);
-    }
 
     return (
         <MainLayout>
@@ -41,8 +51,8 @@ function Temas() {
             <div className={"grid-temas"}>
                 <div className="content">
                     <div className="head-box">
-                    <Link href="/" passHref>
-                        <a className="box">
+
+                        <a className="box" onClick={ () => setCategoria("enem", session.jwt)}>
                             <span className="icon">
                             <Image src={TemaEnem} className="img-responsive" alt="" />
                             </span>
@@ -50,27 +60,21 @@ function Temas() {
                                 Temas ENEM
                             </span>
                         </a>
-                    </Link>
-                    <Link href="/" passHref>
-                        <a className="box">
+
+                        <a className="box" onClick={ () => setCategoria("corrigeai", session.jwt)}>
                             <span className="icon">
                                 <Image src={TemaCorrigeAi} className="img-responsive" alt="" />
                             </span>
                             <span className="texto">
-                            Temas Corrige Aí
+                                Temas Corrige Aí
                             </span>
                         </a>
-                    </Link>
                     </div>
 
                     <div className="box-tema">
-                        {currentTema != null && <h1>{currentTema.tema}</h1>}
+                        {currentTema != null && <h1>{currentTema.titulo}</h1>}
                         {currentTema != null && <div className="conteudo">
-                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
-                                <div style={{ height: '750px' }}>
-                                    <Viewer fileUrl={`/upload/temas/${currentTema.content}`} />
-                                </div>
-                            </Worker>
+                           <Markdown>{ currentTema.content }</Markdown>
                         </div>}
                     </div>
 
@@ -78,23 +82,26 @@ function Temas() {
                         <Link href="/painel/aluno" passHref>
                             <a> Escolher esse tema</a>
                         </Link>
-                    </span>
+                    </span> 
                 </div>
 
 
                 <div className="lista-temas">
-                    <ul>
-                        {temas.length > 0 && temas.map((temaRow:ITemas, index:number) => {
+                    {isLoading ? 
+                        <PreLoader />
+                    : <ul>
+                        {temas != null && temas.length > 0 && temas.map((temaRow:any, index:number) => {
                             return (
                                 <li key={index}>
-                                    <a className={currentTema != null ? temaRow._id == currentTema._id ? "activeTema" : "" : ""} onClick={() => setCurrentTema(temaRow) }>
-                                       {temaRow.tema}
+                                    <a className={currentTema != null ? temaRow.id == currentTema.id ? "activeTema" : "" : ""} onClick={() => setCurrentTema(temaRow) }>
+                                       {temaRow.titulo}
                                     </a>
                                 </li>
                             )
                         })}
-                    </ul>
+                    </ul>}
                 </div>
+
             </div>
             
             <style jsx>
@@ -157,17 +164,5 @@ function Temas() {
         </MainLayout>
     )
 }
-
-
-
-export async function getServerSideProps(ctx: any) {
-    const session = await withAuthSession(ctx);
-    
-    if('redirect' in session) {
-        return session;
-    }
-      
-    return { props: {session: session} }
-  }
 
 export default Temas

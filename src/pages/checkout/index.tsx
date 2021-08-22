@@ -1,9 +1,130 @@
 import React from 'react'
 import Image from 'next/image'
 import { LogoLogin } from '../../components/icons'
+import { Controller, useForm } from 'react-hook-form';
+import { debugPrint } from '../../utils/debugPrint';
+import InputMask from 'react-input-mask'
+import { criarPlano } from '../../services/pagarme';
+import moment from 'moment';
+import { useEffect } from "react"
+import { toast } from 'react-toastify';
+import { API } from '../../services/api';
+import { signIn } from 'next-auth/client';
+import PreLoader from '../../components/PreLoader';
+import { ICheckoutPlano, PLANOS } from '../../utils/helpers';
 
+const useScript = (url: any) => {
+    useEffect(() => {
+        const script = document.createElement("script")
+
+        script.src = url
+        script.async = true
+
+        document.body.appendChild(script)
+
+        return () => {
+            document.body.removeChild(script)
+        }
+    }, [url])
+}
 
 function CheckoutPage() {
+    const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
+
+    const [onPayment, setOnPayment] = React.useState(false);
+    const [isLoaded, setIsLoaded] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+
+    const onSubmit = (data: any) => {
+        setTimeout(function () {
+            setOnPayment(true);
+        }, 800)
+        openCheckout(data)
+    }
+
+    useScript("https://assets.pagar.me/checkout/1.1.0/checkout.js")
+
+    const openCheckout = (data: any) => {
+        setTimeout(() => {
+            setIsLoading(true);
+        },800)
+        // @ts-ignore
+        let checkout = new PagarMeCheckout.Checkout({
+            encryption_key: "ek_test_t8JoT1B5Sc43OG8ztftTpf4P0QfJOX",
+            success: async (data: any) => {
+                if (data) {
+                    const response = await API.post('/pagamento/checkout/capturarPagamento', data);
+                    if (response.status === 200) {
+                        debugPrint(' =====> ', response.data.data)
+                        if (response.data.data.status == "paid" && response.data.data.payment_method == 'credit_card') {
+                            signIn('email', { 
+                                email: response.data.data.email, 
+                                callbackUrl: `${process.env.NEXT_PUBLIC_URL_REDIRECT_POS_LOGIN}`  
+                            })
+                            toast.success("Pagamento recebido com sucesso!")
+                        } else {
+                            setIsLoaded(true)
+                            setIsLoading(false)
+                        }
+                    }
+                } else {
+                    setOnPayment(false);
+                    setIsLoading(false)
+                }
+            },
+            error: (err: any) => {
+                alert(JSON.stringify(err));
+                setOnPayment(false);
+                setIsLoading(false)
+            },
+            close: () => {
+                toast.error("Pagamento cancelado!");
+                setOnPayment(false);
+                setIsLoading(false)
+            }
+        });
+
+        checkout.open({
+            buttonText: "Checkout",
+            amount: 8000,
+            createToken: 'false',
+            customerData: 'true',
+            maxInstallments: planoAtual!.parcela_number,
+            uiColor: "#72b01d",
+            payment_methods: "credit_card, boleto",
+            items: [
+                {
+                    id: '1',
+                    title: 'Bola de futebol',
+                    unit_price: 12000,
+                    quantity: 1,
+                    tangible: true
+                },
+                {
+                    id: 'a123',
+                    title: 'Caderno do Goku',
+                    unit_price: 3200,
+                    quantity: 3,
+                    tangible: true
+                }
+            ]
+        });
+    }
+
+    const [plano, setPlano] = React.useState<ICheckoutPlano>({ loaded: false, data: null })
+
+    React.useEffect(() => {
+        setPlano({
+            loaded: true, data: PLANOS(1395688)!
+        });
+        return () => {
+            setPlano({ loaded: false, data: null })
+        }
+    }, [])
+
+    if (!plano.loaded) return <h1></h1>
+    const { data: planoAtual } = plano
+
     return (
         <div>
             <div className="checkout">
@@ -12,55 +133,124 @@ function CheckoutPage() {
                     <span className="logo">
                         <Image src={LogoLogin} className="img-responsive" alt="" />
                     </span>
-                    <div className="caixa">
-                        <h2>Resumo da compra</h2>
-                        <div className="head">
-                            <div className="box_list">
-                                <span className="bold">Acesso Semestral</span>
-                                <span className="regular">6 meses de acesso à Plataforma Corrige Aí</span>
+                    {isLoading && <PreLoader />}
+                    {isLoaded && <>
+                        Aguardando pagamento do boleto!
+                    </>}
+
+
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        {!onPayment && <div className="caixa">
+                            <h2>Resumo da compra</h2>
+                            <div className="head">
+                                <div className="box_list">
+                                    <span className="bold">{planoAtual!.plano}</span>
+                                    <span className="regular">{planoAtual!.meses} de acesso à Plataforma Corrige Aí</span>
+                                </div>
+                                <div className="box_list">
+                                    <span className="bold">Total {planoAtual!.total}</span>
+                                    <span className="regular">Em até {planoAtual!.parcelamento} no cartão de crédito</span>
+                                </div>
                             </div>
-                            <div className="box_list">
-                                <span className="bold">Total R$ 227,40</span>
-                                <span className="regular">Em até 6x no cartão de crédito</span>
-                            </div>
-                        </div>
-                        <h2>Dados do Aluno</h2>
+                            {/* <h2>Dados do Aluno</h2>
                         <span className="form">
-                            <form action="#">
-                                <span className="grid">
-                                    <span className="input">
-                                        <label htmlFor={"nome"}>Nome</label>
-                                        <input type="text" />
-                                    </span>
-                                    <span className="input">
-                                        <label htmlFor="sobrenome">Sobrenome</label>
-                                        <input type="text" />
-                                    </span>
-                                </span>
-                                <label htmlFor="email">E-mail</label>
-                                <input type="email" />
-
-                                <label htmlFor="password">Senha</label>
-                                <input type="password" />
-
-                                <label htmlFor="cpf">CPF</label>
-                                <input type="text" />
 
                                 <span className="grid">
                                     <span className="input">
-                                        <label htmlFor="telefone">Telefone</label>
-                                        <input type="tel" />
+                                        <label htmlFor="nome" className={`${(errors.nome) ? 'errorLabel' : ''}`}>Nome</label>
+                                        <input type="text" {...register("nome", { required: true, maxLength: 255 })} className={`${(errors.nome) ? 'errorInput' : ''}`} />
                                     </span>
                                     <span className="input">
-                                        <label htmlFor="nascimento">Data de Nascimento</label>
-                                        <input type="text" />
+                                        <label htmlFor="sobrenome" className={`${(errors.sobrenome) ? 'errorLabel' : ''}`}>Sobrenome</label>
+                                        <input type="text" {...register("sobrenome", { required: true, maxLength: 255 })} className={`${(errors.sobrenome) ? 'errorInput' : ''}`} />
                                     </span>
                                 </span>
-                            </form>
-                        </span>
-                    </div>
 
-                    <div className="caixa">
+                                <br />
+
+                                <label htmlFor="email" className={`${(errors.email) ? 'errorLabel' : ''}`}>E-mail</label>
+                                <input type="email" {...register("email", { required: true, maxLength: 255, pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ })} className={`${(errors.email) ? 'errorInput' : ''}`} /> */}
+
+                            {/* <label htmlFor="cpf" className={`${(errors.cpf) ? 'errorLabel' : ''}`}>CPF</label>
+                                <Controller
+                                    name="cpf"
+                                    control={control}
+                                    defaultValue={false}
+                                    rules={{ required: true, pattern: /^(\d{3}\.){2}\d{3}\-\d{2}$/ }}
+                                    render={({ field: { onChange, value } }) => {
+                                        return (
+                                            <InputMask mask="999.999.999-99" value={value} onChange={onChange}>
+                                                {(inputProps: any) => (
+                                                    <input {...inputProps}
+
+                                                        className={`${(errors.cpf) ? 'errorInput' : ''}`} />
+                                                )}
+                                            </InputMask>
+                                        )
+                                    }}
+                                /> */}
+                            {/* <span className="grid">
+                                    <span className="input">
+                                        <label htmlFor="telefone" className={`${(errors.telefone) ? 'errorLabel' : ''}`}>Telefone</label>
+                                        <Controller
+                                            name="telefone"
+                                            control={control}
+                                            defaultValue={false}
+                                            rules={{ required: true }}
+                                            render={({ field: { onChange, value } }) => {
+                                                return (
+                                                    <InputMask mask="\(\099\) 99999-9999" value={value} onChange={onChange}>
+                                                        {(inputProps: any) => (
+                                                            <input {...inputProps}
+
+                                                                className={`${(errors.telefone) ? 'errorInput' : ''}`} />
+                                                        )}
+                                                    </InputMask>
+                                                )
+                                            }}
+                                        />
+                                        {/* <input type="tel" {...register("telefone", { required: true })} className={`${(errors.telefone) ? 'errorInput' : ''}`} /> *
+                                    </span>
+                                    <span className="input">
+                                        <label htmlFor="nascimento" className={`${(errors.nascimento) ? 'errorLabel' : ''}`}>Data de Nascimento</label>
+                                        <Controller
+                                            name="nascimento"
+                                            control={control}
+                                            defaultValue={false}
+                                            rules={{ required: true, pattern: /^(\d{2}\/){2}\d{4}$/ }}
+                                            render={({ field: { onChange, value } }) => {
+                                                return (
+                                                    <InputMask mask="99/99/9999" value={value} onChange={onChange}>
+                                                        {(inputProps: any) => (
+                                                            <input {...inputProps}
+
+                                                                className={`${(errors.nascimento) ? 'errorInput' : ''}`} />
+                                                        )}
+                                                    </InputMask>
+                                                )
+                                            }}
+                                        />
+                                        {/* <input type="text" {...register("nascimento", { required: true })} className={`${(errors.nascimento) ? 'errorInput' : ''}`} /> 
+                                    </span>
+                                </span> */}
+                            {/* 
+                        </span> */}
+                        </div>}
+
+
+                        {!onPayment && <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                            <span className="check" style={{ maxWidth: '60%' }}>
+                                <input type="checkbox" className="custom-control-input" {...register("termos", { required: true })} id="customCheck1" />
+                                <label htmlFor="customCheck1" className={`custom-control-label ${(errors.termos) ? 'errorTerms' : ''}`}> Li e concordo com os Termos de Uso. </label>
+                            </span>
+                            <span className="botaofinalizar" style={{ maxWidth: '60%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }} >
+                                <button type="submit" onClick={handleSubmit(onSubmit)} style={{ padding: 12 }}>Finalizar pagamento</button>
+                            </span>
+                        </div>}
+
+                    </form>
+
+                    {/* <div className="caixa">
                         <h2>Forma de Pagamento</h2>
 
                         <div className="wrapper">
@@ -169,32 +359,23 @@ function CheckoutPage() {
                                 </span>
                             </span>
                         </span>
-                    </div>
+                    </div> */}
 
 
-                    <div className="boleto hide_payment">
+                    {/* <div className="boleto hide_payment">
                         <span className="text">O boleto bancário poderá ser pago em qualquer banco, lotéricas ou conveniadas, até a data do seu vencimento.</span>
                         <div className="box_boleto">
                             Ao clicar em Realizar Pagamento você poderá baixar o PDF do boleto ou fazer sua impressão. O banco pode levar até 3 dias úteis para confirmar pagamentos realizados por boleto. Assim que o pagamento for confirmado, você receberá um e-mail e poderá acessar a Plataforma.
                         </div>
-                    </div>
+                    </div> */}
                 </div>
-
-
-                <span className="check">
-                    <input type="checkbox" className="custom-control-input" name="terms" id="customCheck1" />
-                    <label className="custom-control-label" htmlFor="customCheck1"> Li e concordo com os Termos de Uso. </label>
-                </span>
-                <span className="botaofinalizar">
-                    <a href="#">Finalizar pagamento</a>
-                </span>
             </div>
             <style jsx>
                 {
                     `
                     body{background: #edeeee !important;}
 
-                    .checkout{display: flex; width: 100%; min-height: 100vh; align-items: center; justify-content: center; }
+                    .checkout{display: block; width: 100%; min-height: 100vh; align-items: center; justify-content: center; }
                     .checkout .box{display: block; width: 100%; max-width: 600px; margin: 0 auto;}
                     .checkout .box h1{display: block; width: 100%; font-size: 1.53rem; text-align: center; margin: 2rem 0; color: var(--dark)}
                     .checkout .box .logo{display: block; width: 100%; text-align: center; margin: 0 0 2rem}
@@ -216,8 +397,8 @@ function CheckoutPage() {
                     .hide_payment{display: none}
 
                     .botaofinalizar{display: block; width: 100%; margin: 0 0 4rem;}
-                    .botaofinalizar a{display: flex;border-radius: 0.5rem; max-width: 200px; align-items: center; justify-content: center; height: 40px; background: var(--green); color: var(--white);}
-                    .botaofinalizar a:hover{background: var(--dark)}
+                    .botaofinalizar button{cursor: pointer; border:none;  display: flex;border-radius: 0.5rem; max-width: 200px; align-items: center; justify-content: center; height: 40px; background: var(--green); color: var(--white);}
+                    .botaofinalizar button:hover{cursor: pointer; border:none; background: var(--dark)}
 
                     .check{display: block; width: 100%; margin: 1rem 0}
 
@@ -244,7 +425,7 @@ function CheckoutPage() {
                     transition: all 0.3s ease;
                     }
                     .wrapper .option:last-child{
-                    margin: 0
+                        margin: 0
                     }
                     .wrapper .option .dot{
                     height: 20px;

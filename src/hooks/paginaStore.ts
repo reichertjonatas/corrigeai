@@ -22,6 +22,8 @@ interface IPaginaStore {
 
     setPageNull: () => void;
 
+    getAllPages: () => void;
+
 }
 
 const paginaStore = create<IPaginaStore>((set, get) => ({
@@ -64,6 +66,13 @@ const paginaStore = create<IPaginaStore>((set, get) => ({
 
     setPageNull: () => {
         set(() => ({ pagina: null }))
+    },
+
+    getAllPages: async () => {
+        const response = await API.get('/painel/caed?faq=true')
+        if(response.status === 200){
+            set({ paginas: response.data.data })
+        }
     }
 }))
 

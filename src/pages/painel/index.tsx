@@ -3,25 +3,36 @@ import { getSession, useSession } from 'next-auth/client'
 import { useRouter } from 'next/dist/client/router'
 import React from 'react'
 import LayoutCarregando from '../../components/layout/LayoutCarregando'
+import PreLoader from '../../components/PreLoader'
+import { API } from '../../services/api'
 import { authRequired } from '../../utils/helpers'
 
 function Painel() {
-    return <LayoutCarregando />
+    const router = useRouter();
+    const [session, loading] = useSession()
+
+    const initData = async () => {
+        // @ts-ignore
+        switch (session?.role?.type) {
+            case "corretor":
+                router.replace('/painel/corretor');
+                break;
+            default:
+                router.replace('/painel/aluno');
+                break;
+        }
+    }
+
+    if (!loading) {
+        if (session) {
+            initData();
+        } else {
+            router.push('/painel/entrar');
+        }
+    }
+
+
+    return <PreLoader />
 }
 
-export async function getServerSideProps(ctx: any) {
-    const session = await authRequired(ctx, true);
-
-    if('redirect' in session){
-        return session;
-    }
-    
-    console.log('getServerSideProps called index.tsx', session.user)
-
-    return {
-        props: {
-            user: session.user,
-        },
-    }
-}
 export default Painel

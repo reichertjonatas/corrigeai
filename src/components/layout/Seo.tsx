@@ -14,7 +14,7 @@ export default function Seo({ title, description } : SeoProps ) {
                 { title  ?? 'Corrige Ai - Slogan aqui...'}
             </title>
             <meta name="description" content={ description ?? "Corrige Ai description"} />
-            <meta name="author" content="InoveWeb.pt | Kellvem Barbosa & Pedro Mamare" />
+            <meta name="author" content="InoveWeb.pt | Kellvem Barbosa e Pedro Mamare" />
             <link rel="icon" href="/favicon.ico" />
         </Head>
     )

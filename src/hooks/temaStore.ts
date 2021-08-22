@@ -1,52 +1,36 @@
 import create from "zustand";
-import { ITemas } from "../models/tema";
-import { API } from "../services/api";
-import { debugPrint } from "../utils/debugPrint";
+import { queryTemas } from "../graphql/query";
+import { strapi } from "../services/strapi";
 
 
 interface ITemasStore {
-    temas: ITemas[];
-    currentTema: ITemas | null;
-    getAllTemas: () => void;
-    setCurrentTema: (currentTemaNovo: ITemas) => void;
-
-
-    numPages: number | null;
-    setNumPages: (numPages:number) => void;
-    pageNumber: number; 
-    setPagerNumber: (pageNumber:number) => void;
+    temas: any[];
+    currentTema: any | null;
+    categoria: string;
+    isLoading: boolean;
+    getAllTemas: (token: string | undefined | unknown) => void;
+    setCurrentTema: (currentTemaNovo: any) => void;
+    setCategoria: (categoria: string,token: string | undefined | unknown) => void;
 }
 
 const temaStore = create<ITemasStore>((set, get) => ({
     temas: [],
     currentTema: null,
-    getAllTemas: async () => {
-        API.post('/painel/tema/getAll').then((response) => {
-            if (response.status === 200) {
-                const temas = response.data.data as ITemas[];
-
-                if(get().currentTema == null) {
-                    set({ currentTema: temas[0], temas: temas})
-                    return;
-                }
-
-                set({temas: temas});
-            }
-        })
+    categoria: 'corrigeai',
+    isLoading: true,
+    getAllTemas: async (token: string | undefined | unknown) => {
+        const temas = await strapi(token).graphql({ query: queryTemas(get().categoria) });
+        set({ temas: (temas as any[])?.length > 0 ? temas as any[] : [], currentTema: (temas as any)[0], isLoading: false });
     },
 
-    setCurrentTema: (currentTemaNovo: ITemas) => {
-        set({currentTema: currentTemaNovo})
+    setCurrentTema: (currentTemaNovo: any) => {
+        set({ currentTema: currentTemaNovo })
     },
 
-    numPages: null,
-    setNumPages: (numPages:number) => {
-        set({numPages: numPages})
-    },
-
-    pageNumber: 1,
-    setPagerNumber: (pageNumber:number) => {
-        set({pageNumber: pageNumber})
+    setCategoria: async (categoria: string, token: string | undefined | unknown) => {
+        set({ isLoading: true })
+        const temas = await strapi(token).graphql({ query: queryTemas(categoria) });
+        set({ categoria: categoria, temas: temas as any[], currentTema: (temas as any)[0], isLoading: false })
     }
 }))
 

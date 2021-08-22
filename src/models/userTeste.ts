@@ -1,7 +1,30 @@
 import mongoose, { Schema } from 'mongoose';
 
+var aggregatePaginate = require("mongoose-aggregate-paginate-v2");
+
+
+export interface ITransacoes {
+    metodo_pagamento: number;
+    plano: number;
+    status: number; 
+    data: any;
+    createdAt: string;
+    updatedAt: string;
+}
+
+
+export interface IInformacoes {
+    endereco: any;
+    telefone: any;
+    cpf: string;
+    nascimento: string;
+}
+
 export interface ISubscription {
+    card_hash?: string;
     envios: number;
+    plano_id: number;
+    data: any;
     enviosAvulsos: number;
     subscriptionName: string;
     subscriptionType: number;
@@ -59,11 +82,13 @@ export interface ICorrecoes {
 
 export interface IRedacoes {
     _id: string;
-    redacao: string;
+    redacao: {
+        url : string;
+    }
     nota_final: number;
-    in_review: number;
+    in_review: boolean;
     correcoes: ICorrecoes[];
-    tema_redacao: string;
+    tema: {title: string};
     type?: number;
     createdAt: string;
 }
@@ -82,6 +107,9 @@ export interface IUser {
     redacoes: IRedacoes[]
     eventos: ICalenderEvents[]
     subscription: ISubscription
+    informacoes: IInformacoes
+    transacoes: ITransacoes[]
+    createdAt: string;
 }
 
 export interface IRecompensa {
@@ -101,7 +129,7 @@ const schema = new Schema<IUser>({
     name: { type: String, default: '' },
     image: { type: String, default: null },
     emailVerified: { type: Date, default: null },
-    userType: { type: Number, default: 0 },
+    userType: { type: Number, default: 1 },
     corretorType: { type: Number, default: 1 },
     nivel: { type: Number, default: 1 },
     recompensas: { type: Array, default: [] },
@@ -153,14 +181,36 @@ const schema = new Schema<IUser>({
         }
     ],
     subscription: {
+        card_hash: { type: String, default: null },
         envios: { type: Number, default: 0 },
+        plano_id: { type: Number, default: 0 },
+        data: [Schema.Types.Mixed],
         enviosAvulsos: { type: Number, default: 0 },
         subscriptionName: { type: String, default: 'Grátis' },
         subscriptionType: { type: Number, default: 0 },
         subscriptionDate: { type: Date, default: null },
         subscriptionExpr: { type: Date, default: null }
-    }
+    },
+    informacoes: {
+        endereco: [Schema.Types.Mixed],
+        telefone: [Schema.Types.Mixed],
+        cpf: { type: String, default: '' },
+        nascimento: { type: String, default: '' }
+    },
+    transacoes: [
+        {
+            metodo_pagamento: { type: String, default: 9 },
+            plano: { type: String, default: 0 },
+            status: { type: String, default: 0 }, 
+            data: [Schema.Types.Mixed],
+            createdAt: { type: Date, default: Date.now },
+            updatedAt: { type: Date, default: Date.now },
+        }
+    ]
 });
+
+
+schema.plugin(aggregatePaginate);
 
 schema.set('timestamps', true);
 

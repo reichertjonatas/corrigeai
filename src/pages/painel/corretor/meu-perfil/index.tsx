@@ -16,7 +16,7 @@ function MeuPerfil() {
     }
 
     return (
-        <MainLayout menuType={2} userType={2}>
+        <MainLayout menuType={2} role="corretor">
             <Seo title="Editar perfil" />
             <div className="gridPlanejamento">
                 <div className="content">

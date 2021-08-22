@@ -1,5 +1,5 @@
 import create from "zustand";
-import { ICompetencias, IObsEnem, IRedacoes } from "../models/user";
+import { ICompetencias, ICorrecoes, IObsEnem, IRedacoes } from "../models/userTeste";
 import { API } from "../services/api";
 // @ts-ignore
 import Annotation from 'react-image-annotation'
@@ -7,8 +7,11 @@ import {
     RectangleSelector,
     // @ts-ignore
 } from 'react-image-annotation/lib/selectors'
-import { initialCompetencias, IObsEnemFilter, obs_enem } from "../utils/helpers";
+import { corretor_type, initialCompetencias, IObsEnemFilter, obs_enem } from "../utils/helpers";
 import { debugPrint } from "../utils/debugPrint";
+import { session } from "next-auth/client";
+import { strapi } from "../services/strapi";
+import { redacaoParaCorrigir } from "../graphql/query";
 
 export interface ICorrecoesCorretor{
     _id: string;
@@ -17,7 +20,8 @@ export interface ICorrecoesCorretor{
 }
 
 const corretorStore = create<{
-    redacao: IRedacoes | null,
+    redacoes: any[],
+    redacao: any | null,
     annotations: any[],
     annotation: any,
     type: any,
@@ -27,7 +31,13 @@ const corretorStore = create<{
 
     minhasCorrecoes: ICorrecoesCorretor[],
 
-    initData: (id: string) => void,
+    correcao: ICorrecoes | null,
+
+    setRedacoes: (redacoes: any[]) => void,
+
+    updateRedacoes: (role: string, token: string | undefined | unknown) => void;
+
+    setRedacao: (redacao: any) => void,
     setAnnotations: (annotations: any[]) => void,
     setAnnotation: (annotation: any) => void,
     setType: (type: any) => void,
@@ -36,15 +46,21 @@ const corretorStore = create<{
     setNota: (nota: number, index: number) => void,
     setObs: (obs: string, index: number) => void,
 
-    salvarCorrecao: (id: string) => Promise<{ error: boolean, message: string}>,
+    salvarCorrecao: (idRedacao:string, session: any | undefined | unknown ) => Promise<{ error: boolean, message: string}>,
 
     setCorrecaoNull: () => void,
 
     getMinhasCorrecoes: () => void,
     setNullCorrecoes: () => void,
+    setNullRedacoes: () => void,
+    setNullFrontEnd: () => void,
+    setCorrecaoFrontEnd: (correcao: ICorrecoes ) => void,
 
+    setCompetenciaOffline: (competenciasOffline: ICompetencias[]) => void,
 
+    corretorId: string,
 }>((set, get) => ({
+    redacoes: [],
     redacao: null,
     annotations: [],
     annotation: {},
@@ -53,13 +69,20 @@ const corretorStore = create<{
     competencia: 1,
     competenciasOffline: initialCompetencias,
     minhasCorrecoes: [],
-    initData: async (id: string) => {
-        API.post('/painel/redacao/readCorretor', { _id: id }).then(response => {
-            if (response.status === 200) {
-                set({ redacao: response.data.data as IRedacoes });
-                console.log('initData redacao', response.data.data)
-            }
-        })
+    correcao: null,
+
+    setRedacoes: (redacoes: any[]) => {
+        set({ redacoes: redacoes?.length >= 0 ? redacoes : [] });
+    },
+
+
+    updateRedacoes: async (role: string, token: string | undefined | unknown) => {
+        const redacoes:any = await strapi(token).graphql({ query: redacaoParaCorrigir(corretor_type(role))})
+        set({ redacoes: redacoes?.length >= 0 ? redacoes : [] });
+    },
+
+    setRedacao: async (redacao: any) => {
+        set({ redacao: redacao });
     },
 
     setAnnotations: (annotations) => set({ annotations: annotations }),
@@ -71,7 +94,7 @@ const corretorStore = create<{
         competenciasOffline: state.competenciasOffline.map((item: ICompetencias, indexMap: number) => {
             const filterObsEnem: IObsEnemFilter[] = obs_enem[index].filter(item => item.nota === nota);
 
-            console.log('filterObsEnem ====>', filterObsEnem, ' nota ====> ', nota, ' index ====> ', index);
+            console.log(filterObsEnem[0], 'filterObsEnem ====>', filterObsEnem, ' nota ====> ', nota, ' index ====> ', index);
 
             return (indexMap === index ?
                 // item.nota == nota ?
@@ -82,6 +105,7 @@ const corretorStore = create<{
                 item);
         })
     })),
+
     setObs: (message: string, index: number) => set((state) => set({
         competenciasOffline: state.competenciasOffline.map((item: ICompetencias, indexMap: number) => {
             debugPrint(" ====> corretorStore ", message, " index ==>", index === indexMap)
@@ -92,21 +116,79 @@ const corretorStore = create<{
         })
     })),
 
-    salvarCorrecao: async (id: string) => {
-        const response = await API.post('/painel/redacao/updateCorretor', {
-            _id: id,
-            correcao: {
-                competencias: get().competenciasOffline,
+    salvarCorrecao: async (idRedacao:string, session: any | undefined | unknown) => {
+        // const response = await API.post('/painel/redacao/updateCorretor', {
+        //     _id: id,
+        //     correcao: {
+        //         competencias: get().competenciasOffline,
+        //         marcacoes: get().annotations,
+        //     }
+        // }); 
+        
+        // debugPrint(' ====> ', response.status ,' response.data ==> ', response.data.error, ' ==> ', response.status)
+        // if (response.status === 200){ 
+        //     if(response.data.error == false){
+        //         get().setNullCorrecoes();
+        //         return { error: false, message: 'Correção enviada com sucesso!'}
+        //     }
+        // }
+        try {
+
+
+            console.log("idRedacao", idRedacao)
+
+            const novaCorrecao:any = await strapi((session as any).jwt).create('correcaos', {
                 marcacoes: get().annotations,
+                competencias: get().competenciasOffline,
+                corretor: (session as any).id,
+            });
+            console.log("novaCorrecao", novaCorrecao)
+            if(!novaCorrecao?.id) throw new Error("Erro ao salvar correção.")
+
+
+            const redacao:any = await strapi((session as any).jwt).findOne('redacaos', idRedacao)
+            console.log("redacao ====> above", redacao)
+            if(!redacao?.id) throw new Error("A redação não foi encontrada no sistema para salvar a correção.")
+
+            console.log("redacao ====> before ", redacao)
+
+            const correcoes: any[] = redacao.correcaos;
+            console.log("salvarCorrecao: ===> ", correcoes)
+            correcoes.push(novaCorrecao.id);
+            console.log("salvarCorrecao: ===> ", correcoes)
+
+
+            let novoStatus 
+            if(redacao.status_correcao){
+                switch (redacao.status_correcao) {
+                    case "correcao_um":
+                            novoStatus = "correcao_dois"
+                        break;
+                    
+                    case "correcao_dois":
+                            var descrepancia = false
+                            console.log("aqui vai calc descrepancia");
+                            novoStatus = descrepancia ? "descrepancia" : "finalizada"
+                        break;
+                }
             }
-        }); 
-        
-        debugPrint(' ====> ', response.status ,' response.data ==> ', response.data.error, ' ==> ', response.status)
-        if (response.status === 200){ 
-            if(response.data.error == false)
-                return { error: false, message: 'Correção enviada com sucesso!'}
+
+            console.log("before switch")
+
+            const updated:any = await strapi((session as any).jwt).update('redacaos', idRedacao, {
+                status_correcao: novoStatus,
+                correcaos: correcoes
+            })
+
+            if(!updated?.id) throw new Error("Correção não foi salva!")
+            
+            get().updateRedacoes((session as any).role.type, (session as any).jwt);
+
+            return { error: false, message: "Correção salva com sucesso!" }
+
+        } catch (error) {
+            return { error: true, message: error.message }
         }
-        
         return { error: true, message: 'Erro ao salvar sua correção!'}
     },
 
@@ -118,7 +200,35 @@ const corretorStore = create<{
             set({ minhasCorrecoes: response.data.data as ICorrecoesCorretor[]});
         }
     },
-    setNullCorrecoes: () => set({ minhasCorrecoes: [] }),
+    
+    setCompetenciaOffline: (competenciasOffline: ICompetencias[]) => { 
+        set({competenciasOffline: competenciasOffline})
+    },
+    setNullRedacoes: () => {
+        set({ redacoes: []});
+    },
+    setNullCorrecoes: () => set({ 
+        redacao: null,
+        annotations: [],
+        annotation: {},
+        type: RectangleSelector.TYPE,
+        editorType: 1,
+        competencia: 1,
+        competenciasOffline: initialCompetencias,
+        minhasCorrecoes: []
+    }),
+    setNullFrontEnd: () => set({ 
+        redacao: null,
+        annotations: [],
+        annotation: {},
+        type: RectangleSelector.TYPE,
+        editorType: 1,
+        competencia: 1,
+        competenciasOffline: initialCompetencias,
+        minhasCorrecoes: []
+    }),
+    setCorrecaoFrontEnd: (correcao: ICorrecoes ) => set({ correcao: correcao }),
+    corretorId: '',
 }));
 
 export const useCorretorStore = corretorStore;

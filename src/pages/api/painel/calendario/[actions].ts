@@ -1,7 +1,7 @@
 import { CallbackError } from 'mongoose'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import User, { ICalenderEvents } from '../../../../models/user'
+import User, { ICalenderEvents } from '../../../../models/userTeste'
 import dbConnect from '../../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../../constants'
 

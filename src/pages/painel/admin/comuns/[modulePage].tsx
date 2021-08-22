@@ -37,7 +37,7 @@ function IndexFaq() {
     }
     
     return (
-        <MainLayout menuType={3}>
+        <MainLayout menuType={3} userType={3}>
             <Seo title="FAQ´s" />
             {moduleName.length > 0 && <div className="gridPlanejamento">
                 <div className="content">

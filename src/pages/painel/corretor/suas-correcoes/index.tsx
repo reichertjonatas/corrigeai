@@ -4,24 +4,48 @@ import Seo from '../../../../components/layout/Seo'
 import { useCorretorStore } from '../../../../hooks/corretorStore'
 import shallow from 'zustand/shallow'
 import Link from 'next/link'
-import { IRedacoes } from '../../../../models/user'
 import Moment from 'moment';
+import { getSession } from 'next-auth/client'
+import { strapi } from '../../../../services/strapi'
+import { minhasRedacoes } from '../../../../graphql/query'
+import { corretor_type } from '../../../../utils/helpers'
 
 
-function SuasCorretocoes() {
-    const [minhasCorrecoes, getMinhasCorrecoes, setNullCorrecoes] = useCorretorStore(state => [
-        state.minhasCorrecoes,
-        state.getMinhasCorrecoes,
-        state.setNullCorrecoes
-    ], shallow)
+export async function getServerSideProps(ctx: any) {
+    const session = await getSession(ctx);
 
-    React.useEffect(() => {
-        getMinhasCorrecoes()
-        return setNullCorrecoes();
-    }, [getMinhasCorrecoes])
+    if (!session)
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar'
+            }
+        }
+
+    const redacoes = await strapi(session.jwt).graphql({ query: minhasRedacoes(session.id) })
+
+    return {
+        props: {
+            session: session,
+            minhasCorrecoes: redacoes,
+        }
+    }
+}
+
+function SuasCorretocoes({ session, minhasCorrecoes} : any) {
+    // const [minhasCorrecoes, getMinhasCorrecoes, setNullCorrecoes] = useCorretorStore(state => [
+    //     state.minhasCorrecoes,
+    //     state.getMinhasCorrecoes,
+    //     state.setNullCorrecoes
+    // ], shallow)
+
+    // React.useEffect(() => {
+    //     getMinhasCorrecoes()
+    //     return setNullCorrecoes();
+    // }, [getMinhasCorrecoes])
 
     return (
-        <MainLayout menuType={2}>
+        <MainLayout menuType={2} role="corretor">
             <Seo title="Suas correções" />
 
             <div className="redacoes-box">
@@ -35,19 +59,19 @@ function SuasCorretocoes() {
 
 
                     <div className="list-item">
-                        {minhasCorrecoes.length > 0 && minhasCorrecoes.map((redacaosPerUser: any, index: number) => {
-                            console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
-                            return redacaosPerUser.redacoes.map((redacao: IRedacoes, index: number) => {
+                        {minhasCorrecoes != null && minhasCorrecoes?.length > 0 && minhasCorrecoes.map((redacao: any, index: number) => {
+                            console.log('redacaosPerUser.redacoes', redacao);
+                            // return redacaosPerUser.redacoes.map((redacao: IRedacoes, index: number) => {
                                 const date = Moment(redacao.createdAt);
                                 return (
                                     <a key={index}>
                                         <div className="item">
                                             <div className="data">{ `${date.format("DD/MM")}` }</div>
-                                            <div className="tema">{redacao.tema_redacao}</div>
-                                            <div className="estudante">{redacaosPerUser.email}</div>
+                                            <div className="tema">{redacao.tema.titulo}</div>
+                                            <div className="estudante">{redacao.user.email}</div>
                                         </div>
                                     </a>)
-                            });
+                            // });
                         })}
                     </div>
 

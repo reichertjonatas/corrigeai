@@ -3,9 +3,64 @@ import React from 'react'
 import MainLayout from '../../../../components/layout/MainLayout'
 import Seo from '../../../../components/layout/Seo'
 import Image from 'next/image'
-import { calendar, set_ballon_right, set_ballon } from '../../../../components/icons'
+import { calendar } from '../../../../components/icons'
+import { useEnviosStore } from '../../../../hooks/enviosStore'
+import Moment from 'moment'
+import { mediaGeral } from '../../../../utils/helpers'
+import shallow from 'zustand/shallow'
+import { getSession } from 'next-auth/client'
+import { strapi } from '../../../../services/strapi'
+import { redacaoPerUserSortDate } from '../../../../graphql/query'
 
-function SeusEnvios() {
+export async function getServerSideProps(ctx : any) {
+    const session = await getSession(ctx);
+
+    if(!session) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar',
+            }
+        }
+    }
+
+    const redacoes = await strapi(session.jwt).graphql({
+        query: redacaoPerUserSortDate(session.id)
+    })
+
+    return {
+        props: {
+          session: session,
+          redacoes
+        }
+    }
+}
+
+function SeusEnvios( { redacoes  } : any) {
+
+    const [
+        envios,
+        getLastsRedacoes,
+        setNullRedacoes,
+        setNullCurrentRedacao,
+    ] = useEnviosStore(state => [
+        state.envios,
+        state.getLastsRedacoes,
+        state.setNullRedacoes,
+        state.setNullCurrentRedacao
+    ], shallow)
+
+    React.useEffect(() => {
+        getLastsRedacoes(redacoes?.length ? redacoes : []);
+        return () => {
+            setNullRedacoes()
+            setNullCurrentRedacao()
+        }
+    }, []);
+
+
+    const thisMediaGeral = mediaGeral(envios);
+
     return (
         <MainLayout>
             <Seo title="Seus envios" />
@@ -24,92 +79,41 @@ function SeusEnvios() {
                     </div>
 
                     <div className="content">
-                        <div className="list-item">
-                            <div className="item">
-                                <div className="data">05/05</div>
-                                <div className="tema">Democratização do acesso ao cinema no Brasil</div>
-                                <div className="nota">780</div>
-                            </div>
-                        </div>
 
-                        <div className="list-item">
+                        {envios?.length > 0 && envios.slice(0, 10).map((envio, index) => {
+                            return (
+                                <div className="list-item" key={index}>
+                                    <Link href={`/painel/aluno/seus-envios/redacao/${envio._id}`} passHref>
 
-                            <div className="ballon-left">
-                                <div className="conteudo-ballon">
-                                    <span className="text">1 mês depois</span>
-                                    <span className="icon">
-                                        <Image src={set_ballon} className="img-responsive" alt="" />
-                                        </span>
-                                </div>
-                            </div>
+                                        {/* {index % 4 == 0 && <div className="ballon-left">
+                                            <div className="conteudo-ballon">
+                                                <span className="text">{index + 1} mês depois</span>
+                                                <span className="icon">
+                                                    <Image src={set_ballon} className="img-responsive" alt="" />
+                                                </span>
+                                            </div>
+                                        </div>} */}
 
-                            <div className="item">
-                                <div className="data">05/05</div>
-                                <div className="tema">Democratização do acesso ao cinema no Brasil</div>
-                                <div className="nota">780</div>
-                            </div>
+                                        <div className="item" style={{ cursor: 'pointer' }}>
+                                            <div className="data">{Moment(envio.createdAt).format('DD/MM')}</div>
+                                            <div className="tema">{envio.tema.titulo}</div>
+                                            <div className="nota">{envio.nota_final == 0 ? '---' : envio.nota_final}</div>
+                                        </div>
 
-                            <div className="ballon-right">
-                                <div className="conteudo-ballon">
-                                    <span className="text">Sua nota está igual.</span>
-                                    <span className="icon">
-                                        <Image src={set_ballon_right} className="img-responsive" alt="" />
-                                    </span>
-                                </div>
-                            </div>
+                                        {/* {index % 4 == 0 && <div className="ballon-right">
+                                            <div className="conteudo-ballon">
+                                                <span className="text">Sua nota está igual.</span>
+                                                <span className="icon">
+                                                    <Image src={set_ballon_right} className="img-responsive" alt="" />
+                                                </span>
+                                            </div>
+                                        </div>} */}
 
-                        </div>
+                                    </Link>
 
-                        <div className="list-item">
-                            <div className="item">
-                                <div className="data">05/05</div>
-                                <div className="tema">Democratização do acesso ao cinema no Brasil</div>
-                                <div className="nota">780</div>
-                            </div>
-                        </div>
-
-                        <div className="list-item">
-                            <div className="item">
-                                <div className="data">05/05</div>
-                                <div className="tema">Democratização do acesso ao cinema no Brasil</div>
-                                <div className="nota">780</div>
-                            </div>
-                        </div>
-
-                        <div className="list-item">
-                            <div className="item">
-                                <div className="data">05/05</div>
-                                <div className="tema">Democratização do acesso ao cinema no Brasil</div>
-                                <div className="nota">780</div>
-                            </div>
-                        </div>
-
-                        <div className="list-item">
-
-                            <div className="ballon-left">
-                                <div className="conteudo-ballon">
-                                    <span className="text">1 mês depois</span>
-                                    <span className="icon">
-                                        <Image src={set_ballon} className="img-responsive" alt="" />
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="item">
-                                <div className="data">05/05</div>
-                                <div className="tema">Democratização do acesso ao cinema no Brasil</div>
-                                <div className="nota">780</div>
-                            </div>
-
-                            <div className="ballon-right">
-                                <div className="conteudo-ballon">
-                                    <span className="text">Atenção! Sua nota caiu.</span>
-                                    <span className="icon">
-                                        <Image src={set_ballon_right} className="img-responsive" alt="" />
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+                                </div>)
+                        }
+                        )}
                     </div>
                 </div>
             </div>
@@ -117,47 +121,26 @@ function SeusEnvios() {
 
 
             <div className="graphics-envios">
+
                 <div className="box">
                     <span className="title">Sua última nota</span>
+
                     <span className="columns">
-                        <span className="column">
-                            <span className="height">
-                                <span className="rate" style={{ minHeight: "30%" }}>&nbsp;</span>
-                            </span>
-                            <span className="number">500</span>
-                        </span>
-                        <span className="column">
-                            <span className="height">
-                                <span className="rate" style={{ minHeight: "80%" }}>&nbsp;</span>
-                            </span>
-                            <span className="number">800</span>
-                        </span>
-                        <span className="column">
-                            <span className="height">
-                                <span className="rate" style={{ minHeight: "65%" }}>&nbsp;</span>
-                            </span>
-                            <span className="number">650</span>
-                        </span>
-                        <span className="column">
-                            <span className="height">
-                                <span className="rate" style={{ minHeight: "10%" }}>&nbsp;</span>
-                            </span>
-                            <span className="number">280</span>
-                        </span>
-                        <span className="column">
-                            <span className="height">
-                                <span className="rate" style={{ minHeight: "80%" }}>&nbsp;</span>
-                            </span>
-                            <span className="number">820</span>
-                        </span>
-                        <span className="column">
-                            <span className="height">
-                                <span className="rate active" style={{ minHeight: "100%" }}>&nbsp;</span>
-                            </span>
-                            <span className="number active">1000</span>
-                        </span>
+
+                        {envios?.length > 0 && envios.slice(0, 6).reverse().map((envio, index) => {
+                            return envio.nota_final > 0 && (<span className="column" key={index}>
+                                <span className="height">
+                                    <span className={`rate ${envios.length == index + 1 ? 'active' : ''}`} style={{ minHeight: `${envio.nota_final / 10}%` }}>&nbsp;</span>
+                                </span>
+                                <span className="number">{envio.nota_final}</span>
+                            </span>)
+                        }
+                        )}
+
                     </span>
                 </div>
+
+
 
                 <div className="box">
                     <span className="title">Sua média geral</span>
@@ -194,9 +177,9 @@ function SeusEnvios() {
                         </span>
                         <span className="column">
                             <span className="height">
-                                <span className="rate active" style={{ minHeight: "100%" }}>&nbsp;</span>
+                                <span className="rate active" style={{ minHeight: `${(thisMediaGeral != '---' && thisMediaGeral != undefined) ? thisMediaGeral / 10 : 100}%` }}>&nbsp;</span>
                             </span>
-                            <span className="number active">1000</span>
+                            <span className="number active">{thisMediaGeral}</span>
                         </span>
                     </span>
                 </div>

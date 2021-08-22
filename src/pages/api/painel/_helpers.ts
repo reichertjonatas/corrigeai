@@ -1,5 +1,5 @@
 
-import User, { ISubscription } from '../../../models/user';
+import User, { ISubscription } from '../../../models/userTeste';
 import dbConnect from '../../../services/mongodb'
 
 export const checkUserLevel = async (email: string) : Promise<number> => {
@@ -21,6 +21,8 @@ export const userSubscription = async (email: string) : Promise<ISubscription> =
         const user = await User.findOne({ email: email });
         return user.subscription;
     } catch (error) {
+
+        // @ts-ignore
         return {
             envios: 0,
             subscriptionName: 'Grátis',

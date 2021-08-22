@@ -1,9 +1,165 @@
 import { getSession } from "next-auth/client"
-import { ICalenderEvents, IObsEnem } from "../models/user"
+import { competencia } from "../components/icons";
+import User, { ICalenderEvents, IObsEnem, IRedacoes } from "../models/userTeste"
+import { API } from "../services/api";
+import { debugPrint } from "./debugPrint";
 
-export async function authRequired(ctx: any, isIndex?: boolean) {
+export const corretor_type = (corretor_turma:string) => {
+    return corretor_turma == 'turma_um' ? 'correcao_um' : 'correcao_dois';
+}
+
+
+export function datecomp( d1: any, d2: any )
+{
+    var a1 = d1.split("/");
+    var a2 = d2.split("/");
+    a1 = a1[2] + a1[0] + a1[1];
+    a2 = a2[2] + a2[0] + a2[1];
+    return (parseInt(a1) - parseInt(a2));
+}
+
+export const mediaGeral = (redacoes: any[]) => {
+  if (redacoes.length > 0) {
+      var ultimasNotas:number[] = [];
+
+      redacoes.filter(item => item.nota_final != 0).map(item => {
+        ultimasNotas.push(item.nota_final);
+        return item;
+      })
+
+      debugPrint(" ===> ", ultimasNotas.length)
+
+      if(ultimasNotas.length > 0) {
+        var mediaGeralCalc = 0;
+        ultimasNotas.map(item => {
+          mediaGeralCalc = mediaGeralCalc + item
+          return item;
+        });
+        return Math.round(mediaGeralCalc / ultimasNotas.length) == 0 ? '---' : Math.round(mediaGeralCalc / ultimasNotas.length);
+      } else {
+        return 0;
+      }
+  }
+}
+
+export const capitalizeTxt = (txt: any)  => {
+    return txt[0].toUpperCase() + txt.slice(1);// txt.charAt(0).toUpperCase() + txt.slice(1); //or if you want lowercase the rest txt.slice(1).toLowerCase();
+}
+
+export interface ICheckoutPlano {
+    loaded: boolean, data: null | IPlano;
+}
+
+export interface IPlano {
+        plano_type: number;
+        parcela_number: number;
+        total_envios: number,
+        days: number,
+        plano: string;
+        meses: string;
+        total: string;
+        parcelamento: string;
+        infos: string[]
+    
+}
+
+
+export const PLANOS = (plano_id:number) => {
+    switch (plano_id) {
+        case 1395688:
+              return <IPlano>{
+                  plano_type: 1,
+                  parcela_number: 1,
+                  total_envios: 8,
+                  days: 30,
+                  plano: "Acesso Mensal",
+                  meses: "1 mês",
+                  total: "R$ 80,00",
+                  parcelamento: "1x",
+                  infos: ["", "", ""]
+              }
+        default:
+            return null
+    }
+  }
+
+export const notaTotalRedacao = (redacao: IRedacoes) => {
+    if (redacao) {
+        var ultimasNotas: number[][] = [];
+        
+        redacao.correcoes.map((correcoes, index:number) => {
+            var ultimaNotaCalc = 0;
+            correcoes.competencias.map(competencia => {
+                ultimaNotaCalc = ultimaNotaCalc + competencia.nota;
+            })
+            ultimasNotas.push([ultimaNotaCalc]);
+        })
+
+        
+        if(ultimasNotas.length > 0) {
+            var mediasNotas: number[] = [];
+            ultimasNotas.map(ultimaNota => {
+                var mediaGeralCalc = 0;
+                ultimaNota.map(item => {
+                    mediaGeralCalc = mediaGeralCalc + item
+                    return item;
+                });
+                mediasNotas.push(Math.round(mediaGeralCalc / ultimaNota.length));
+            })
+            if(mediasNotas.length > 0) {
+                var mediaFinal = 0;
+                mediasNotas.map(item => {
+                    mediaFinal = mediaFinal + item
+                    return item;
+                })
+                return Math.round(mediaFinal / mediasNotas.length);
+            }
+            return 0;
+        } else {
+          return 0;
+        }
+    }
+    return 0;
+}
+
+export const mediaRedacaoPorCompetencia = (redacao: IRedacoes, competencia: number) => {
+    if (redacao) {
+        var ultimasNotas: number[][] = [];
+        debugPrint(" ===> ", redacao.correcoes.length)
+        redacao.correcoes.map((correcoes, index:number) => {
+            ultimasNotas.push([correcoes.competencias[competencia].nota]);
+        })
+
+        
+        if(ultimasNotas.length > 0) {
+            var mediasNotas: number[] = [];
+            ultimasNotas.map(ultimaNota => {
+                var mediaGeralCalc = 0;
+                ultimaNota.map(item => {
+                    mediaGeralCalc = mediaGeralCalc + item
+                    return item;
+                });
+                mediasNotas.push(Math.round(mediaGeralCalc / ultimaNota.length));
+            })
+            if(mediasNotas.length > 0) {
+                var mediaFinal = 0;
+                mediasNotas.map(item => {
+                    mediaFinal = mediaFinal + item
+                    return item;
+                })
+                return Math.round(mediaFinal / mediasNotas.length);
+            }
+            return 0;
+        } else {
+          return 0;
+        }
+    }
+    return 0;
+  }
+
+export async function authRequired(ctx: any, userType?: number | null, isIndex?: boolean) {
     const session = await getSession(ctx)
-
+    
     if (!session) {
         return {
             redirect: {
@@ -12,32 +168,32 @@ export async function authRequired(ctx: any, isIndex?: boolean) {
             }
         }
     }
-
-    if (isIndex) {
-        switch (session.user!.userType) {
-            case 2:
-                return {
-                    redirect: {
-                        permanent: false,
-                        destination: '/painel/corretor',
-                    }
-                }
-            case 3:
-                return {
-                    redirect: {
-                        permanent: false,
-                        destination: '/painel/admin',
-                    }
-                }
-            default:
-                return {
-                    redirect: {
-                        permanent: false,
-                        destination: '/painel/aluno',
-                    }
-                }
-        }
-    }
+    
+    // if (isIndex) {
+    //     switch (session!.user!.userType) {
+    //         case 2:
+    //             return {
+    //                 redirect: {
+    //                     permanent: false,
+    //                     destination: '/painel/corretor',
+    //                 }
+    //             }
+    //         case 3:
+    //             return {
+    //                 redirect: {
+    //                     permanent: false,
+    //                     destination: '/painel/admin',
+    //                 }
+    //             }
+    //         default:
+    //             return {
+    //                 redirect: {
+    //                     permanent: false,
+    //                     destination: '/painel/aluno',
+    //                 }
+    //             }
+    //     }
+    // }
 
     return session;
 }

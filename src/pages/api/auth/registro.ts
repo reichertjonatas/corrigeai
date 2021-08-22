@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import User from "../../../models/user";
+import User from "../../../models/userTeste";
 import dbConnect from "../../../services/mongodb";
 import bcrypt from 'bcryptjs';
 

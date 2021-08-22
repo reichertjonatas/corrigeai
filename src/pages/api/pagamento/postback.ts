@@ -10,7 +10,11 @@ const handler =  async (req: NextApiRequest, res: NextApiResponse) => {
   
     if (session) {
       try {
-          
+          if(req.method === 'POST') {
+            console.log(" ===> POST ", req.body);
+          } else {
+            console.log(" ===> GET ", req.query);
+          }
       } catch (error) {
           return res.status(500).send({error: true, errorMessage: error.message});
       }

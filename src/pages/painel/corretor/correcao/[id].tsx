@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { CloseIcon, PencilIcon, RedacaoPreview } from '../../../../components/icons';
 import MainLayout from '../../../../components/layout/MainLayout'
 import { withAuthSession } from '../../../../utils/helpers';
-import styles from './Correcao.module.css';
 import shallow from 'zustand/shallow'
 
 // @ts-ignore
@@ -13,27 +12,47 @@ import { PointSelector, RectangleSelector } from 'react-image-annotation/lib/sel
 import Annotation from 'react-image-annotation'
 import { useCorretorStore } from '../../../../hooks/corretorStore';
 import { useRouter } from 'next/router';
-import { ICompetencias, IItemObsEnem, IObsEnem } from '../../../../models/user';
-import NoSSRWrapper from '../../../../components/layout/NoSSRWrapper';
 import { debugPrint } from '../../../../utils/debugPrint';
 import { toast } from 'react-toastify';
+import { RenderOverlay } from '../../../../components/editor/RenderOverley';
+import { getColorActivite } from '../../../../components/editor/helpers';
+import { RenderHighlight } from '../../../../components/editor/RenderHighlight';
+import { RenderSelector } from '../../../../components/editor/RenderSelector';
+import { RenderEditor } from '../../../../components/editor/RenderEditor';
+import { getSession } from 'next-auth/client';
+import { strapi } from '../../../../services/strapi';
+import { redacaoById } from '../../../../graphql/query';
+import PreLoader from '../../../../components/PreLoader';
 
-const Box = ({ children, geometry, style }: any) => (
-    <div style={{
-        ...style,
-        position: 'absolute',
-        left: `${geometry.x}%`,
-        top: `${geometry.y}%`,
-        height: `${geometry.height}%`,
-        width: `${geometry.width}%`,
-    }}>{children}</div>
-)
 
-function Correcao() {
+export async function getServerSideProps(ctx: any) {
+    const session = await getSession(ctx);
+    const { id } = ctx.query;
+
+    if (!session)
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar'
+            }
+        }
+
+    const redacao = await strapi(session.jwt).graphql({ query: redacaoById(id) })
+
+    return {
+        props: {
+            session,
+            redacaoProps: redacao,
+        }
+    }
+}
+
+function Correcao({ redacaoProps, session }: any) {
     const router = useRouter()
     const { id } = router.query;
+    const [isLoading, setIsLoading] = useState(true)
 
-    const [initData,
+    const [
         redacao,
         annotations, setAnnotations,
         annotation, setAnnotation,
@@ -44,9 +63,9 @@ function Correcao() {
         setNota,
         setObs,
         salvarCorrecao,
-        setCorrecaoNull
+        setCorrecaoNull,
+        setRedacao,
     ] = useCorretorStore(state => ([
-        state.initData,
         state.redacao,
         state.annotations, state.setAnnotations,
         state.annotation, state.setAnnotation,
@@ -57,108 +76,98 @@ function Correcao() {
         state.setNota,
         state.setObs,
         state.salvarCorrecao,
-        state.setCorrecaoNull
+        state.setCorrecaoNull,
+        state.setRedacao,
     ]), shallow);
 
+    React.useEffect(() => {
+        setRedacao(redacaoProps)
+        return () => {
+            setCorrecaoNull()
+        }
+    }, [])
+
+
+    // React.useEffect(() => {
+    //     if (router.asPath !== router.route) {
+    //         // router.query.lang is defined
+    //         // initData(id as string);
+    //     }
+    //     return () => setCorrecaoNull()
+    //     // eslint-disable-next-line
+    // }, [router])
 
     React.useEffect(() => {
-        if (router.asPath !== router.route) {
-            // router.query.lang is defined
-            initData(id as string);
-        }
-        return () => setCorrecaoNull()
-        // eslint-disable-next-line
-    }, [router])
-
-    function renderHighlight({ annotation, active }: any) {
-        const { geometry } = annotation
-        if (!geometry) return null
-
-        var boxStyle: any = {
-            border: 'solid 1px black',
-            boxShadow: active
-                && '0 0 20px 20px rgba(255, 255, 255, 0.3) inset'
-        }
-
-        var cor = 'red';
-
-        switch (annotation.data.competencia) {
-            case 2:
-                cor = '#fb5400';
-                break;
-            case 3:
-                cor = '#b5179e';
-                break;
-            case 4:
-                cor = '#fcbe21';
-                break;
-            case 5:
-                cor = '#8ac925';
-                break;
-            default:
-                cor = '#3f37c9';
-                break;
-        }
-
-        switch (annotation.data.editorType) {
-            case 2:
-                boxStyle = {
-                    // borderRadius: '1rem',
-                    borderBottom: `solid 2px ${cor}`,
-                    borderTop: 'none',
-                    borderLeft: 'none',
-                    borderRight: 'none',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    color: cor,
-                    boxShadow: active && `0 0 12px 12px ${cor}90 inset`,
+        console.log("useEffect ==> ID", redacao)
+        if (redacao?.correcaos?.length > 0) {
+            redacao?.correcaos.map(async (correcao: any) => {
+                console.log("useEffect ==> map", correcao._id)
+                const correcaoDB: any = await strapi(session.jwt).findOne('correcaos', correcao.id);
+                console.log("useEffect ==> db ", correcaoDB)
+                if (correcaoDB.corretor.id === session.id) {
+                    router.replace('/painel/corretor')
+                } else {
+                    setIsLoading(false)
                 }
-                break;
-            case 3:
-                boxStyle = {
-                    borderRadius: '0.9rem',
-                    border: `solid 1px ${cor}`,
-                    backgroundColor: `${cor}90`,
-                    // padding: '1rem',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    color: cor,
-                    boxShadow: active && `0 0 12px 12px ${cor}90 inset`,
-                }
-                break;
+            })
+        } else
+            setIsLoading(false)
+    }, [redacao])
 
-            default:
-                boxStyle = {
-                    borderRadius: '1rem',
-                    // border: `solid 1px ${cor}`,
-                    backgroundColor: `${cor}90`,
-                    // padding: '1rem',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    fontWeight: 'bold',
-                    fontSize: '1.8rem',
-                    alignItems: 'center',
-                    color: cor,
-                    boxShadow: active && `0 0 12px 12px ${cor}90 inset`,
-                    '-webkit-text-stroke': '1.5px white'
-                }
-                break;
-        }
+    const handlerCompetencia = (nCompetencia: number) => {
+        setCompetencia(nCompetencia);
+        setAnnotation({})
+    }
 
-        return (
-            <Box
-                key={annotation.data.id}
-                geometry={geometry}
-                style={boxStyle}
-            >
-                {annotation.data.editorType == 1 && 'X'}
-            </Box>
-        )
+    const handlerEditorType = (nEditorType: number) => {
+        setEditorType(nEditorType);
+        setAnnotation({})
+    }
+
+    const onChange = (nAnnotation: any) => {
+        setAnnotation({
+            data: {
+                competencia: competencia,
+                editorType: editorType,
+            },
+            ...nAnnotation,
+        })
+    }
+
+    const onSubmit = (annotation: any) => {
+        const { geometry, data } = annotation
+        setAnnotation({})
+        setAnnotations(annotations.concat({
+            // @ts-ignore
+            geometry,
+            data: {
+                ...data,
+                id: Math.random(),
+                competencia: competencia,
+                editorType: editorType,
+            }
+        }))
     }
 
 
+    useEffect(() => {
+        switch (editorType) {
+            case 2:
+                setType(RectangleSelector.TYPE)
+                break;
+            case 3:
+                setType(RectangleSelector.TYPE)
+                break;
+            default:
+                setType(PointSelector.TYPE)
+                break;
+        }
+    }, [editorType])
+
+    if (!redacao) return (<h1></h1>);
+
     function renderPopUp({ annotation }: any) {
+
         const { geometry } = annotation
 
         var cor = 'black';
@@ -244,285 +253,7 @@ function Correcao() {
         )
     }
 
-
-
-    function renderSelector({ annotation, active }: any) {
-        const { geometry } = annotation
-        if (!geometry) return null
-
-        var boxStyle: any = {
-            border: 'solid 1px black',
-            boxShadow: active
-                && '0 0 20px 20px rgba(255, 255, 255, 0.3) inset'
-        }
-
-        var cor = 'red';
-
-        debugPrint(annotation)
-
-        switch (annotation.data.competencia ?? 1) {
-            case 2:
-                cor = '#fb5400';
-                break;
-            case 3:
-                cor = '#b5179e';
-                break;
-            case 4:
-                cor = '#fcbe21';
-                break;
-            case 5:
-                cor = '#8ac925';
-                break;
-            default:
-                cor = '#3f37c9';
-                break;
-        }
-
-        switch (annotation.data.editorType) {
-            case 2:
-                boxStyle = {
-                    // borderRadius: '1rem',
-                    borderBottom: `solid 2px ${cor}`,
-                    borderTop: 'none',
-                    borderLeft: 'none',
-                    borderRight: 'none',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    color: cor,
-                    backgroundColor: `${cor}20`,
-                    boxShadow: active && `0 0 12px 12px ${cor}90 inset`,
-                }
-                break;
-            case 3:
-                boxStyle = {
-                    borderRadius: '1rem',
-                    border: `solid 1px ${cor}`,
-                    backgroundColor: `${cor}90`,
-                    //padding: '1rem',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    color: cor,
-                    boxShadow: active && `0 0 12px 12px ${cor}90 inset`,
-                }
-                break;
-
-            default:
-                boxStyle = {
-                    borderRadius: '1rem',
-                    // border: `solid 1px ${cor}`,
-                    backgroundColor: `${cor}90`,
-                    // padding: '1rem',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    fontWeight: 'bold',
-                    fontSize: '1.8rem',
-                    alignItems: 'center',
-                    color: cor,
-                    boxShadow: active && `0 0 12px 12px ${cor}90 inset`,
-                    '-webkit-text-stroke': '1.5px white'
-                }
-                break;
-        }
-
-        return (
-            <Box
-                geometry={geometry}
-                style={boxStyle}>
-                {annotation.data.editorType == 1 && 'X'}
-            </Box>
-        )
-    }
-
-    function renderOverlay() {
-        return (
-            <div
-                style={{
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    color: 'white',
-                    padding: 5,
-                    pointerEvents: 'none',
-                    position: 'absolute',
-                    top: 5,
-                    left: 5,
-                    borderRadius: 8,
-                }}
-            >
-                corrigeaí - {(new Date()).toLocaleDateString('pt')}
-            </div>
-        )
-    }
-
-    const handlerCompetencia = (nCompetencia: number) => {
-        setCompetencia(nCompetencia);
-        setAnnotation({})
-    }
-
-    const handlerEditorType = (nEditorType: number) => {
-        setEditorType(nEditorType);
-        setAnnotation({})
-    }
-
-    const onChange = (nAnnotation: any) => {
-        setAnnotation({
-            data: {
-                competencia: competencia,
-                editorType: editorType,
-            },
-            ...nAnnotation,
-        })
-    }
-
-    const onSubmit = (annotation: any) => {
-        const { geometry, data } = annotation
-        setAnnotation({})
-        setAnnotations(annotations.concat({
-            // @ts-ignore
-            geometry,
-            data: {
-                ...data,
-                id: Math.random(),
-                competencia: competencia,
-                editorType: editorType,
-            }
-        }))
-    }
-
-    function renderEditor(props: any) {
-        const { geometry } = props.annotation
-        if (!geometry) return null
-
-        var cor = 'black';
-        var nomeCompetencia = '';
-
-        switch (props.annotation.data.competencia) {
-            case 2:
-                cor = '#fb5400';
-                break;
-            case 3:
-                cor = '#b5179e';
-                break;
-            case 4:
-                cor = '#fcbe21';
-                break;
-            case 5:
-                cor = '#8ac925';
-                break;
-            default:
-                cor = '#3f37c9';
-                break;
-        }
-
-        switch (props.annotation.data.competencia) {
-            case 2:
-                nomeCompetencia = 'Competência II';
-                break;
-            case 3:
-                nomeCompetencia = 'Competência III';
-                break;
-            case 4:
-                nomeCompetencia = 'Competência IV';
-                break;
-            case 5:
-                nomeCompetencia = 'Competência V';
-                break;
-            default:
-                nomeCompetencia = 'Competência I';
-                break;
-        }
-
-        const inputStyle = {
-            "&:focus": { outline: "none" },
-            borderRadius: '0.25rem',
-            border: 'none',
-            padding: '0.2rem 0.4rem',
-            minWidth: '100%',
-            fontSize: '0.8rem'
-        };
-
-        return (
-            <div
-                style={{
-                    background: 'white',
-                    padding: 10,
-                    marginTop: 4,
-                    boxShadow: '7px 7px 5px 0px rgba(50, 50, 50, 0.75); inset',
-                    backgroundColor: cor,
-                    borderRadius: 6,
-                    position: 'absolute',
-                    left: `${geometry.x}%`,
-                    top: `${geometry.y + geometry.height}%`,
-                }}
-            >
-                <div style={{ fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'start', color: 'white' }}>{nomeCompetencia}</div>
-                <div style={{ fontSize: '0.75rem', color: 'white' }}>Descreva o motivo da nota:</div>
-                <div style={{ marginTop: 10, marginBottom: 10 }}>
-                    <textarea
-                        rows={4}
-                        cols={30}
-                        style={inputStyle}
-                        onChange={e => props.onChange({
-                            ...props.annotation,
-                            data: {
-                                ...props.annotation.data,
-                                text: e.target.value
-                            }
-                        })}
-                    />
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                    <button style={{
-                        padding: 2,
-                        minWidth: '50%',
-                        borderRadius: '0.5rem',
-                        backgroundColor: `white`,
-                        border: '1px solid white',
-                        color: cor,
-                        //textTransform: 'uppercase',
-                        fontWeight: 600,
-                        fontSize: '0.95rem',
-                        cursor: 'pointer',
-                        'fontFamily': "Poppins, sans-serif"
-
-                    }} onClick={props.onSubmit}>Salvar</button>
-                </div>
-            </div>
-        )
-    }
-
-    const getColorActivite = () => {
-        switch (competencia) {
-            case 2:
-                return '#fb5400';
-                break;
-            case 3:
-                return '#b5179e';
-            case 4:
-                return '#fcbe21';
-            case 5:
-                return '#8ac925';
-            default:
-                return '#3f37c9';
-        }
-    }
-
-    useEffect(() => {
-        switch (editorType) {
-            case 2:
-                setType(RectangleSelector.TYPE)
-                break;
-            case 3:
-                setType(RectangleSelector.TYPE)
-                break;
-            default:
-                setType(PointSelector.TYPE)
-                break;
-        }
-    }, [editorType])
-
-    if (!redacao) return (<h1></h1>);
-
-    const RowObsEnem = ({ item, ...rest } : any) => {
+    const RowObsEnem = ({ item, ...rest }: any) => {
         return (
             <>
                 {item.section && <span className="number">{item.section}</span>}
@@ -533,39 +264,41 @@ function Correcao() {
 
 
     const handlerEnviarCorrecao = async () => {
-        debugPrint('handlerEnviarCorrecao', 'preenchidos ===> ', competenciasOffline.length, ' ===> ', ); 
-        var errorMessage:string[] = [];
+        debugPrint('handlerEnviarCorrecao', 'preenchidos ===> ', competenciasOffline.length, ' ===> ',);
+        var errorMessage: string[] = [];
 
-        
-        competenciasOffline.map((itemCompentencia:ICompetencias, index: number) => {
-            if(itemCompentencia.nota < 0){
+
+        competenciasOffline.map((itemCompentencia: any, index: number) => {
+            if (itemCompentencia.nota < 0) {
                 errorMessage.push(`${itemCompentencia.title} - Selecione a nota`)
-            } else if (itemCompentencia.nota != 200 ) {
-                debugPrint(itemCompentencia.obs.length , ' <======= ')
-                if(itemCompentencia.obs.length <= 3){
+            } else if (itemCompentencia.nota != 200) {
+                debugPrint(itemCompentencia.obs.length, ' <======= ')
+                if (itemCompentencia.obs.length <= 3) {
                     errorMessage.push(`${itemCompentencia.title} - Preencher observação da competência`)
                 }
             }
         })
 
-        if(errorMessage.length > 0 ) {
-            errorMessage.map( message => message.includes("nota") ? toast.error(message) : toast.warning(message))
+        if (errorMessage.length > 0) {
+            errorMessage.map(message => message.includes("nota") ? toast.error(message) : toast.warning(message))
         } else {
-            const response = await salvarCorrecao(id as string);
+            const response = await salvarCorrecao(id as string, session);
             debugPrint('salvar response', response)
-            if(response.error)
+            if (response.error)
                 toast.error(response.message)
-             else {
+            else {
                 toast.success(response.message)
-                router.push('/painel/corretor')
+                router.replace('/painel/corretor')
             }
         }
     }
 
+    if(isLoading)
+        return <PreLoader />
+
     return (
-        <NoSSRWrapper>
-            <MainLayout menuType={2}>
-                <style global jsx>{`
+        <MainLayout menuType={2} role="corretor">
+            <style global jsx>{`
                 .content-global{
                     max-width: 95%!important;
                     margin: 0 auto!important;
@@ -585,134 +318,245 @@ function Correcao() {
                 }
 
             `}</style>
-                <div className={styles.gridTemas}>
+            <div className="gridTemas">
 
-                    <div className={styles.content}>
-                        <div className={styles.boxTema}>
+                <div className="content">
+                    <div className="boxTema">
 
-                            <div className={styles.competencia}>
-                                <span onClick={() => handlerCompetencia(1)} className={competencia == 1 ? styles.active : ''} style={{ "background": "#3f37c9" }}>Competência I</span>
-                                <span onClick={() => handlerCompetencia(2)} className={competencia == 2 ? styles.active : ''} style={{ "background": "#fb5400" }}>Competência II</span>
-                                <span onClick={() => handlerCompetencia(3)} className={competencia == 3 ? styles.active : ''} style={{ "background": "#b5179e" }}>Competência III</span>
-                                <span onClick={() => handlerCompetencia(4)} className={competencia == 4 ? styles.active : ''} style={{ "background": "#fcbe21" }}>Competência IV</span>
-                                <span onClick={() => handlerCompetencia(5)} className={competencia == 5 ? styles.active : ''} style={{ "background": "#8ac925" }}>Competência V</span>
-                            </div>
+                        <div className="competencia">
+                            <span onClick={() => handlerCompetencia(1)} className={competencia == 1 ? 'active' : ''} style={{ "background": "#3f37c9" }}>Competência I</span>
+                            <span onClick={() => handlerCompetencia(2)} className={competencia == 2 ? 'active' : ''} style={{ "background": "#fb5400" }}>Competência II</span>
+                            <span onClick={() => handlerCompetencia(3)} className={competencia == 3 ? 'active' : ''} style={{ "background": "#b5179e" }}>Competência III</span>
+                            <span onClick={() => handlerCompetencia(4)} className={competencia == 4 ? 'active' : ''} style={{ "background": "#fcbe21" }}>Competência IV</span>
+                            <span onClick={() => handlerCompetencia(5)} className={competencia == 5 ? 'active' : ''} style={{ "background": "#8ac925" }}>Competência V</span>
+                        </div>
 
-                            <div className={styles.tasks}>
+                        <div className="tasks">
 
-                                <span onClick={() => handlerEditorType(1)} className={editorType == 1 ? `${styles.task}` : styles.task} style={{ border: editorType == 1 ? `2px solid ${getColorActivite()}` : 'none' }}>
-                                    <span className={styles.img}>
-                                        <Image src={CloseIcon} className={styles["img-responsive"]} alt="" />
-                                    </span>
-                                    <span className={styles.text}>Adicionar &quot;x&quot;</span>
+                            <span onClick={() => handlerEditorType(1)} className={editorType == 1 ? `task` : 'task'} style={{ border: editorType == 1 ? `2px solid ${getColorActivite(competencia)}` : 'none' }}>
+                                <span className="img">
+                                    <Image src={CloseIcon} className="img-responsive" alt="" />
                                 </span>
+                                <span className="text">Adicionar &quot;x&quot;</span>
+                            </span>
 
-                                <span onClick={() => handlerEditorType(2)} className={editorType == 2 ? `${styles.task}` : styles.task} style={{ border: editorType == 2 ? `2px solid ${getColorActivite()}` : 'none' }} >
-                                    <span className={styles.img}>
-                                        <Image src={PencilIcon} className={styles["img-responsive"]} alt="" />
-                                    </span>
-                                    <span className={styles.text}>Traçado de lápis</span>
+                            <span onClick={() => handlerEditorType(2)} className={editorType == 2 ? `task` : 'task'} style={{ border: editorType == 2 ? `2px solid ${getColorActivite(competencia)}` : 'none' }} >
+                                <span className="img">
+                                    <Image src={PencilIcon} className="img-responsive" alt="" />
                                 </span>
-                                <span onClick={() => handlerEditorType(3)} className={editorType == 3 ? `${styles.task}` : styles.task} style={{ border: editorType == 3 ? `2px solid ${getColorActivite()}` : 'none' }}>
-                                    <span className={styles.img}>
-                                        <Image src={PencilIcon} className={styles["img-responsive"]} alt="" />
-                                    </span>
-                                    <span className={styles.text}>Destacar texto</span>
+                                <span className="text">Traçado de lápis</span>
+                            </span>
+                            <span onClick={() => handlerEditorType(3)} className={editorType == 3 ? `task` : 'task'} style={{ border: editorType == 3 ? `2px solid ${getColorActivite(competencia)}` : 'none' }}>
+                                <span className="img">
+                                    <Image src={PencilIcon} className="img-responsive" alt="" />
                                 </span>
-                            </div>
-                            <div className={styles.redacao}>
-                                <Annotation
-                                    src={`${process.env.NEXT_PUBLIC_URL_PUBLICA}${process.env.NEXT_PUBLIC_URL_REDACAO}${redacao?.redacao}`}
-                                    alt=''
-                                    annotations={annotations}
-                                    renderOverlay={renderOverlay}
-                                    renderContent={renderPopUp}
-                                    renderHighlight={renderHighlight}
-                                    renderSelector={renderSelector}
-                                    renderEditor={renderEditor}
+                                <span className="text">Destacar texto</span>
+                            </span>
+                        </div>
+                        <div className="redacao">
+                            <Annotation
+                                src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
+                                alt=''
+                                annotations={annotations}
+                                renderOverlay={RenderOverlay}
+                                renderContent={renderPopUp}
+                                renderHighlight={RenderHighlight}
+                                renderSelector={RenderSelector}
+                                renderEditor={RenderEditor}
 
-                                    type={type}
-                                    value={annotation}
-                                    onChange={onChange}
-                                    onSubmit={onSubmit}
-                                    className={styles["img-responsive"]}
-                                />
-                                {/* <Image src={RedacaoPreview}  alt="" /> */}
-                            </div>
+                                type={type}
+                                value={annotation}
+                                onChange={onChange}
+                                onSubmit={onSubmit}
+                                className="img-responsive"
+                            />
+                            {/* <Image src={RedacaoPreview}  alt="" /> */}
                         </div>
                     </div>
-
-
-                    <div className={styles.notas}>
-                        <h1>Notas</h1>
-                        <span className={styles.criterios}>
-
-                            {competenciasOffline.map((competenciaItem: ICompetencias, index: number) => (
-                                <span className={styles.criterio} key={index}>
-                                    <span className={styles.title}>{competenciaItem.title}</span>
-                                    <span className={styles.subtitle}>Selecione uma nota.</span>
-
-                                    <span className={styles.notasCriterios} onChange={(e: any) => {
-                                        debugPrint('competencia: ', index, ' - ', parseInt(e.target.value));
-                                        setNota(parseInt(e.target.value), index);
-                                    }}>
-                                        <span className={styles.nota}>
-                                            <input type="radio" id={`${index}0`} name={`${index}`} value="0" />
-                                            <label htmlFor={`${index}0`}>0</label>
-                                        </span>
-
-                                        <span className={styles.nota}>
-                                            <input type="radio" id={`${index}40`} name={`${index}`} value="40" />
-                                            <label htmlFor={`${index}40`}>40</label>
-                                        </span>
-
-                                        <span className={styles.nota}>
-                                            <input type="radio" id={`${index}80`} name={`${index}`} value="80" />
-                                            <label htmlFor={`${index}80`}>80</label>
-                                        </span>
-
-                                        <span className={styles.nota}>
-                                            <input type="radio" id={`${index}120`} name={`${index}`} value="120" />
-                                            <label htmlFor={`${index}120`}>120</label>
-                                        </span>
-
-                                        <span className={styles.nota}>
-                                            <input type="radio" id={`${index}160`} name={`${index}`} value="160" />
-                                            <label htmlFor={`${index}160`}>160</label>
-                                        </span>
-
-                                        <span className={styles.nota}>
-                                            <input type="radio" id={`${index}200`} name={`${index}`} value="200" />
-                                            <label htmlFor={`${index}200`}>200</label>
-                                        </span>
-                                    </span>
-                                    {(competenciaItem.nota >= 0 && competenciaItem.nota < 200) && (
-                                        <textarea onChange={(e) => {
-                                            debugPrint("teste =====> ", e.target.value[0])
-                                            setObs(e.target.value as string, index); 
-                                        }} rows={5} style={{
-                                            width: '100%',
-                                            marginTop: '12px',
-                                            borderRadius: '0.5rem',
-                                        }}>
-
-                                        </textarea>
-                                    )}
-                                    {competenciaItem.obs_enem != null && <div className={`popCompetencia ${competenciaItem.obs_enem!.color}`} style={{marginTop: '12px'}}>
-                                        {competenciaItem.obs_enem != null && competenciaItem.obs_enem.items.map((item: IItemObsEnem, index: number) => <RowObsEnem key={index} item={item} />
-                                        )}
-                                    </div>}
-
-                                </span>))}
-
-                            <span className={styles.botao}>
-                                <button onClick={handlerEnviarCorrecao}>Enviar correção</button>
-                            </span>
-                        </span>
-                    </div>
                 </div>
-                <style global jsx>
-                    {`
+
+
+                <div className="notas">
+                    <h1>Notas</h1>
+                    <span className="criterios">
+
+                        {competenciasOffline.map((competenciaItem: any, index: number) => (
+                            <span className="criterio" key={index}>
+                                <span className="title">{competenciaItem.title}</span>
+                                <span className="subtitle">Selecione uma nota.</span>
+
+                                <span className="notasCriterios" onChange={(e: any) => {
+                                    debugPrint('competencia: ', index, ' - ', parseInt(e.target.value));
+                                    setNota(parseInt(e.target.value), index);
+                                }}>
+                                    <span className="nota">
+                                        <input type="radio" id={`${index}0`} name={`${index}`} value="0" />
+                                        <label htmlFor={`${index}0`}>0</label>
+                                    </span>
+
+                                    <span className="nota">
+                                        <input type="radio" id={`${index}40`} name={`${index}`} value="40" />
+                                        <label htmlFor={`${index}40`}>40</label>
+                                    </span>
+
+                                    <span className="nota">
+                                        <input type="radio" id={`${index}80`} name={`${index}`} value="80" />
+                                        <label htmlFor={`${index}80`}>80</label>
+                                    </span>
+
+                                    <span className="nota">
+                                        <input type="radio" id={`${index}120`} name={`${index}`} value="120" />
+                                        <label htmlFor={`${index}120`}>120</label>
+                                    </span>
+
+                                    <span className="nota">
+                                        <input type="radio" id={`${index}160`} name={`${index}`} value="160" />
+                                        <label htmlFor={`${index}160`}>160</label>
+                                    </span>
+
+                                    <span className="nota">
+                                        <input type="radio" id={`${index}200`} name={`${index}`} value="200" />
+                                        <label htmlFor={`${index}200`}>200</label>
+                                    </span>
+                                </span>
+                                {(competenciaItem.nota >= 0 && competenciaItem.nota < 200) && (
+                                    <textarea onChange={(e) => {
+                                        debugPrint("teste =====> ", e.target.value[0])
+                                        setObs(e.target.value as string, index);
+                                    }} rows={5} style={{
+                                        width: '100%',
+                                        marginTop: '12px',
+                                        borderRadius: '0.5rem',
+                                    }}>
+
+                                    </textarea>
+                                )}
+                                {competenciaItem.obs_enem != null && <div className={`popCompetencia ${competenciaItem.obs_enem!.color}`} style={{ marginTop: '12px' }}>
+                                    {competenciaItem.obs_enem != null && competenciaItem.obs_enem.items.map((item: any, index: number) => <RowObsEnem key={index} item={item} />
+                                    )}
+                                </div>}
+
+                            </span>))}
+
+                        <span className="botao">
+                            <button onClick={handlerEnviarCorrecao}>Enviar correção</button>
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <style jsx>
+                {
+                    `
+                    .gridTemas{display: grid; grid-template-columns: 2fr 1fr; gap: 2rem}
+.gridTemas .content{display: block; width: 100%;}
+.gridTemas .content .boxTema{display: block; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 1.875rem 1.5625rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.gridTemas .content .boxTema .competencia{display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin: 0 0 1.5rem}
+.gridTemas .content .boxTema .competencia span{transition: all 0.5s ease; display: flex; cursor: pointer; align-items: center; justify-content: center; width: 100%; color: var(--gray20);background: #3f37c9; height: 2.4375rem; border-radius: 0.75rem;font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.91125em;}
+.gridTemas .content .boxTema .competencia span.active{border: 2px solid var(--green)}
+.gridTemas .content .boxTema .competencia span:hover{transform: scale(0.9);}
+.gridTemas .content .boxTema .tasks{display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 0 0 2rem}
+.gridTemas .content .boxTema .tasks .task{display: flex; transition: all 0.5s ease; cursor: pointer; flex-direction: row; gap: 0.3rem;  align-items: center; justify-content: center; background: var(--white);height: 2.4375rem; border-radius: 0.75rem;font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.91125em;}
+.gridTemas .content .boxTema .tasks .task.active{border: 2px solid var(--green)}
+.gridTemas .content .boxTema .tasks .task:hover{transform: scale(0.9);}
+.gridTemas .content .boxTema .tasks .task .img{position: relative; top: 2px}
+.gridTemas .content .boxTema .redacao{display: block; width: 100%; height: 25rem; overflow: scroll;}
+
+.gridTemas .notas{display: block; width: 100%; height: max-content; border-radius: 0.75rem; background: var(--gray20); padding: 1.875rem 1.5625rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.gridTemas .notas h1{display: block; width: 100%; text-align: center; font-size: 1.5625rem}
+.gridTemas .notas .criterios{display: block; width: 100%;}
+.gridTemas .notas .criterios .criterio{display: block; width: 100%; margin: 0 0 1rem}
+.gridTemas .notas .criterios .criterio .title{display: block; width: 100%; font-size: 0.926874rem; font-weight: 500; color: var(--dark)}
+.gridTemas .notas .criterios .criterio .subtitle{display: block; width: 100%; font-size: 0.736875rem; font-weight: 300; color: var(--gray40)}
+.gridTemas .notas .criterios .criterio .notasCriterios{display: grid; width: 100%; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; margin: 0.5rem 0 0}
+.gridTemas .notas .criterios .criterio .notasCriterios .nota{display: flex; align-items: center; flex-direction: row; gap: 0.4rem; width: 100%; background: var(--white); border-radius: 0.71875rem; font-size: 0.7rem; color: var(--gray40); padding: 0.3875rem 0.6875rem}
+.gridTemas .notas .criterios .criterio .notasCriterios .nota input{width: 0.5625rem; height: 0.5625rem}
+
+.gridTemas .notas .criterios .botao{display: block; width: 100%; margin: 2rem 0 0}
+.gridTemas .notas .criterios .botao button{margin: 0; border: none;  cursor: pointer; transition: all 0.5s ease; display: inline-block; width: 100%; margin: 0 0 1rem; text-align: center; color: var(--gray20); font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 0.75rem; font-size: 1.2em; background: var(--dark); padding: 0.5125rem; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+.gridTemas .notas .criterios .botao button:hover{transform: scale(0.9);}
+
+.content-global{
+  max-width: 95%!important;
+  margin: 0 auto;
+}
+
+.sidebar{ display: none!important; }
+
+.gridTemas .content .boxTema .redacao{
+    display: block;
+    width: 100%;
+    height: 60rem;
+    overflow: scroll;
+}
+
+.gridTemas .content .boxTema .redacao img{
+    width: 100%;
+}
+
+
+@media(max-width: 1920px){
+  /* .content-global{max-width: 1200px; margin: 0 0 0 27.75rem} */
+  .content-global{ max-width: 95%!important; margin: 0 auto!important;}
+  .sidebar{ display: none!important; }
+}
+
+@media(max-width: 1700px){
+  /* .content-global{max-width: 1200px; margin: 0 0 0 27.75rem} */
+  .content-global{ max-width: 95%!important; margin: 0 auto!important;}
+  .sidebar{ display: none!important; }
+}
+
+@media(max-width: 1630px){
+  /* .content-global{max-width: 1150px; margin: 0 0 0 26.75rem} */
+  /* html {font-size: 14px} */
+  .content-global{ max-width: 95%!important; margin: 0 auto!important;}
+  .sidebar{ display: none!important; }
+}
+
+@media(max-width: 1440px){
+  /* .content-global{max-width: 70%} */
+  .content-global{ max-width: 95%!important; margin: 0 auto!important;}
+  .sidebar{ display: none!important; }
+  .gridTemas .content .boxTema .competencia{grid-template-columns: repeat(3, 1fr)}
+  .gridTemas .content .boxTema .tasks{grid-template-columns: repeat(3, 1fr)}
+}
+
+
+@media(max-width: 1240px){
+  /* .content-global{max-width: 70%; margin: 0 0 0 25rem} */
+  .content-global{ max-width: 95%!important; margin: 0 auto!important;}
+  .sidebar{ display: none!important; }
+}
+
+@media(max-width: 1100px){
+  .content-global{ max-width: 95%!important; margin: 0 auto!important;}
+  .sidebar{ display: none!important; }
+  
+  /* .content-global{max-width: 90%; margin: 0 auto} */
+}
+
+@media(max-width: 640px){
+  .content-global{ max-width: 95%!important; margin: 0 auto!important;}
+  .sidebar{ display: none!important; }
+
+  .gridTemas .content .boxTema .competencia{grid-template-columns: repeat(3, 1fr)}
+  .gridTemas .content .boxTema .tasks{grid-template-columns: repeat(3, 1fr)}
+  .gridTemas{grid-template-columns: 1fr}
+}
+
+@media(max-width: 480px){
+  .content-global{ max-width: 95%!important; margin: 0 auto!important;}
+  .sidebar{ display: none!important; }
+
+  .gridTemas .content .boxTema .competencia{grid-template-columns: repeat(2, 1fr)}
+  .gridTemas .content .boxTema .tasks{grid-template-columns: repeat(2, 1fr)}
+  .gridTemas .notas .criterios .criterio .notasCriterios{grid-template-columns: repeat(3, 1fr)}
+}
+                    `
+                }
+            </style>
+            <style global jsx>
+                {`
                     .popCompetencia {
                         display: flex;
                         flex-direction: row;
@@ -766,20 +610,9 @@ function Correcao() {
                     .orange{background: #f8d2c5;}
                     .pink{background: #f9e2e8;}
                     `}
-                </style>
-            </MainLayout>
-        </NoSSRWrapper>
+            </style>
+        </MainLayout>
     )
-}
-
-export async function getServerSideProps(ctx: any) {
-    const session = await withAuthSession(ctx);
-
-    if ('redirect' in session) {
-        return session;
-    }
-
-    return { props: { session: session } }
 }
 
 export default Correcao

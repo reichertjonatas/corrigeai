@@ -9,23 +9,44 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { msToTime } from '../../../../../utils/helpers';
-import { ICalenderEvents } from '../../../../../models/user';
+import { ICalenderEvents } from '../../../../../models/userTeste';
 import { useUserStore } from '../../../../../hooks/userStore';
 import { API } from '../../../../../services/api';
 import { debugPrint } from '../../../../../utils/debugPrint';
+import { useCalenderStore } from '../../../../../hooks/calenderStore';
+import { getSession, useSession } from 'next-auth/client';
 
+export async function getServerSideProps(ctx : any) {
+  const session = await getSession(ctx);
 
+  if(!session) {
+      return {
+          redirect: {
+              permanent: false,
+              destination: '/painel/entrar',
+          }
+      }
+  }
+
+  return {
+      props: {
+        session: session,
+      }
+  }
+}
 
 const localizer = momentLocalizer(moment)
 // @ts-ignore
 const CorrigeAiCalendar = withDragAndDrop(Calendar);
 
-function Calendario() {
+function Calendario({ session } : any) {
 
-  const events = useUserStore(state => state.userInfo.events);
-  const initialLoad = useUserStore((state) => state.initialLoad);
-  const addNewEvent = useUserStore((state) => state.addEvent);
-  const updateDragDrop = useUserStore((state) => state.updateDragDrop);
+  const updateDragDrop = useCalenderStore((state) => state.updateDragDrop);
+
+  const removeEvent = useCalenderStore((state) => state.removeEvent);
+  const addNewEvent = useCalenderStore((state) => state.addEvent);
+  const events = useCalenderStore(state => state.events);
+  const getAllEvents = useCalenderStore((state) => state.getAllEvents);
 
   const [open, setOpen] = React.useState(false);
   const closeModal = () => setOpen(false);
@@ -33,15 +54,16 @@ function Calendario() {
 
   // @ts-nocheck
   React.useEffect(() => {
-    if(events.length == 1)
-      initialLoad()
+    if(events?.length == 1)
+      getAllEvents(session.user.id, session.jwt)
 
     debugPrint("==> UseEffects <===");
-  }, [initialLoad])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getAllEvents])
 
   const onEventDrop = ({ event, start, end, allDay }: any) => {
     const updatedEvent: ICalenderEvents = { ...event, start, end };
-    updateDragDrop(event._id, updatedEvent);
+    updateDragDrop(event._id, updatedEvent, session.jwt);
   };
 
 
@@ -61,7 +83,7 @@ function Calendario() {
           color: '#72b01d'
         }
       }
-      addNewEvent(newEvent);
+      addNewEvent(session.user.id, newEvent, session.jwt);
     } else {
       const title = window.prompt('Digite seu texto:');
       if (title) {
@@ -74,7 +96,7 @@ function Calendario() {
           }
         }
 
-        addNewEvent(newEvent);
+        addNewEvent(session.user.id, newEvent, session.jwt);
       }
     }
   }
@@ -302,11 +324,14 @@ function Calendario() {
 
 
 const EventComponent = ({ event, start, end, title }: any) => {
+  const [ session, loading ] = useSession();
+  const updateEvent = useCalenderStore((state) => state.updateEvent);
+  const removeEvent = useCalenderStore((state) => state.removeEvent);
+  
+  if(!session || loading) 
+  return <></>;
 
-  const updateEvent = useUserStore((state) => state.updateEvent);
-  const removeEvent = useUserStore((state) => state.removeEvent);
-
-  return (
+  return  (
     event._id != '1' ? <Popup
       contentStyle={{
         width: '60px'
@@ -317,7 +342,7 @@ const EventComponent = ({ event, start, end, title }: any) => {
           e.preventDefault();
           if (confirm('Deseja excluir?')) {
             // Save it!
-            removeEvent(event._id);
+            removeEvent(event._id, session.jwt);
           }
         }}>
           <p>{title}</p>
@@ -329,18 +354,18 @@ const EventComponent = ({ event, start, end, title }: any) => {
       on={['hover']}
       closeOnDocumentClick={false}>
       <div className="tooltipDivPrincial">
-        <span className="tooltipOrange" onClick={() => updateEvent(event._id, '#f08026')}></span>
-        <span className="tooltipYellow" onClick={() => updateEvent(event._id, '#e5d501')}></span>
-        <span className="tooltipRed" onClick={() => updateEvent(event._id, '#c0272d')}></span>
-        <span className="tooltipGreen" onClick={() => updateEvent(event._id, '#72b01e')}></span>
-        <span className="tooltipMagento" onClick={() => updateEvent(event._id, '#93278f')}></span>
+        <span className="tooltipOrange" onClick={() => updateEvent(event._id, '#f08026', session.jwt)}></span>
+        <span className="tooltipYellow" onClick={() => updateEvent(event._id, '#e5d501', session.jwt)}></span>
+        <span className="tooltipRed" onClick={() => updateEvent(event._id, '#c0272d', session.jwt)}></span>
+        <span className="tooltipGreen" onClick={() => updateEvent(event._id, '#72b01e', session.jwt)}></span>
+        <span className="tooltipMagento" onClick={() => updateEvent(event._id, '#93278f', session.jwt)}></span>
       </div> 
     </Popup>: (
         <span key={event._id} onContextMenu={(e) =>{ 
           e.preventDefault();
           if (confirm('Deseja excluir?')) {
             // Save it!
-            removeEvent(event._id);
+            removeEvent(event._id, session.jwt);
           }
         } }>
           <p>{title}</p>

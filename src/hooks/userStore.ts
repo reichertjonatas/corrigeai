@@ -1,5 +1,5 @@
 import create from 'zustand'
-import { ICalenderEvents, IRedacoes, IUser } from '../models/user';
+import { ICalenderEvents, IRedacoes, IUser } from '../models/userTeste';
 import { API } from '../services/api';
 import { debugPrint } from '../utils/debugPrint';
 import { initialEvent } from '../utils/helpers';
@@ -8,20 +8,22 @@ interface IEventState {
     userInfo: {
         events: ICalenderEvents[];
     }
-    redacoes: IRedacoes[];
+    redacoes: any[];
 
     user: IUser;
 
-    me: () => Promise<boolean>;
+    isLoadingProfile: boolean;
 
-    createRedacao: (redacao: IRedacoes) => Promise<{ error: boolean; data: any; }>;
+    // me: (token: string | undefined | unknown) => Promise<boolean>;
+
+    createRedacao: (redacao: IRedacoes , token: string | unknown) => Promise<{ error: boolean; data: any; }>;
 
     addEvent: (event: ICalenderEvents) => void;
     removeEvent: (_id: string) => void;
     updateEvent: (_id: string, nColor: string) => void;
     updateDragDrop: (_id: string, nEvent: ICalenderEvents) => void;
-
     initialLoad: () => void;
+    setLoadingProfile: (loading : boolean) => void;
 }
 
 
@@ -34,45 +36,37 @@ const userStore = create<IEventState>((set, get) => ({
     redacoes: [],
     user: {} as IUser,
 
-    me: async () => {
-        const response = await API.post('/painel/me');
-        if (response.status === 200) {
-            set({ user: response.data.data })
-            return true;
-        }
-        return false;
-    },
+    isLoadingProfile: true,
 
-    createRedacao: async (redacao: IRedacoes) => {
-        if (get().user.subscription.envios > 0) {
-            const response = await API.post('/painel/redacao/create', {
-                "redacao": redacao.redacao,
-                "tema_redacao": redacao.tema_redacao,
-            });
+    // me: async (token: string | undefined | unknown) => {
+    //     console.log("token", token)
+    //     const response = await getAPI('/users/me', token);
+    //     console.log(" ==> ", response.data)
+    //     if (response.status === 200) {
+    //         set({ user: response.data })
+    //         return true;
+    //     }
+    //     return false;
+    // },
 
-            console.log('data', response.data);
+    createRedacao: async (redacao: IRedacoes, token: string | unknown) => {
+        // if (get().user.subscription.envios > 0) {
+        //     const response = await API.post('/painel/redacao/create', {
+        //         "redacao": redacao.redacao,
+        //         // "tema_redacao": redacao.tema_redacao,
+        //     });
 
-            if (response.status === 200 && !response.data.error ) {
-                await get().me();
-                return { error: false, data: {}};
-            } else {
-                return response.data.data;
-            }
-        }
+        //     console.log('data', response.data);
+
+        //     if (response.status === 200 && !response.data.error ) {
+        //         // await get().me(token);
+        //         return { error: false, data: {}};
+        //     } else {
+        //         return response.data.data;
+        //     }
+        // }
 
         return {error: true, data: { message: 'Você não possui envios disponíveis!' }};
-    },
-
-    initialLoad: () => {
-        API.get('/painel/calendario/getEvents').then((response) => {
-            if (response.status === 200) {
-                const eventsFormated = (response.data.data as ICalenderEvents[]).map(event => {
-                    return { ...event, start: new Date(event.start), end: new Date(event.end) };
-                });
-
-                set((state) => ({ userInfo: { events: [...eventsFormated, ...state.userInfo.events]}}))
-            }
-        });
     },
 
     addEvent: async (event: ICalenderEvents) => {
@@ -128,7 +122,22 @@ const userStore = create<IEventState>((set, get) => ({
             }
         })
 
-    }
+    },
+
+
+    initialLoad: () => {
+        // API.get('/painel/calendario/getEvents').then((response) => {
+        //     if (response.status === 200) {
+        //         const eventsFormated = (response.data.data as ICalenderEvents[]).map(event => {
+        //             return { ...event, start: new Date(event.start), end: new Date(event.end) };
+        //         });
+
+        //         set((state) => ({ userInfo: { events: [...eventsFormated, ...state.userInfo.events]}}))
+        //     }
+        // });
+    },
+
+    setLoadingProfile: (isLoading: boolean) => set({isLoadingProfile: isLoading})
 
 }));
 

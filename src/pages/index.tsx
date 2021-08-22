@@ -9,8 +9,9 @@ import {
   passo3_match,
   TheKingHenrique
 } from '../components/icons'
+import { authRequired } from '../utils/helpers';
 
-export default function Home() {
+function Home() {
   return (
     <>
       <header>
@@ -191,7 +192,7 @@ export default function Home() {
                   <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
                 </ul>
                 <span className="botao">
-                  <a href="#">Comprar agora</a>
+                  <Link href="/checkout">Comprar agora</Link>
                 </span>
               </div>
             </div>
@@ -213,7 +214,7 @@ export default function Home() {
                   <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
                 </ul>
                 <span className="botao">
-                  <a href="#">Comprar agora</a>
+                  <Link href="/checkout">Comprar agora</Link>
                 </span>
               </div>
             </div>
@@ -235,7 +236,7 @@ export default function Home() {
                   <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
                 </ul>
                 <span className="botao">
-                  <a href="#">Comprar agora</a>
+                  <Link href="/checkout">Comprar agora</Link>
                 </span>
               </div>
             </div>
@@ -428,3 +429,5 @@ export default function Home() {
     </>
   )
 }
+
+export default Home

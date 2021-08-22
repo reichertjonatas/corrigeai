@@ -1,8 +1,10 @@
+import { ObjectId } from 'mongodb'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
 import Pagina from '../../../../models/pagina'
-import User, { ICorrecoes, IRedacoes } from '../../../../models/user'
+import User, { ICorrecoes, IRedacoes } from '../../../../models/userTeste'
 import dbConnect from '../../../../services/mongodb'
+import { notaTotalRedacao } from '../../../../utils/helpers'
 import { ERROR_NOT_LOGGED } from '../../constants'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -26,30 +28,57 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 }
                 break;
+            case 'getAllSeusEnvios':
+                if (req.method === 'POST') {
+                    try {
+                        //const response = await User.findOne({ email: session.user!.email }, { redacoes: { $slice:[0, 12]} }).sort({ 'redacoes.createdAt' : -1 });
+                        
+                        
+                        const response = await User.aggregate([
+                            { $match: { email: session.user!.email } },
+                            { $unwind: { path: "$redacoes" } },
+                            { $sort: { 'redacoes.createdAt': -1 } },
+                            { $group: { _id: "$_id", arrayRedacao: { $push: "$redacoes" } } },
+                        ]);
+
+                        console.log("====> aggregate ", response)
+                        if (response.length === 0)
+                            return res.status(200).send({ error: false,  data: [] });
+
+                        return res.status(200).send({ error: false, data: response[0].arrayRedacao });
+                    } catch (error) {
+                        return res.status(500).send({ error: true, errorMessage: error.message });
+                    }
+                }
+                break;
             case 'getAllCorretor':
                 if (req.method === 'POST') {
-                    const { page } = req.body;
+                    const { page, revisaoType } = req.body;
                     const limitPerPage = 10;
                     const skip = page == 1 ? 0 : page * limitPerPage;
-
-                    const revisaoType = 0;
+                    
                     try {
+                        const aggregate = await User.aggregate([
+                            { $match: { 'redacoes': { $exists: true, $not: { $size: 0 } } } },
+                            {
+                                $project: {
+                                    email: 1,
+                                    redacoes: {
+                                        $filter: {
+                                            input: "$redacoes",
+                                            as: "redacao",
+                                            cond: {
+                                                $eq: [{ $size: "$$redacao.correcoes" }, revisaoType]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                        ]);
 
-                        const response = await User.find({
-                            'redacoes': { $exists: true, $not: { $size: 0 } },
-                        }).select({
-                            'redacoes': 1, email: 1
-                        }).limit(limitPerPage).skip(skip).sort({ createdAt: 'asc' });
+                        if (!aggregate) throw new Error("Nenhuma redação corrigida!");
 
-                        if (!response) throw new Error("Nenhuma página encontrada!");
-
-                        const responseFiltered = response.map(item => {
-                            return { ...item, _id: item._id, email: item.email, redacoes: item.redacoes.filter((itemFilter: any) => itemFilter.correcoes.length === revisaoType) }
-                        })
-
-                        if (!responseFiltered) throw new Error("Nenhuma página encontrada!");
-
-                        return res.status(200).send({ error: false, data: responseFiltered });
+                        return res.status(200).send({ error: false, data: aggregate });
                     } catch (error) {
                         return res.status(500).send({ error: true, errorMessage: error.message });
                     }
@@ -60,29 +89,48 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     const { page } = req.body;
                     const limitPerPage = 10;
                     const skip = page == 1 ? 0 : page * limitPerPage;
-
-                    const revisaoType = 0;
+                    
                     try {
                         const user = await User.findOne({ email: session.user!.email });
-                        const response = await User.find({
-                            'redacoes': { $exists: true, $not: { $size: 0 } },
-                            'redacoes.correcoes.corretor' : user._id
-                        }).select({
-                            'redacoes': 1, email: 1
-                        }).limit(limitPerPage).skip(skip).sort({ createdAt: 'desc' });
 
-                        if (!response) throw new Error("Nenhuma página encontrada!");
-
-                        const responseFiltered = response.map(item => {
-                            return {_id: item._id, email: item.email, redacoes: item.redacoes.filter((redacao:any) => {
-                                const correcaoFiltered = redacao.correcoes.filter((correcao : any) => correcao.corretor == user._id);
-                                return correcaoFiltered.length > 0
-                            })}
-                        })
-
-                        if (!responseFiltered) throw new Error("Nenhuma redação corrigida!");
-
-                        return res.status(200).send({ error: false, data: response });
+                        const aggregate = await User.aggregate([
+                            { $match: { 'redacoes': { $exists: true, $not: { $size: 0 } } } },
+                            { $limit: 15 },
+                            { $unwind: { path: "$redacoes" } },
+                            { $sort: { 'redacoes.createdAt': -1 } },
+                            { $group: { 
+                                _id: "$_id",
+                                email: { $first : "$email" },
+                                redacoes: { $push: "$redacoes" } } 
+                            },
+                            {
+                                $project: {
+                                    email: 1,
+                                    redacoes: {
+                                        $map: {
+                                            input: "$redacoes",
+                                            as: "redacao",
+                                            in: {
+                                                tema_redacao: '$$redacao.tema_redacao',
+                                                nota_final: '$$redacao.nota_final',
+                                                createdAt: '$$redacao.createdAt',
+                                                correcoes: {
+                                                    $filter: {
+                                                        input: "$$redacao.correcoes",
+                                                        as: "correcao",
+                                                        cond: {
+                                                            $eq: ["$$correcao.corretor",  user._id ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                        ]);
+                        if (!aggregate) throw new Error("Nenhuma redação corrigida!");
+                        return res.status(200).send({ error: false, data: aggregate });
                     } catch (error) {
                         return res.status(500).send({ error: true, errorMessage: error.message });
                     }
@@ -92,12 +140,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 if (req.method === 'POST') {
                     const { _id } = req.body;
                     try {
-                        // if(session.user!.userType! <= 1) throw new Error("Ação não permitida!");
+                        
+                        const user = await User.findOne({ email: session.user!.email }).select({
+                            _id: 1
+                        });
 
-                        const response = await User.findOne({ 'redacoes._id': _id });
+                        const response = await User.findOne({ 'redacoes._id': _id }).select({
+                            'redacoes.$': 1, email: 1
+                        });
+
                         if (!response) throw new Error("Redação não encontrada!");
 
-                        return res.status(200).send({ error: false, data: response.redacoes[0] });
+                        return res.status(200).send({ error: false, corretorId: user._id, data: response.redacoes[0] });
                     } catch (error) {
                         return res.status(500).send({ error: true, errorMessage: error.message });
                     }
@@ -161,21 +215,63 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 if (req.method === 'POST') {
                     const { _id, correcao }: { correcao: ICorrecoes, _id: string } = req.body;
                     try {
-                        const user = await User.findOne({ email: session.user!.email });
+                        const user = await User.findOne({ 'redacoes._id': _id });
 
                         var ultimaNotaCalc = 0;
+                        var correcoesExistents = 0;
 
-                        correcao.competencias.map(item => {
-                            ultimaNotaCalc = ultimaNotaCalc + item.nota;
-                            return item;
+                        user.redacoes.map((redacao: any) => {
+                            if (redacao._id == _id) {
+                                console.log(" ==> ", redacao.correcoes.length)
+                                correcoesExistents = correcoesExistents + redacao.correcoes.length;
+                            }
                         })
+
+
+                        if (correcoesExistents > 0) {
+                            console.log(" if ===> ")
+                            var notasDB: number[] = [];
+
+                            const redacoes = user.redacoes as IRedacoes[];
+                            console.log("==========> ", redacoes)
+
+                            redacoes.map((redacao: IRedacoes) => {
+                                if (redacao._id == _id) {
+                                    const notaTotal = notaTotalRedacao(redacao);
+                                    console.log("==========> ", notaTotal)
+                                    notasDB.push(notaTotal)
+                                }
+                            })
+
+                            var ultimasMedias = 0;
+                            notasDB.map(item => {
+                                ultimasMedias = ultimasMedias + item;
+                            })
+
+                            ultimaNotaCalc = Math.round(ultimasMedias / notasDB.length);
+                            console.log(" ==>==>==>==> ", ultimaNotaCalc);
+
+                            var atualNota = 0;
+                            correcao.competencias.map(item => {
+                                atualNota = atualNota + item.nota;
+                                return item;
+                            })
+                            
+                            ultimaNotaCalc = Math.round((atualNota + ultimaNotaCalc) / 2)
+                        } else {
+                            console.log(" else ===> ")
+                            correcao.competencias.map(item => {
+                                ultimaNotaCalc = ultimaNotaCalc + item.nota;
+                                return item;
+                            })
+                        }
 
                         await User.updateOne({ 'redacoes._id': _id }, {
                             $set: { 'redacoes.$.nota_final': ultimaNotaCalc }
                         });
 
                         await User.updateOne({ 'redacoes._id': _id }, {
-                            $set: { 'redacoes.$.correcoes': { ...correcao, corretor: user.id } }
+                            $push: { 'redacoes.$.correcoes': { ...correcao, corretor: user.id } }
                         });
 
                         return res.status(200).send({ error: false, data: { message: 'Salvo com sucesso!' } });

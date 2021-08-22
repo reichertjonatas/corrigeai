@@ -1,10 +1,23 @@
+import moment from 'moment'
 import Image from 'next/image'
 import React from 'react'
 import { IcPhoto } from '../../../../components/icons'
 import MainLayout from '../../../../components/layout/MainLayout'
 import Seo from '../../../../components/layout/Seo'
+import PreLoader from '../../../../components/PreLoader'
+import { useUserStore } from '../../../../hooks/userStore'
+import { capitalizeTxt, PLANOS } from '../../../../utils/helpers'
 
 function MeuPerfil() {
+    const user = useUserStore(state => state.user);
+
+    if(!user.userType) {
+        return <PreLoader />
+    }
+    console.log(user.subscription.plano_id);
+
+    const plano = PLANOS(user.subscription.plano_id);
+    
     return (
         <MainLayout>
             <Seo title="Editar perfil" />
@@ -14,10 +27,9 @@ function MeuPerfil() {
                         <div className="botaoDelete">
                             <Image src={IcPhoto} className="img-responsive" alt="" />
                         </div>
-                        <h1>Pedro Santos Mamare</h1>
-                        <p>E-mail: mamarepedro@gmail.com</p>
-                        <p>Data de Registro: 27/07/2021</p>
-                        <p>ID: #7983</p>
+                        <h1>{capitalizeTxt(user.name)}</h1>
+                        <p>E-mail: {user.email}</p>
+                        <p>Data de Registro: {moment(user.createdAt).format('DD/MM/YYYY')}</p>
                         <span className="desc">
                             <span className="dadosUser">
                                 <span className="coluna">
@@ -45,7 +57,7 @@ function MeuPerfil() {
                                         <span className="row">
                                             <span className="funcao">Plano Atual:</span>
                                             <span className="tipo">
-                                                Plano trimestral - 10 envios
+                                               { plano && <>Plano {plano.plano} - {plano.total_envios} envios</>}
                                             </span>
                                         </span>
                                         <span className="row">
@@ -126,3 +138,7 @@ function MeuPerfil() {
 }
 
 export default MeuPerfil
+function PLANO(plano_id: number) {
+    throw new Error('Function not implemented.')
+}
+

@@ -24,6 +24,28 @@ html{
     --gray50: #cccccc;
 }
 
+input[type="text"] {
+  outline: none;
+}
+
+.errorTerms {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 8px;
+  text-decoration-thickness: 0.2em;
+  text-decoration-color: red!important;
+}
+
+.errorInput{
+  border-color: red!important;
+  outline: none;
+}
+
+.errorLabel {
+  color: red!important;
+  font-weight: bold;
+}
+
 
 body{background: var(--gray30) !important; overflow-x: hidden; font-family: 'Poppins', sans-serif !important; box-sizing: border-box;}
 
@@ -92,6 +114,12 @@ a:hover{color: #0a9bff;}
 @media(max-width: 480px){
   .content-global .head .user ul li .message{display: none}
   .content-global .head h1{margin: -1.1rem 0 0}
+}
+
+@media(max-width: 1440px){
+  html {
+      font-size: 14px;
+  }
 }
 
 .titleH1 {

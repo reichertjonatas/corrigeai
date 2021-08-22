@@ -2,54 +2,85 @@ import Link from 'next/link'
 import React from 'react'
 import MainLayout from '../../../components/layout/MainLayout'
 import { useRedacaoStore } from '../../../hooks/redacaoStore';
-import { IRedacoes } from '../../../models/user';
 import Moment from 'moment'
+import { useUserStore } from '../../../hooks/userStore';
+import { debugPrint } from '../../../utils/debugPrint';
+import { useCorretorStore } from '../../../hooks/corretorStore';
+import { strapi } from '../../../services/strapi';
+import { redacaoParaCorrigir } from '../../../graphql/query';
+import { getSession } from 'next-auth/client';
+import { corretor_type } from '../../../utils/helpers';
 
-function DashboardCorretor() {
-    const redacoes = useRedacaoStore( state => state.redacoes);
-    const getAllCorretor = useRedacaoStore( state => state.getAllCorretor);
-    const setNullRedacoes = useRedacaoStore( state => state.setNullRedacoes);
+export async function getServerSideProps(ctx: any) {
+    const session = await getSession(ctx);
+
+    if (!session)
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar'
+            }
+        }
+
+    const redacoes = await strapi(session.jwt).graphql({ query: redacaoParaCorrigir(corretor_type(session.corretor_type as string)) })
+
+    return {
+        props: {
+            session: session,
+            redacoesProps: redacoes,
+        }
+    }
+}
+
+function DashboardCorretor({ redacoesProps }: any) {
+    const redacoes = useCorretorStore(state => state.redacoes);
+    const setRedacoes = useCorretorStore(state => state.setRedacoes);
+    const setNullRedacoes = useCorretorStore(state => state.setNullRedacoes);
 
     React.useEffect(() => {
-        getAllCorretor();
-        return setNullRedacoes();
-    }, [getAllCorretor]);
+        setRedacoes(redacoesProps);
+        return () => setNullRedacoes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
-        <MainLayout menuType={2}>
+        <MainLayout menuType={2} role="corretor">
             <div className="redacoes-box">
                 <div className="content">
                     <div className="head">
-                    <div className="data">Data</div>
-                    <div className="tema">Tema</div>
-                    <div className="estudante">Estudante</div>
-                    {/* <div className="circle">Segunda Correção</div> */}
+                        <div className="data">Data</div>
+                        <div className="tema">Tema</div>
+                        <div className="estudante">Estudante</div>
+                        {/* <div className="circle">Segunda Correção</div> */}
                     </div>
 
                     <div className="list-item">
-                        {redacoes.length > 0 && redacoes.map((redacaosPerUser: any, index: number) => {
-                            console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
-                            return redacaosPerUser.redacoes.map((redacao: IRedacoes, index: number) => {
+                        {redacoes && redacoes?.length <= 0 && <h1 className="msg_nada_encontrado">Nenhuma redação para corrigir.</h1>}
+                        {redacoes?.length > 0 && redacoes.map((redacao: any, index: number) => {
+                            console.log("redacao => ", redacao )
+                            // console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
+                            // return redacaosPerUser.redacoes.map((redacao: any, index: number) => {
                                 const date = Moment(redacao.createdAt);
                                 return (
-                                    <Link href={`/painel/corretor/correcao/${redacao._id}`} key={index} passHref>
-                                        <div className="item" style={{cursor: 'pointer'}}>
-                                            <div className="data">{ `${date.format("DD/MM")}` }</div>
-                                            <div className="tema">{redacao.tema_redacao}</div>
-                                            <div className="estudante">{redacaosPerUser.email}</div>
+                                    <Link href={`/painel/corretor/correcao/${redacao.id}`} key={index} passHref>
+                                        <div className="item" style={{ cursor: 'pointer' }}>
+                                            <div className="data">{`${date.format("DD/MM")}`}</div>
+                                            <div className="tema">{redacao.tema.titulo}</div>
+                                            <div className="estudante">{redacao.user.email}</div>
 
                                             {/* <div className="circle">
                                                 <span className="ic" style={{"background": "#72b01e"}}>&nbsp;</span>
                                             </div> */}
                                         </div>
-                                    </Link>)});
+                                    </Link>)
+                            // });
                         })}
                     </div>
                 </div>
             </div>
             <style jsx>
-            {
-                `.redacoes-box{display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 12.3125rem; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 0.8125rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+                {
+                    `.redacoes-box{display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 12.3125rem; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 0.8125rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
                 .redacoes-box .content{display: block; width: 100%;}
 
                 .redacoes-box .content .head{display: flex; width: 100%; font-size: 1.125rem; gap: 1rem; font-weight: 500; color: var(--dark); margin: 0 0 1rem}

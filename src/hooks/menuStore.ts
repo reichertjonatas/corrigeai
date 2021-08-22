@@ -4,7 +4,7 @@ const menuStore = create<{
     menuOpen: boolean;
     setMenuOpen: () => void;
 }>((set) => ({
-    menuOpen: false,
+    menuOpen: true,
     setMenuOpen: () => set((state) => ({menuOpen: !state.menuOpen })),
 }))
 

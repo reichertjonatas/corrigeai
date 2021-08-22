@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/client'
 import { IPagina } from '../../../../hooks/paginaStore'
 import Pagina from '../../../../models/pagina'
 import Tema, { ITemas } from '../../../../models/tema'
-import User, { IRedacoes } from '../../../../models/user'
+import User, { IRedacoes } from '../../../../models/userTeste'
 import dbConnect from '../../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../../constants'
 

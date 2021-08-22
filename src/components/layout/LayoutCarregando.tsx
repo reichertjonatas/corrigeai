@@ -11,7 +11,7 @@ function LayoutCarregando({isDashboard = false } : CarregandoProps) {
         </MainLayout>)
             : 
         (
-            <div style={{"background" : "var(--green) !important", minHeight: "100vh", minWidth: "100vw",display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
+            <div style={{"background" : "var(--green) !important", height: "100vh", width: "100vw",display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
                 <PreLoader />
             </div>
         ) 

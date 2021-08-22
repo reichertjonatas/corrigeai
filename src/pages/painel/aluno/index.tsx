@@ -2,76 +2,115 @@ import { getSession, session, useSession } from 'next-auth/client'
 import { IcAlert, IcLike, IcGraphic, IcUltimosEnvios, IcRocket } from '../../../components/icons'
 import MainLayout from '../../../components/layout/MainLayout'
 import Image from 'next/image'
-import styles from './Aluno.module.css'
-import router, { useRouter } from 'next/dist/client/router'
+import { useRouter } from 'next/dist/client/router'
 import React, { useEffect } from 'react'
 import LayoutCarregando from '../../../components/layout/LayoutCarregando'
-import { withAuthSession } from '../../../utils/helpers'
-import { IRedacoes, IUser } from '../../../models/user'
-import { API } from '../../../services/api'
+import { mediaGeral } from '../../../utils/helpers'
 import Link from 'next/link'
 import Seo from '../../../components/layout/Seo'
 import Popup from 'reactjs-popup'
-import { useUserStore } from '../../../hooks/userStore'
-import { toast, ToastContainer } from 'react-toastify'
-import { ITemas } from '../../../models/tema'
-import { PointSymbolProps, PointTooltipProps, ResponsiveLine } from "@nivo/line";
+import { toast } from 'react-toastify'
+import { PointSymbolProps, ResponsiveLine } from "@nivo/line";
 import PreLoader from '../../../components/PreLoader'
 import Select from 'react-select'
 import NoSSRWrapper from '../../../components/layout/NoSSRWrapper'
-import { debugPrint } from '../../../utils/debugPrint'
+import { useMeStore } from '../../../hooks/meStore'
+import { ISubscription, useSubscriptionStore } from '../../../hooks/subscriptionStore'
+import { strapi } from '../../../services/strapi'
+import { useRedacaoStore } from '../../../hooks/redacaoStore'
+import { mediaCorrigeAi, redacaoPerUser } from '../../../graphql/query'
 
-function Aluno() {
-  const [loadingProfile, setLoadingProfile] = React.useState(true);
-  const user = useUserStore((state) => state.user)
+
+export async function getServerSideProps(ctx: any) {
+  const session = await getSession(ctx);
+
+  if (!session)
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/painel/entrar'
+      }
+    }
+
+  const temas = await strapi(session.jwt).graphql({
+    query: `query{
+      temas {
+        id
+        titulo
+      }
+    }`
+  })
+
+  const mediaCorrige = await strapi(session.jwt).graphql({
+    query: mediaCorrigeAi
+  })
+
+  const redacoes = await strapi(session.jwt).graphql({
+    query: redacaoPerUser(session.id)
+  })
+
+  return {
+    props: {
+      session: session,
+      temasProps: temas,
+      redacoesProps: redacoes,
+      mediaCorrigeAi: (mediaCorrige as any)?.aggregate?.avg?.nota_final ?? 0
+    }
+  }
+}
+
+
+function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
   const [session, loading] = useSession()
+
   const [tema, setTema] = React.useState<string | null>(null)
   const [temas, setTemas] = React.useState<{ value: string, label: string }[]>([])
+
   // const [suggestions, setSuggestions] = React.useState<ITemas[]>([])
-  const createRedacao = useUserStore((state) => state.createRedacao);
-  const me = useUserStore((state) => state.me);
   const [timer, setTimer] = React.useState<null | any>(null);
 
   const [open, setOpen] = React.useState(false);
   const closeModal = () => setOpen(false);
 
+  const user = useMeStore(state => state.user)
+  const setMe = useMeStore(state => state.setMe)
+  const subscription = useSubscriptionStore(state => state.subscription)
+  const setSubscription = useSubscriptionStore(state => state.setSubscription)
+  const updateSubscription = useSubscriptionStore(state => state.updateSubscription)
+
+  const createRedacao = useRedacaoStore((state) => state.createRedacao);
+  const redacoes = useRedacaoStore(state => state.redacoes);
+  const setRedacoes = useRedacaoStore(state => state.setRedacoes);
 
   /// upload
-
   const [file, setFile] = React.useState<any | null>(null);
   const [createObjectURL, setCreateObjectURL] = React.useState<any | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const router = useRouter()
 
   useEffect(() => {
-    async function initData() {
-      await me();
-      setLoadingProfile(false);
+    if (session?.jwt && !loading) {
+      setMe(session?.jwt)
+      console.log("me => ", session.jwt)
+      if (session?.subscription)
+        setSubscription(session.subscription as ISubscription, session.jwt)
+
+      setRedacoes(redacoesProps?.length >= 0 ? redacoesProps : []);
     }
-    initData();
-  }, [me])
+  }, [setMe, session])
 
   useEffect(() => {
-    async function initData() {
-      API.post('/painel/tema/getAll').then((response) => {
-        if (response.status === 200) {
-          if (!response.data.error) {
-
-            const options: { value: string, label: string }[] = response.data.data.map((item: ITemas) => ({ value: item.tema, label: item.tema }));
-            setTemas(options);
-          }
-        }
-      })
-    }
-    initData();
+    console.log(temasProps, "temasProps")
+    const options: { value: string, label: string }[] = temasProps?.map((item: any) => ({ value: item.id, label: item.titulo }));
+    setTemas(options);
   }, [])
 
-  if (loading || loadingProfile)
-    return <LayoutCarregando isDashboard />
+  if(loading)
+    return <PreLoader />
 
-  if (!session && !loading && !user) {
+  if (!session && !loading) {
     router.push('/painel/entrar');
-    return <></>
+    return <PreLoader />;
   }
 
   const uploadFileClient = (e: any) => {
@@ -86,20 +125,32 @@ function Aluno() {
     setIsLoading(true);
     e.preventDefault()
 
-
     const body = new FormData();
-    body.append("file", file);
-    const responseUpload = await API.post("/painel/upload/redacao", body);
 
-    if (responseUpload.status === 200) {
-      const success = await createRedacao({ redacao: responseUpload.data.data.fileName, tema_redacao: tema ?? '' } as IRedacoes);
+    console.log(`files.${file.name}`);
+
+    body.append(`files.redacao`, file, file.filename);
+    body.append("user", session?.id as string ?? '');
+    body.append("tema", tema ?? '');
+
+    const data = {};
+    // @ts-ignore
+    data['user'] = session?.id as string ?? '';
+    // @ts-ignore
+    data['tema'] = tema ?? '';
+
+    body.append("data", JSON.stringify(data))
+
+    if (session) {
+      const success = await createRedacao(body, subscription!, session!.id as string, session!.jwt);
       if (!success.error) {
-        toast.success('Redação enviada com sucesso!');
+        updateSubscription(subscription?.id ?? '', session.jwt);
+        toast.success(success.data.message);
       } else {
         toast.error(success.data.message);
       }
     } else {
-      toast.error(responseUpload.data.message);
+      toast.error('Precisa efetuar o login para enviar a redação!');
     }
 
     closeModal();
@@ -136,12 +187,14 @@ function Aluno() {
           r={size}
           stroke={borderColor}
           fill={borderColor} />
+
         <text textAnchor="middle" y="6" style={{
           fontFamily: "Poppins",
           fontSize: "16px",
           fill: "#fff",
           fontWeight: 500,
         }}>
+
           {datum.y as number}
         </text>
         <switch>
@@ -164,51 +217,30 @@ function Aluno() {
 
 
   const ultimaNota = () => {
-    if (user.redacoes.length > 0) {
-      const redacoes = user.redacoes.filter(item => item.nota_final != 0);
-      console.log("redacoes", redacoes.length)
-      if(redacoes.length <= 0) return '---' 
-      return redacoes[redacoes.length - 1].nota_final == 0 ? '---' : redacoes[redacoes.length - 1].nota_final;
+    if (redacoes?.length > 0) {
+      const redacoesLocal = redacoes.filter((item: any) => item.nota_final != 0);
+      console.log("redacoes", redacoesLocal.length)
+      if (redacoesLocal.length <= 0) return '---'
+      return redacoesLocal[redacoesLocal.length - 1].nota_final == 0 ? '---' : redacoesLocal[redacoesLocal.length - 1].nota_final;
     }
 
     return "---";
   }
 
-  const mediaGeral = () => {
-    if (user.redacoes.length > 0) {
-        var ultimasNotas:number[] = [];
-
-        user.redacoes.filter(item => item.nota_final != 0).map(item => {
-          ultimasNotas.push(item.nota_final);
-          return item;
-        })
-
-        if(ultimasNotas.length > 0) {
-          var mediaGeralCalc = 0;
-          ultimasNotas.map(item => {
-            mediaGeralCalc = mediaGeralCalc + item
-            return item;
-          });
-          return Math.round(mediaGeralCalc / ultimasNotas.length) == 0 ? '---' : Math.round(mediaGeralCalc / ultimasNotas.length);
-        } else {
-          return "---";
-        }
-    }
-  }
-
   const dataEnvios = () => {
-    var data:{ x: string, y: number, tema: string }[] = [];
+    console.log("dataEnvios")
+    var data: { x: string, y: number, tema: string }[] = [];
 
-    if (user.redacoes.length > 0) {
-      const redacoes = user.redacoes.filter(item => item.nota_final != 0);
-      console.log("redacoes", redacoes.length)
-      if(redacoes.length <= 0) return [];
-      redacoes.slice((redacoes.length - 4), redacoes.length).map(item => {
-        data.push({ x: item.createdAt, y: item.nota_final, tema: item.tema_redacao });
+    if (redacoes?.length > 0) {
+      const redacoesLocal = redacoes.filter((item: any) => item.nota_final != 0);
+      console.log("redacoes", redacoesLocal.length)
+      if (redacoesLocal.length <= 0) return [];
+      redacoesLocal.slice((redacoesLocal.length - 4), redacoesLocal.length).map((item: any) => {
+        data.push({ x: item.createdAt, y: item.nota_final, tema: item.tema.titulo });
         return item;
       });
     }
-    
+
     return data
   }
 
@@ -216,50 +248,50 @@ function Aluno() {
   return (
     <MainLayout>
       <Seo title="Painel do Aluno" />
-      <div className={styles["grid-painelaluno"]}>
-        <div className={styles["content"]}>
-          <div className={styles["head-box"]}>
-            <div className={styles["box"]}>
-              <span className={styles["icon"]}>
-                <Image src={IcLike} className={styles["img-responsive"]} alt="" />
+      <div className="grid-painelaluno">
+        <div className="content">
+          <div className="head-box">
+            <div className="box">
+              <span className="icon">
+                <Image src={IcLike} className="img-responsive" alt="" />
               </span>
-              <span className={styles["texto"]}>
-                {user.redacoes.length > 0 ? `Você já enviou ${user.redacoes.length} ${user.redacoes.length == 1 ? 'redação' : 'redações'}.` : 'Você ainda não enviou redações!'}
+              <span className="texto">
+                {redacoes?.length > 0 ? `Você já enviou ${redacoes.length} ${redacoes.length == 1 ? 'redação' : 'redações'}.` : 'Você ainda não enviou redações!'}
               </span>
-              <span className={styles["hr"]} style={{ "background": "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(114,176,30,1) 0%, rgba(201,203,200,1) 100%)" }}>&nbsp;</span>
+              <span className="hr" style={{ "background": "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(114,176,30,1) 0%, rgba(201,203,200,1) 100%)" }}>&nbsp;</span>
             </div>
-            <div className={styles["box"]}>
-              <span className={styles["icon"]}>
-                <Image src={IcAlert} className={styles["img-responsive"]} alt="" />
+            <div className="box">
+              <span className="icon">
+                <Image src={IcAlert} className="img-responsive" alt="" />
               </span>
-              <span className={styles["texto"]}>
-                Você possui {user.subscription.envios} envios.
+              <span className="texto">
+                Você possui {subscription?.envios} envios.
               </span>
-              {user.subscription.envios <= 0 && <span className={styles["button"]}>
+              {subscription != null && subscription.envios <= 0 && <span className="button">
                 <Link href="/planos">Comprar agora</Link>
               </span>}
-              <span className={styles["hr"]} style={{ "background": "linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(237,28,36,1) 0%, rgba(201,203,200,1) 100%)" }}>&nbsp;</span>
+              <span className="hr" style={{ "background": "linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(237,28,36,1) 0%, rgba(201,203,200,1) 100%)" }}>&nbsp;</span>
             </div>
           </div>
-          <div className={styles["box-content"]}>
-            <span className={styles["head-content"]}>
-              <span className={styles["icon"]}>
-                <Image src={IcUltimosEnvios} className={styles["img-responsive"]} alt="" />
+          <div className="box-content">
+            <span className="head-content">
+              <span className="icon">
+                <Image src={IcUltimosEnvios} className="img-responsive" alt="" />
               </span>
-              <span className={styles["title"]}>Seus últimos envios</span>
+              <span className="title">Seus últimos envios</span>
             </span>
-            <div className={styles["graphic"]}>
-              {user.redacoes.length > 0 && dataEnvios().length ? (
+            <div className="graphic">
+              {redacoes?.length > 0 && dataEnvios().length ? (
                 <div style={{ height: 230, width: '100%' }}>
-                    <ResponsiveLine
+                  <ResponsiveLine
                     data={[
                       {
                         id: "envios",
                         data: false ?
-                            [
-                              { x: "2019-05-01", y: 500, tema: `Democratização do acesso ao cinema no Brasil` },
-                              { x: "2019-06-01", y: 600, tema: `Democratização do acesso ao cinema no Brasil` },
-                            ]
+                          [
+                            { x: "2019-05-01", y: 500, tema: `Democratização do acesso ao cinema no Brasil` },
+                            { x: "2019-06-01", y: 600, tema: `Democratização do acesso ao cinema no Brasil` },
+                          ]
                           :
                           dataEnvios()
                       }
@@ -287,30 +319,37 @@ function Aluno() {
                   />
                 </div>
               ) : (
-                <div style={{ padding: 50, textAlign: 'center' }}>{user.redacoes.length == 0 ? 'Envie a primeira redação para gerar estatísticas!' : 'O gráfico será exibido quando receber a primeira correção.'}</div>
+                <div style={{ padding: 50, textAlign: 'center' }}>{redacoes?.length == 0 ? 'Envie a primeira redação para gerar estatísticas!' : 'O gráfico será exibido quando a redação receber uma correção.'}</div>
               )}
             </div>
           </div>
         </div>
 
-        <div className={styles["sidebar-panel"]}>
-          <div className={styles["grades"]}>
+        <div className="sidebar-panel">
+          <div className="grades">
             <ul>
-              <li>Sua última nota: { ultimaNota() }</li>
-              <li>Sua média geral: { mediaGeral() } </li>
-              <li>Média Corrige Aí: ---</li>
-              <li className={styles["desempenho"]}>
+              <li>Sua última nota: {ultimaNota()}</li>
+              <li>Sua média geral: {mediaGeral(redacoes)} </li>
+              <li>Média Corrige Aí: {mediaCorrigeAi}</li>
+              <li className="desempenho">
                 <Link href="/painel/aluno/desempenho">VER DESEMPENHO COMPLETO</Link>
               </li>
             </ul>
           </div>
 
 
-          <div className={styles["submit-essay"]}>
-            <span className={styles["name"]}>
-              <a style={{ cursor: "pointer" }} onClick={() => user.subscription.envios > 0 ? setOpen(true) : toast.error('Você não possui envios disponíveis!')}>
-                <span className={styles["icon"]}>
-                  <Image src={IcRocket} className={styles["img-responsive"]} alt="" />
+          <div className="submit-essay">
+            <span className="name">
+              <a style={{ cursor: "pointer" }} onClick={() => (
+                subscription != null ?
+                  subscription.envios > 0 ?
+                    setOpen(true)
+                    :
+                    toast.error('Você não possui envios disponíveis!')
+                  : toast.error('Você não possui envios disponíveis!')
+              )}>
+                <span className="icon">
+                  <Image src={IcRocket} className="img-responsive" alt="" />
                 </span>
                 Enviar redação</a>
             </span>
@@ -370,15 +409,60 @@ function Aluno() {
             </Popup>
           </div>
 
-          <div className={styles["themes"]}>
+          <div className="themes">
             <ul>
               <li><Link href="/painel/aluno/temas">Ver todos os temas</Link></li>
-              <li><Link href="/duvidas">Como enviar a sua redação</Link></li>
+              <li><Link href="/caed">Como enviar a sua redação</Link></li>
             </ul>
           </div>
         </div>
       </div>
       <style global jsx>{`
+
+          .grid-painelaluno{display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem}
+          .grid-painelaluno .content{display: block; width: 100%;}
+          .grid-painelaluno .content .head-box{display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin: 0 0 3.5rem}
+          .grid-painelaluno .content .head-box .box{display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 12.3125rem; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 0.8125rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+          .grid-painelaluno .content .head-box .box .icon{position: absolute; right: 0.8125rem; top: 0.8125rem}
+          .grid-painelaluno .content .head-box .box .texto{display: block; width: 100%; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 2.0625em; text-align: center; line-height: 2.476875rem; max-width: 265px; margin: 0 0 0.5rem}
+          .grid-painelaluno .content .head-box .box:nth-child(2) .texto{max-width: 14.06rem}
+          .grid-painelaluno .content .head-box .box .hr{position: absolute; width: 100%;height: 3px;bottom: 1rem;max-width: calc(100% - 2rem);border-radius: 5px;}
+          .grid-painelaluno .content .head-box .box .button{display: block; width: 100%; text-align: center;}
+          .grid-painelaluno .content .head-box .box .button a{display: flex; margin: 0 auto; box-shadow: 0px 0px 9px 0px #c68989; align-items: center; justify-content: center;background: #c70500; min-height: 2.8rem; font-weight: 500; width: 11.0625rem; border-radius: 5.53125rem; color: var(--white); font-size: 1.0575em}
+          .grid-painelaluno .content .head-box .box .button a:hover{transform: scale(0.9);}
+          .grid-painelaluno .content .box-content{display: block; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 1.875rem 1.5625rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+          .grid-painelaluno .content .box-content .head-content{display: flex;width: 100%;flex-direction: row;align-items: center;gap: 1rem; padding: 0 1.5625rem}
+          .grid-painelaluno .content .box-content .head-content .icon{position: relative; top: 4px}
+          .grid-painelaluno .content .box-content .head-content .title{display: block; width: 100%; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 2.0625em; color: var(--dark);}
+          .grid-painelaluno .content .box-content .graphic{display: block; width: 100%;}
+
+
+          .grid-painelaluno .sidebar-panel{display: block; width: 100%;}
+          .grid-painelaluno .sidebar-panel .grades{display: block; width: 100%; margin: 0 0 1rem;}
+          .grid-painelaluno .sidebar-panel .grades ul{padding: 0; margin: 0;}
+          .grid-painelaluno .sidebar-panel .grades ul li{display: inline-block; width: 100%; margin: 0 0 1rem; text-align: center; color: var(--dark); font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 0.75rem; font-size: 1.366875em; background: var(--gray20); padding: 0.5125rem; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+          .grid-painelaluno .sidebar-panel .grades ul li.desempenho{margin: 0; transition: all 0.5s ease; display: inline-block; width: 100%; margin: 0 0 1rem; text-align: center; color: var(--gray20); font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 0.75rem; font-size: 1.2em; background: var(--dark); padding: 0.5125rem; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+          .grid-painelaluno .sidebar-panel .grades ul li.desempenho:hover{transform: scale(0.9);}
+          .grid-painelaluno .sidebar-panel .grades ul li.desempenho a{display: block; color: var(--gray20);}
+          .grid-painelaluno .sidebar-panel .submit-essay{display: block; width: 100%; margin: 0 0 1.8125rem;}
+          .grid-painelaluno .sidebar-panel .submit-essay a{display: flex; flex-direction: row; gap: 0.7rem; margin: 0 auto; box-shadow: 0px 0px 9px 0px #407610; align-items: center; justify-content: center;background: var(--dark); min-height: 4.2rem; font-weight: 500; border-radius: 1.2rem; color: var(--gray20); font-size: 1.275em}
+          .grid-painelaluno .sidebar-panel .submit-essay .icon{position: relative; top: 4px}
+          .grid-painelaluno .sidebar-panel .submit-essay a:hover{transform: scale(0.9);}
+
+          .grid-painelaluno .sidebar-panel .themes{display: block; width: 100%; background: var(--gray20); border-radius: 0.75rem; padding: 1.5625rem 2.1875rem;box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+          .grid-painelaluno .sidebar-panel .themes ul{padding: 0; margin: 0}
+          .grid-painelaluno .sidebar-panel .themes ul li{display: inline-block; width: 100%; margin: 0 0 1rem}
+          .grid-painelaluno .sidebar-panel .themes ul li:last-child{margin: 0}
+          .grid-painelaluno .sidebar-panel .themes ul li a{display: block; background: var(--gray50); padding: 0.7rem; border-radius: 0.9rem; text-align: center; color: var(--dark); font-size: 1.1em; line-height: 1.1em}
+
+
+          @media(max-width: 1200px){
+            .grid-painelaluno{grid-template-columns: 1fr}
+          }
+
+          @media(max-width: 640px){
+            .grid-painelaluno .content .head-box{grid-template-columns: 1fr}
+          }
           .react-select-container { flex: 1 } 
 
           .chart {
@@ -437,6 +521,7 @@ function Aluno() {
       } </style>
       <style jsx>
         {`
+
           .popRedacao{display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; padding: 1rem 0;}
           .popRedacao h1{display: block; width: 100%; text-align: center; color: #002400; font-weight: 700; font-size: 1.4rem; font-family: 'Poppins', sans-serif; margin-bottom: 1rem}
           .popRedacao .formulario{display: block;width: 100%;max-width: 480px;margin: 0 auto;padding: 2rem 1rem 1.5rem;border: 2px dashed #cccccc;text-align: center; border-radius: 0.5rem}
@@ -461,15 +546,6 @@ function Aluno() {
       </style>
     </MainLayout>
   )
-}
-
-export async function getServerSideProps(ctx: any) {
-  const session = await withAuthSession(ctx);
-  if ('redirect' in session) {
-    return session;
-  }
-
-  return { props: { session: session } }
 }
 
 
