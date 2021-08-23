@@ -173,7 +173,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
             case 'create':
                 if (req.method === 'POST') {
-                    const { redacao, tema_redacao }: IRedacoes = req.body;
+                    const { redacao, tema: { title } }: IRedacoes = req.body;
                     try {
 
                         const me = await User.findOne({ email: session.user!.email });
@@ -181,7 +181,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         if (!redacao)
                             throw new Error("Necessário enviar a redacao.");
 
-                        if (!tema_redacao)
+                        if (!title)
                             throw new Error("Necessário escolher o tema.");
 
                         if (!me)
@@ -194,7 +194,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         await User.updateOne({ email: session.user!.email }, {
                             $push: {
                                 redacoes: {
-                                    $each: [{ redacao, tema_redacao }],
+                                    $each: [{ redacao, title }],
                                 }
                             }
                         });

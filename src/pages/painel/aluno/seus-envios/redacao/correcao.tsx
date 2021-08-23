@@ -19,7 +19,7 @@ import { debugPrint } from '../../../../../utils/debugPrint';
 function Correcao() {
     const router = useRouter()
 
-    const [initData,
+    const [
         redacao,
         correcao,
         annotations, setAnnotations,
@@ -33,7 +33,6 @@ function Correcao() {
         salvarCorrecao,
         setCorrecaoNull
     ] = useCorretorStore(state => ([
-        state.initData,
         state.redacao,
         state.correcao,
         state.annotations, state.setAnnotations,

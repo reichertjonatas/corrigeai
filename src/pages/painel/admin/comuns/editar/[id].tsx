@@ -57,7 +57,7 @@ function EditarFaq() {
     // }, [initData])
 
     return (
-        <MainLayout menuType={3} userType={3}>
+        <MainLayout menuType={3} role="admin">
             <Seo title="Editar FAQ" />
             <div className="gridPlanejamento">
                 <div className="content">

@@ -3,7 +3,6 @@ import Providers from 'next-auth/providers'
 import nodemailer from "nodemailer"
 import axios from 'axios';
 import Adapters from 'next-auth/adapters';
-import Models from '../../../models'
 
 const options = {
   site: process.env.NEXTAUTH_URL,
@@ -82,17 +81,7 @@ const options = {
     }),
 
   ],
-  adapter: Adapters.TypeORM.Adapter(
-    // The first argument should be a database connection string or TypeORM config object
-    process.env.NEXT_PUBLIC_DATABASE_URL!,
-    // The second argument can be used to pass custom models and schemas
-    {
-      models: {
-        // @ts-ignore
-        User: Models.User,
-      },
-    }
-  ),
+  database: process.env.NEXT_PUBLIC_DATABASE_URL,
   session: {
     jwt: true,
   },
