@@ -166,7 +166,7 @@ function Correcao() {
                 <div className="notas">
                     <h1>Notas das competências</h1>
                     <span className="criterios">
-                        {   correcao != null && correcao.competencias?.length > 0 && correcao.competencias.map((competencia, index: number) => {
+                        {   correcao != null && correcao.competencias?.length > 0 && correcao.competencias.map((competencia: any, index: number) => {
                             { competencia }
                             return ( competencia.obs.length > 0 ? (
                                 <span className="criterio" key={index}>

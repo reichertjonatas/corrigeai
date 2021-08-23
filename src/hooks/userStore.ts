@@ -1,5 +1,5 @@
 import create from 'zustand'
-import { ICalenderEvents, IRedacoes, IUser } from '../models/userTeste';
+import { ICalenderEvents, IRedacoes, IUser } from '../models/User';
 import { API } from '../services/api';
 import { debugPrint } from '../utils/debugPrint';
 import { initialEvent } from '../utils/helpers';

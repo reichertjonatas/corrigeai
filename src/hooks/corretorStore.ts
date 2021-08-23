@@ -1,5 +1,5 @@
 import create from "zustand";
-import { ICompetencias, ICorrecoes, IObsEnem, IRedacoes } from "../models/userTeste";
+import { ICompetencias, ICorrecoes, IObsEnem, IRedacoes } from "../models/User";
 import { API } from "../services/api";
 // @ts-ignore
 import Annotation from 'react-image-annotation'

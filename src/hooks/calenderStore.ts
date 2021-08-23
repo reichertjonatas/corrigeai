@@ -1,5 +1,5 @@
 import create from "zustand";
-import { ICalenderEvents } from "../models/userTeste";
+import { ICalenderEvents } from "../models/User";
 import { strapi } from "../services/strapi";
 import { initialEvent } from "../utils/helpers";
 

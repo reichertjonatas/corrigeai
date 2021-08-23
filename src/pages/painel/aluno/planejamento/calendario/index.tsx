@@ -9,7 +9,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { msToTime } from '../../../../../utils/helpers';
-import { ICalenderEvents } from '../../../../../models/userTeste';
+import { ICalenderEvents } from '../../../../../models/User';
 import { useUserStore } from '../../../../../hooks/userStore';
 import { API } from '../../../../../services/api';
 import { debugPrint } from '../../../../../utils/debugPrint';

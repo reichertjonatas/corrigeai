@@ -1,5 +1,5 @@
 import create from "zustand";
-import { IRedacoes } from "../models/userTeste";
+import { IRedacoes } from "../models/User";
 import { API } from "../services/api";
 import { debugPrint } from "../utils/debugPrint";
 

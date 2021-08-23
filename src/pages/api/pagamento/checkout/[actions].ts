@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
-import dbConnect from "../../../../services/mongodb";
 import { ERROR_NOT_LOGGED } from "../../constants";
-import User from "../../../../models/userTeste";
 import { startAssinatura } from "./_PagamentoController";
 import moment from "moment";
 import { PLANOS } from "../../../../utils/helpers";
@@ -11,7 +9,6 @@ import Strapi from 'strapi-sdk-js'
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { actions } = req.query;
 
-  await dbConnect();
 
   console.log(" ===> ", actions);
 

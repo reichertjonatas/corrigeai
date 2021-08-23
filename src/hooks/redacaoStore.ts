@@ -1,7 +1,7 @@
 import { Subscription } from "react-hook-form/dist/utils/Subject";
 import create from "zustand";
 import { redacaoPerUser } from "../graphql/query";
-import { IRedacoes } from "../models/userTeste";
+import { IRedacoes } from "../models/User";
 import { API } from "../services/api";
 import { strapi } from "../services/strapi";
 import { ISubscription } from "./subscriptionStore";

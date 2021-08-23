@@ -1,6 +1,6 @@
 import { getSession } from "next-auth/client"
 import { competencia } from "../components/icons";
-import User, { ICalenderEvents, IObsEnem, IRedacoes } from "../models/userTeste"
+import { ICalenderEvents, IObsEnem, IRedacoes } from "../models/User"
 import { API } from "../services/api";
 import { debugPrint } from "./debugPrint";
 

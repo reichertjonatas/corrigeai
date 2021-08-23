@@ -1,10 +1,8 @@
 import { NextApiRequest , NextApiResponse} from 'next'
 import { getSession } from 'next-auth/client'
-import dbConnect from '../../../services/mongodb'
 import { ERROR_NOT_LOGGED } from '../constants'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await dbConnect();
   
   const session = await getSession({ req })
 
