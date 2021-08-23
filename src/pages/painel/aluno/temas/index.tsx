@@ -73,9 +73,7 @@ function Temas({ session } : any ) {
 
                     <div className="box-tema">
                         {currentTema != null && <h1>{currentTema.titulo}</h1>}
-                        {currentTema != null && <div className="conteudo">
-                           <Markdown>{ currentTema.content }</Markdown>
-                        </div>}
+                        {currentTema != null && <div className="conteudo" dangerouslySetInnerHTML={{ __html: currentTema.content }}></div>}
                     </div>
 
                     <span className="botao">

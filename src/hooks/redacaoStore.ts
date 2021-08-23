@@ -30,8 +30,7 @@ const redacaoStore = create<IRedacaoStore>((set, get) => ({
 
     createRedacao: async (body: any, subscription: ISubscription, id: string, token: string | unknown) => {
         if (subscription.envios > 0) {
-            const response = await strapi(token).create("redacaos", {...body, status_correcao: 'correcao_um'});
-            console.log('<== data ==> createRedacao', response);
+            const response = await strapi(token).create("redacaos", body);
 
             if (response) {
                 const nEnvios = subscription.envios - 1;

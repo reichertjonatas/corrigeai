@@ -1,19 +1,54 @@
 import moment from 'moment'
+import { getSession } from 'next-auth/client'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import Popup from 'reactjs-popup'
 import { IcPhoto } from '../../../../components/icons'
 import MainLayout from '../../../../components/layout/MainLayout'
 import Seo from '../../../../components/layout/Seo'
 import PreLoader from '../../../../components/PreLoader'
-import { useUserStore } from '../../../../hooks/userStore'
+import { useMeStore } from '../../../../hooks/meStore'
 import { capitalizeTxt } from '../../../../utils/helpers'
+import Strapi from 'strapi-sdk-js'
 
-function MeuPerfil() {
-    const user = useUserStore(state => state.user);
+export async function getServerSideProps(ctx: any) {
+    const session = await getSession(ctx);
 
-    if(!user.userType) {
-        return <PreLoader />
+    if (!session) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar',
+            }
+        }
     }
+
+    return {
+        props: {
+            session: session,
+        }
+    }
+}
+
+
+function MeuPerfil({ session }: any) {
+    const user = useMeStore(state => state.user);
+    const setMe = useMeStore(state => state.setMe);
+    const [isLoading, setIsLoading] = useState(true)
+
+    React.useEffect(() => {
+        console.log("useEffect ==>", isLoading)
+        const initLoad = async () => {
+            await setMe(session.jwt);
+            setIsLoading(false);
+            console.log("useEffect ==> initLoad", isLoading)
+        }
+        initLoad();
+    }, [setMe])
+
+    if (isLoading || user === null)
+        return <PreLoader />
 
     return (
         <MainLayout menuType={2} role="corretor">
@@ -24,26 +59,80 @@ function MeuPerfil() {
                         <div className="botaoDelete">
                             <Image src={IcPhoto} className="img-responsive" alt="" />
                         </div>
-                        <h1>{capitalizeTxt(user.name)}</h1>
-                        <p>E-mail: {user.email}</p>
-                        <p>Data de Registro: {moment(user.createdAt).format('DD/MM/YYYY')}</p>
+                        <h1>{capitalizeTxt(user!.name)}</h1>
+                        <p>E-mail: {user!.email}</p>
+                        <p>Data de Registro: {moment(user!.createdAt).format('DD/MM/YYYY')}</p>
                         <span className="desc">
                             <span className="dadosUser">
                                 <span className="coluna">
                                     <h2>Dados do Usuário</h2>
                                     <span className="tabela">
-                                        <span className="row">
+                                        {/* <span className="row">
                                             <span className="funcao">Senha:</span>
                                             <span className="tipo">
                                                 <input type="password" />
                                             </span>
-                                        </span>
+                                        </span> */}
 
                                         <span className="row">
                                             <span className="funcao">&nbsp;</span>
-                                            <span className="tipo">
-                                                <a href="#">Atualizar senha</a>
-                                            </span>
+
+                                            <Popup
+                                                trigger={
+                                                    <span className="tipo">
+                                                        <a href="#">Alterar senha</a>
+                                                    </span>}
+                                                modal
+                                                nested
+                                            >
+                                                {(close: any) => (
+                                                    <div className="popRedacao">
+                                                        <button className="close" onClick={close}>
+                                                            &times;
+                                                        </button>
+
+                                                        <div className="header"> Alteração da senha </div>
+                                                        <div className="content">
+                                                            <p>
+                                                                Ao clicar em continuar será enviado um e-mail com as instruções para alterar a senha!
+                                                            </p>
+
+                                                            <div>
+
+                                                                <button
+                                                                    className="button continuar"
+                                                                    onClick={async () => {
+                                                                        const strapi = new Strapi()
+                                                                        await strapi.forgotPassword({ email: session.user.email })
+                                                                            .then((response : any) => {
+                                                                                console.log("======> reset pass ", response)
+                                                                                
+                                                                                toast.dismiss()
+                                                                                toast.info("E-mail enviado!")
+
+                                                                                close()
+                                                                            }).catch((error:any) => {
+                                                                                console.log(" =======> reset pass error", error)
+
+                                                                                toast.dismiss()
+                                                                                toast.error(error?.status === 400 ? 'Requisição mal formatada!' : 'Erro desconhecido!')
+
+                                                                                close()
+                                                                            })
+                                                                    }}> CONTINUAR </button>
+
+                                                                <button
+                                                                    className="button cancelar"
+                                                                    onClick={() => {
+                                                                        close()
+                                                                        toast.dismiss();
+                                                                        toast.warning("Operação cancelada!")
+                                                                    }}> CANCELAR </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Popup>
                                         </span>
                                     </span>
                                 </span>
@@ -54,20 +143,45 @@ function MeuPerfil() {
                                         <span className="row">
                                             <span className="funcao">Estado atual:</span>
                                             <span className="tipo">
-                                                Corretor  - Turma {user.corretorType}
+                                                Corretor  - Turma {user!.corretor_type == "turma_um" ? 1 : 2}
                                             </span>
                                         </span>
                                     </span>
                                 </span>
                             </span>
-                            <span className="botaoSave">
+                            {/* <span className="botaoSave">
                                 <a href="#">Salvar</a>
-                            </span>
+                            </span> */}
                         </span>
                     </div>
                 </div>
             </div>
 
+            <style jsx>
+                {`
+
+          .popRedacao{display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; padding: 1rem 0;}
+          .popRedacao h1{display: block; width: 100%; text-align: center; color: #002400; font-weight: 700; font-size: 1.4rem; font-family: 'Poppins', sans-serif; margin-bottom: 1rem}
+          .popRedacao .formulario{display: block;width: 100%;max-width: 480px;margin: 0 auto;padding: 2rem 1rem 1.5rem;border: 2px dashed #cccccc;text-align: center; border-radius: 0.5rem}
+          .popRedacao .formulario form{display: block; width: 100%}
+          .formulario input[type="text"]{display: block; width: 100%; margin: 0 0 1rem; padding: 0.8rem 0.5rem; border: 1px solid #cccccc; border-radius: 0.5rem; font-family: 'Poppins', sans-serif}
+          .upload .custom-file-upload{border-radius: 0.5rem; margin: 0; color: #fff; background: #72b01d; transition: all 0.5s ease; font-family: 'Poppins', sans-serif; border: 1px solid #ccc;display: inline-block;padding: 6px 12px;cursor: pointer;}
+          .upload .custom-file-upload:hover{background: #002400; }
+          .popRedacao .botoes{display: flex; width: 100%; flex-direction: row; justify-content: center; margin: 2rem 0 0; gap: 1rem}
+          
+          .enviar {cursor: pointer; border:none; display: block; transition: all 0.5s ease;padding: 0.5rem 1rem; background: #002400; color: #fff; text-decoration: none; border-radius: 0.5rem; font-family: 'Poppins', sans-serif}
+          .enviar :hover{background: #72b01d;}
+
+          .popRedacao .botoes a.cancelar{background: transparent; color: #002400}
+          .popRedacao .botoes a.cancelar:hover{color: #002400; background: transparent}
+
+          input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+          }
+                    `}
+            </style>
             <style jsx>
                 {
                     `

@@ -83,7 +83,7 @@ function Calendario({ session } : any) {
           color: '#72b01d'
         }
       }
-      addNewEvent(session.user.id, newEvent, session.jwt);
+      addNewEvent(session.id, newEvent, session.jwt);
     } else {
       const title = window.prompt('Digite seu texto:');
       if (title) {
@@ -96,7 +96,7 @@ function Calendario({ session } : any) {
           }
         }
 
-        addNewEvent(session.user.id, newEvent, session.jwt);
+        addNewEvent(session.id, newEvent, session.jwt);
       }
     }
   }

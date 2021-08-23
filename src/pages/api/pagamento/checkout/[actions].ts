@@ -6,6 +6,7 @@ import User from "../../../../models/userTeste";
 import { startAssinatura } from "./_PagamentoController";
 import moment from "moment";
 import { PLANOS } from "../../../../utils/helpers";
+import Strapi from 'strapi-sdk-js'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { actions } = req.query;
@@ -20,74 +21,85 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         try {
           const { payment_method, amount, customer, card_hash } = req.body;
 
+          const strapi = new Strapi()
+
           const plano_id = 1395688;
 
           console.log("above ", req.body)
 
           if (!amount) throw new Error("Transação inválida!");
 
-          const assinatura = await startAssinatura(
-            plano_id,
-            card_hash == undefined ? null : card_hash,
-            payment_method,
-            amount,
-            customer
-          )
+          console.log(" above  ===> ")
 
-          console.log("date: =>", moment(new Date().setDate(new Date().getDate() + 30)).format('YYYY-MM-DD HH:mm:ss'), " == ", assinatura);
+          // const assinatura = await startAssinatura(
+          //   plano_id,
+          //   card_hash == undefined ? null : card_hash,
+          //   payment_method,
+          //   amount,
+          //   customer
+          // )
 
-          if (!assinatura) throw new Error("Assinatura não efetuada!");
+          // console.log("date: =>", moment(new Date().setDate(new Date().getDate() + 30)).format('YYYY-MM-DD HH:mm:ss'), " == ", assinatura);
 
-          if (assinatura?.current_transaction.status == "paid") {
-            const user = await User.findOne({ email: customer.email })
-            if (!user) {
-              console.log("if")
+          // if (!assinatura) throw new Error("Assinatura não efetuada!");
+
+          
+
+          if (true) {//assinatura?.current_transaction.status == "paid") {
+            console.log(" ==> <== ")
+            const user: any = await strapi.find('users', { email: customer.email });
+            console.log(" ===> user ", user)
+            if (!user[0]) {
+
+              const novoUser = await strapi.register({ username: 'kellvem', email: 'kellvem222@gmail.com', password:'123456' })
+              console.log(" ===> ", novoUser);
+
               //   // await signIn('email', { redirect: false, email: capture.customer.email });
-              const novoUser = new User({
-                email: assinatura.customer.email.toLowerCase(),
-                name: assinatura.customer.name ?? '',
-                userType: 1,
-                informacoes: {
-                  endereco: customer.address,
-                  telefone: assinatura.phone != undefined ? assinatura.phone : null,
-                  cpf: customer.document_number,
-                  nascimento: customer.birthday,
-                },
-                nivel: PLANOS(plano_id)!.plano_type,
-                subscription: {
-                  card_hash: card_hash != undefined ? card_hash : null,
-                  data: assinatura,
-                  plano_id: plano_id,
-                  subscriptionName: PLANOS(plano_id)!.plano,
-                  envios: PLANOS(plano_id)!.total_envios,
-                  subscriptionDate: new Date(),
-                  subscriptionExpr: moment(new Date().setDate(new Date().getDate() + PLANOS(plano_id)!.days)).format('YYYY-MM-DD HH:mm:ss'),
-                }
-              });
-              novoUser.save(novoUser);
+              // const novoUser = new User({
+              //   email: assinatura.customer.email.toLowerCase(),
+              //   name: assinatura.customer.name ?? '',
+              //   userType: 1,
+              //   informacoes: {
+              //     endereco: customer.address,
+              //     telefone: assinatura.phone != undefined ? assinatura.phone : null,
+              //     cpf: customer.document_number,
+              //     nascimento: customer.birthday,
+              //   },
+              //   nivel: PLANOS(plano_id)!.plano_type,
+              //   subscription: {
+              //     card_hash: card_hash != undefined ? card_hash : null,
+              //     data: assinatura,
+              //     plano_id: plano_id,
+              //     subscriptionName: PLANOS(plano_id)!.plano,
+              //     envios: PLANOS(plano_id)!.total_envios,
+              //     subscriptionDate: new Date(),
+              //     subscriptionExpr: moment(new Date().setDate(new Date().getDate() + PLANOS(plano_id)!.days)).format('YYYY-MM-DD HH:mm:ss'),
+              //   }
+              // });
+              // novoUser.save(novoUser);
             } else {
               console.log("else")
-              await User.updateOne({ email: assinatura.customer.email }, {
-                $set: {
-                  name: assinatura.customer.name ?? '',
-                  informacoes: {
-                    endereco: assinatura.customer.address.toLowerCase(),
-                    telefone: assinatura.phone != undefined ? assinatura.phone : null,
-                    cpf: assinatura.customer.document_number,
-                    nascimento: assinatura.customer.birthday,
-                  },
-                  nivel: PLANOS(plano_id)!.plano_type,
-                  subscription: {
-                    card_hash: card_hash != undefined ? card_hash : null,
-                    data: assinatura,
-                    plano_id: plano_id,
-                    subscriptionName: PLANOS(plano_id)!.plano,
-                    envios: PLANOS(plano_id)!.total_envios,
-                    subscriptionDate: new Date(),
-                    subscriptionExpr: moment(new Date().setDate(new Date().getDate() + PLANOS(plano_id)!.days)).format('YYYY-MM-DD HH:mm:ss'),
-                  }
-                }
-              });
+              // await User.updateOne({ email: assinatura.customer.email }, {
+              //   $set: {
+              //     name: assinatura.customer.name ?? '',
+              //     informacoes: {
+              //       endereco: assinatura.customer.address.toLowerCase(),
+              //       telefone: assinatura.phone != undefined ? assinatura.phone : null,
+              //       cpf: assinatura.customer.document_number,
+              //       nascimento: assinatura.customer.birthday,
+              //     },
+              //     nivel: PLANOS(plano_id)!.plano_type,
+              //     subscription: {
+              //       card_hash: card_hash != undefined ? card_hash : null,
+              //       data: assinatura,
+              //       plano_id: plano_id,
+              //       subscriptionName: PLANOS(plano_id)!.plano,
+              //       envios: PLANOS(plano_id)!.total_envios,
+              //       subscriptionDate: new Date(),
+              //       subscriptionExpr: moment(new Date().setDate(new Date().getDate() + PLANOS(plano_id)!.days)).format('YYYY-MM-DD HH:mm:ss'),
+              //     }
+              //   }
+              // });
             }
 
             return res.status(200).send({

@@ -4,7 +4,6 @@ import MainLayout from '../../../components/layout/MainLayout'
 import Image from 'next/image'
 import { useRouter } from 'next/dist/client/router'
 import React, { useEffect } from 'react'
-import LayoutCarregando from '../../../components/layout/LayoutCarregando'
 import { mediaGeral } from '../../../utils/helpers'
 import Link from 'next/link'
 import Seo from '../../../components/layout/Seo'
@@ -79,6 +78,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
   const updateSubscription = useSubscriptionStore(state => state.updateSubscription)
 
   const createRedacao = useRedacaoStore((state) => state.createRedacao);
+  const updateRedacoes = useRedacaoStore((state) => state.updateRedacoes);
   const redacoes = useRedacaoStore(state => state.redacoes);
   const setRedacoes = useRedacaoStore(state => state.setRedacoes);
 
@@ -126,19 +126,12 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     e.preventDefault()
 
     const body = new FormData();
+    body.append("files.redacao", file);
 
-    console.log(`files.${file.name}`);
-
-    body.append(`files.redacao`, file, file.filename);
-    body.append("user", session?.id as string ?? '');
-    body.append("tema", tema ?? '');
-
-    const data = {};
-    // @ts-ignore
+    const data:any = {};
     data['user'] = session?.id as string ?? '';
-    // @ts-ignore
     data['tema'] = tema ?? '';
-
+    data['status_correcao'] = subscription?.subscriptionType === "enem" ? "correcao_um" :  "redacao_simples";
     body.append("data", JSON.stringify(data))
 
     if (session) {
@@ -330,7 +323,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
             <ul>
               <li>Sua última nota: {ultimaNota()}</li>
               <li>Sua média geral: {mediaGeral(redacoes)} </li>
-              <li>Média Corrige Aí: {mediaCorrigeAi}</li>
+              <li>Média Corrige Aí: { Math.round(mediaCorrigeAi)}</li>
               <li className="desempenho">
                 <Link href="/painel/aluno/desempenho">VER DESEMPENHO COMPLETO</Link>
               </li>

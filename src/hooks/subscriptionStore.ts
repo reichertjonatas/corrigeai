@@ -1,5 +1,4 @@
 import create from "zustand";
-import { postGraphql } from "../services/api";
 import { strapi } from "../services/strapi";
 
 export interface ISubscription {

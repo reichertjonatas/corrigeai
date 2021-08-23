@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const API = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_URL_API,
+    baseURL: `${process.env.NEXT_PUBLIC_URL_PUBLICA}/api`,
 })
 
 // export const postGraphqla = async (query: string, token?: string | null | undefined | unknown ) => { 

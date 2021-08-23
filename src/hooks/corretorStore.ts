@@ -161,13 +161,20 @@ const corretorStore = create<{
             let novoStatus 
             if(redacao.status_correcao){
                 switch (redacao.status_correcao) {
+
+                    case "redacao_simples":
+                            novoStatus = "finalizada"
+                        break;
+                        
                     case "correcao_um":
                             novoStatus = "correcao_dois"
                         break;
                     
                     case "correcao_dois":
                             var descrepancia = false
+
                             console.log("aqui vai calc descrepancia");
+
                             novoStatus = descrepancia ? "descrepancia" : "finalizada"
                         break;
                 }

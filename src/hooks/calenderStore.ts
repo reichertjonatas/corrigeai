@@ -24,6 +24,7 @@ const calenderStore = create<ICalenderInterface>((set, get) => ({
         set({ events: [...enventsFormated, ...get().events] })
     },
     addEvent: async (user: string, nEvent: ICalenderEvents, token: string | undefined | unknown) => {
+        console.log(" ===> addEvent: " , user);
         const response = await strapi(token).create('events', { ...nEvent, user: user });
         const event: any = response as any;
         set({

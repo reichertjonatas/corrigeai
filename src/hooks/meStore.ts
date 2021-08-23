@@ -6,11 +6,12 @@ export interface IMeInterface {
         id: string;
         email: string;
         name: string;
-        foto: {
-            url: string;
-        }
+        image?: string
+        corretor_type?: string;
+        createdAt: string;
+
     } | null,
-    setMe: (token: string | undefined | unknown) => void;
+    setMe: (token: string | undefined | unknown) => Promise<void>;
     changePassword: () => Promise<boolean>;
 }
 
@@ -18,9 +19,18 @@ const meStore = create<IMeInterface>((set, get) => ({
     user: null,
     setMe: async (token: string | undefined | unknown) => {
         const response = await strapi(token).find('users/me');
-        const user:any = response as any;
+        const user: any = response as any;
         if (user) {
-            set({ user: { id: user.id, name: user.name, email: user.email, foto: { url: user.foto.url } } });
+            set({
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    image: user?.foto != null ? user.foto.url : null,
+                    corretor_type: user?.corretor_type ? user.corretor_type : null,
+                    createdAt: user.createdAt
+                }
+            });
         }
     },
     changePassword: async () => {
@@ -28,4 +38,4 @@ const meStore = create<IMeInterface>((set, get) => ({
     }
 }))
 
-export const useMeStore = meStore; 
+export const useMeStore = meStore;

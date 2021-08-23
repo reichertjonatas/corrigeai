@@ -114,10 +114,12 @@ function Redacao() {
                     <div className="novasCorrecoes">
                         { redacao.correcoes.length > 0 && redacao.correcoes.map( (correcao:any, index:number) => {
                             return (<a key={ index }href="#" onClick={() => {
+                                
                                 router.push('/painel/aluno/seus-envios/redacao/correcao')
                                 setAnnotations(correcao.marcacoes);
                                 setCompetenciaOffline(correcao.competencias)
                                 setCorrecaoFrontEnd(correcao);
+                                
                             }}>Ver correção {index+1} completa</a>);
                         })}
                     </div>
