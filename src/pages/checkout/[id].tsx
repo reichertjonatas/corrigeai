@@ -12,6 +12,11 @@ import { API } from '../../services/api';
 import { signIn } from 'next-auth/client';
 import PreLoader from '../../components/PreLoader';
 import { ICheckoutPlano, PLANOS } from '../../utils/helpers';
+import { useRouter } from 'next/router';
+import Strapi from 'strapi-sdk-js'
+import { planoById } from '../../graphql/query';
+
+const modoAssinatura = false;
 
 const useScript = (url: any) => {
     useEffect(() => {
@@ -28,12 +33,40 @@ const useScript = (url: any) => {
     }, [url])
 }
 
-function CheckoutPage() {
+export async function getServerSideProps(ctx: any) {
+    const { id } = ctx.query;
+
+    if(!id){
+        return { 
+            redirect: {
+                permanent: false,
+                destination: '/'
+            }
+        }
+    }
+
+    const strapiLocal = new Strapi({
+        url: `${process.env.NEXT_PUBLIC_URL_API}`
+    })
+    const plano = await strapiLocal.graphql({ query: planoById(id) })
+
+    return {
+        props: {
+            planoDados: plano
+        }
+    }
+}
+
+function CheckoutPage({ planoDados }: any) {
     const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
 
     const [onPayment, setOnPayment] = React.useState(false);
     const [isLoaded, setIsLoaded] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [isErrorPayment, setisErrorPayment] = React.useState(false);
+    const router = useRouter();
+
+
 
     const onSubmit = (data: any) => {
         setTimeout(function () {
@@ -49,179 +82,52 @@ function CheckoutPage() {
             setIsLoading(true);
         }, 800)
 
-        const dataFake = {
-            object: 'subscription',
-            plan: null,
-            id: 749132,
-            amount: 8000,
-            current_transaction: {
-                object: 'transaction',
-                status: 'paid',
-                refuse_reason: null,
-                status_reason: 'acquirer',
-                acquirer_response_code: '0000',
-                acquirer_name: 'pagarme',
-                acquirer_id: '610986d550e10d0011dd70a0',
-                authorization_code: '16394',
-                soft_descriptor: null,
-                tid: 13807365,
-                nsu: 13807365,
-                date_created: '2021-08-23T11:53:38.621Z',
-                date_updated: '2021-08-23T11:53:39.017Z',
-                amount: 8000,
-                authorized_amount: 8000,
-                paid_amount: 8000,
-                refunded_amount: 0,
-                installments: 1,
-                id: 13807365,
-                cost: 114,
-                card_holder_name: 'kellvem barbosa',
-                card_last_digits: '6490',
-                card_first_digits: '538333',
-                card_brand: 'mastercard',
-                card_pin_mode: null,
-                card_magstripe_fallback: false,
-                cvm_pin: false,
-                postback_url: null,
-                payment_method: 'credit_card',
-                capture_method: 'ecommerce',
-                antifraud_score: null,
-                boleto_url: null,
-                boleto_barcode: null,
-                boleto_expiration_date: null,
-                referer: 'api_key',
-                ip: '82.155.64.84',
-                subscription_id: 749132,
-                metadata: {},
-                antifraud_metadata: {},
-                reference_key: null,
-                device: null,
-                local_transaction_id: null,
-                local_time: null,
-                fraud_covered: false,
-                fraud_reimbursed: null,
-                order_id: null,
-                risk_level: 'very_low',
-                receipt_url: null,
-                payment: null,
-                addition: null,
-                discount: null,
-                private_label: null,
-                pix_qr_code: null,
-                pix_expiration_date: null
-            },
-            postback_url: null,
-            payment_method: 'credit_card',
-            card_brand: 'mastercard',
-            card_last_digits: '6490',
-            current_period_start: '2021-08-23T11:53:38.580Z',
-            current_period_end: null,
-            charges: 0,
-            soft_descriptor: null,
-            status: 'paid',
-            date_created: '2021-08-23T11:53:39.008Z',
-            date_updated: '2021-08-23T11:53:39.008Z',
-            phone: {
-                object: 'phone',
-                ddi: '55',
-                ddd: '62',
-                number: '983114142',
-                id: 1256631
-            },
-            address: {
-                object: 'address',
-                street: 'Rua Georgina George Borges de Melo',
-                complementary: '',
-                street_number: '12',
-                neighborhood: 'Conjunto Habitacional Madre Germana II',
-                city: 'Goiânia',
-                state: 'GO',
-                zipcode: '74354806',
-                country: 'Brasil',
-                id: 5619737
-            },
-            customer: {
-                object: 'customer',
-                id: 6717628,
-                external_id: null,
-                type: null,
-                country: null,
-                document_number: '03288449188',
-                document_type: 'cpf',
-                name: 'Kellvem',
-                email: 'kellvembarbosa@icloud.com',
-                phone_numbers: null,
-                born_at: null,
-                birthday: null,
-                gender: null,
-                date_created: '2021-08-23T11:53:38.544Z',
-                documents: []
-            },
-            card: {
-                object: 'card',
-                id: 'card_cksokzdpv0ags0o9tiqwzodx4',
-                date_created: '2021-08-23T11:53:38.611Z',
-                date_updated: '2021-08-23T11:53:39.000Z',
-                brand: 'mastercard',
-                holder_name: 'kellvem barbosa',
-                first_digits: '538333',
-                last_digits: '6490',
-                country: 'UNITED STATES',
-                fingerprint: 'cksokzd8w99z40j82z3jlutah',
-                valid: true,
-                expiration_date: '0224'
-            },
-            metadata: null,
-            fine: {},
-            interest: {},
-            settled_charges: null,
-            manage_token: 'test_subscription_9xWQR9EG6qPhztAxSvjuYxPU2IjLFT',
-            manage_url: 'https://pagar.me/customers/#/subscriptions/749132?token=test_subscription_9xWQR9EG6qPhztAxSvjuYxPU2IjLFT'
-        };
-
-        const response = await API.post('/pagamento/checkout/capturarPagamento', dataFake);
-
-        try {
-
-            if (response.status === 200) {
-                // debugPrint(' =====> ', response.data.data)
-                if (response.data.data.status == "paid" && response.data.data.payment_method == 'credit_card') {
-                    // signIn('email', { 
-                    //     email: response.data.data.email, 
-                    //     callbackUrl: `${process.env.NEXT_PUBLIC_URL_REDIRECT_POS_LOGIN}`  
-                    // })
-                    toast.success("Pagamento recebido com sucesso!")
-                    setOnPayment(false);
-                } else {
-                    setIsLoaded(true)
-                    setIsLoading(false)
-                }
-            }
-
-        } catch (error) {
-            setIsLoaded(true)
-            setIsLoading(false)
-            setOnPayment(false);
-        }
-        return;
-
         // @ts-ignore
         let checkout = new PagarMeCheckout.Checkout({
             encryption_key: "ek_test_t8JoT1B5Sc43OG8ztftTpf4P0QfJOX",
             success: async (data: any) => {
                 if (data) {
-                    const response = await API.post('/pagamento/checkout/capturarPagamento', data);
-                    if (response.status === 200) {
-                        debugPrint(' =====> ', response.data.data)
-                        if (response.data.data.status == "paid" && response.data.data.payment_method == 'credit_card') {
-                            // signIn('email', { 
-                            //     email: response.data.data.email, 
-                            //     callbackUrl: `${process.env.NEXT_PUBLIC_URL_REDIRECT_POS_LOGIN}`  
-                            // })
-                            toast.success("Pagamento recebido com sucesso!")
-                        } else {
-                            setIsLoaded(true)
-                            setIsLoading(false)
+                    if(modoAssinatura){
+                        const response = await API.post('/pagamento/checkout/capturarPagamento', { modoAssinatura, planoIdDb: planoDados.id, ...data });
+                        if (response.status === 200) {
+                            if (response.data.data.status == "paid" && response.data.data.payment_method == 'credit_card') {
+                                toast.success("Pagamento recebido com sucesso!")
+                                router.replace('/painel/verificar-email')
+                            } else if(response.data.data.status == 'waiting_payment') {
+                                toast.info("Aguardando pagamento!")
+                                router.replace(`/checkout/aguardando`)
+                            } else if(response.data.data.status == 'nao_autorizada') {
+                                toast.error("Pagamento rejeitado!")
+                                router.replace(`/checkout/rejeitado`)
+                            } else if(response.data.data.status == 'waiting_payment') {
+                                toast.info("Aguardando pagamento!")
+                                router.replace(`/checkout/aguardando`)
+                            }
+                        }
+                    } else {
+                        const response = await API.post('/pagamento/checkout/capturarPagamento', { 
+                            modoAssinatura, 
+                            planoIdDb: planoDados.id,
+                            amount: planoDados.precoPagarme, 
+                            ...data 
+                        });
+                        if (response.status == 200) {
+                            console.log(" ===> ", response.data.data)
+                            if (response.data.data.status == "paid" || response.data.data.status == 'authorized') {
+                                toast.success("Pagamento recebido com sucesso!")
+                                router.replace('/painel/verificar-email')
+                            } else if(response.data.data.status == 'waiting_payment') {
+                                toast.info("Aguardando pagamento!")
+                                router.replace(`/checkout/aguardando?boletoUrl=${encodeURI(response.data.data.boleto_url)}`)
+                            } else if(response.data.data.status == 'nao_autorizada') {
+
+                                toast.error("Pagamento rejeitado!")
+                                router.replace(`/checkout/rejeitado`)
+                            } else if(response.data.data.status == 'waiting_payment') {
+
+                                toast.info("Aguardando pagamento!")
+                                router.replace(`/checkout/aguardando`)
+                            }
                         }
                     }
                 } else {
@@ -243,26 +149,21 @@ function CheckoutPage() {
 
         checkout.open({
             buttonText: "Checkout",
-            amount: 8000,
-            createToken: 'false',
+            amount: planoDados.precoPagarme,
+            createToken: `${!modoAssinatura}`,
             customerData: 'true',
-            maxInstallments: planoAtual!.parcela_number,
+            interestRate: planoDados.juros,
+            maxInstallments: planoDados.parcela_number,
             uiColor: "#72b01d",
             payment_methods: "credit_card, boleto",
+            postbackUrl: `${process.env.NEXT_PUBLIC_URL}/api/pagamento/postback`,
             items: [
                 {
-                    id: '1',
-                    title: 'Bola de futebol',
-                    unit_price: 12000,
+                    id: planoDados.id,
+                    title: planoDados.name,
+                    unit_price: planoDados.precoPagarme,
                     quantity: 1,
-                    tangible: true
-                },
-                {
-                    id: 'a123',
-                    title: 'Caderno do Goku',
-                    unit_price: 3200,
-                    quantity: 3,
-                    tangible: true
+                    tangible: false
                 }
             ]
         });
@@ -286,10 +187,10 @@ function CheckoutPage() {
         <div>
             <div className="checkout">
                 <div className="box">
-                    <h1>Checkout</h1>
                     <span className="logo">
                         <Image src={LogoLogin} className="img-responsive" alt="" />
                     </span>
+                    <h1>Checkout</h1>
                     {isLoading && <PreLoader />}
                     {isLoaded && <>
                         Aguardando pagamento do boleto!
@@ -301,12 +202,12 @@ function CheckoutPage() {
                             <h2>Resumo da compra</h2>
                             <div className="head">
                                 <div className="box_list">
-                                    <span className="bold">{planoAtual!.plano}</span>
-                                    <span className="regular">{planoAtual!.meses} de acesso à Plataforma Corrige Aí</span>
+                                    <span className="bold">{planoDados.name}</span>
+                                    <span className="regular">{planoDados.textoMes} de acesso à Plataforma Corrige Aí</span>
                                 </div>
                                 <div className="box_list">
-                                    <span className="bold">Total {planoAtual!.total}</span>
-                                    <span className="regular">Em até {planoAtual!.parcelamento} no cartão de crédito</span>
+                                    <span className="bold">Total {planoDados.totalTexto}</span>
+                                    <span className="regular">Em até {planoDados.parcelamentoTexto} no cartão de crédito</span>
                                 </div>
                             </div>
                             {/* <h2>Dados do Aluno</h2>
@@ -535,7 +436,7 @@ function CheckoutPage() {
                     .checkout{display: block; width: 100%; min-height: 100vh; align-items: center; justify-content: center; }
                     .checkout .box{display: block; width: 100%; max-width: 600px; margin: 0 auto;}
                     .checkout .box h1{display: block; width: 100%; font-size: 1.53rem; text-align: center; margin: 2rem 0; color: var(--dark)}
-                    .checkout .box .logo{display: block; width: 100%; text-align: center; margin: 0 0 2rem}
+                    .checkout .box .logo{display: block; width: 100%; text-align: center; margin: 2rem 0;}
                     .checkout .box .caixa{display: block; width: 100%; background: #fff; padding: 2rem; border-radius: 1rem; box-shadow: 0px 0px 15px 0px rgb(0 0 0 / 15%); margin: 0 0 2rem}
                     .checkout .box .caixa h2:first-child{display: block; width: 100%; font-size: 1.3rem; margin: 0 0 1.5rem}
                     .checkout .box .caixa h2{display: block; width: 100%; font-size: 1.3rem; margin: 1.5rem 0; color: var(--dark)}

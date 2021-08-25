@@ -1,8 +1,8 @@
-import Image from 'next/image'
 import React from 'react'
-import { LogoCorrige, LogoLogin } from '../../components/icons'
+import Image from 'next/image'
+import { LogoLogin } from '../../components/icons'
 
-function VerificarEmail() {
+function PagamentoRejeitado() {
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
 
@@ -11,10 +11,11 @@ function VerificarEmail() {
                     <span className="logo">
                         <Image src={LogoLogin}  className="img-responsive" alt="CorrigeAi" />
                     </span>
-                    <h1>Verifique seu email</h1>
+                    <h1>Pagamento rejeitado</h1>
                     <div className="caixa" style={{textAlign: 'center'}}>
-                        <p>A plataforma enviou um email, clique no link autorizar o acesso! <br />
-                            <span style={{ fontSize: '12px' }}>Obs: Se não encontrar o e-mail verifique a caixa de spam!</span>
+                        <p>
+                            Seu pagamento foi rejeitado! <br />
+                            Tente novamente se possível altere o metódo de pagamento!
                         </p>
                     </div>
                 </div>
@@ -27,7 +28,7 @@ function VerificarEmail() {
                     .checkout{display: block; width: 100%; min-height: 100vh; align-items: center; justify-content: center; }
                     .checkout .box{display: block; width: 100%; max-width: 600px; margin: 0 auto;}
                     .checkout .box h1{display: block; width: 100%; font-size: 1.53rem; text-align: center; margin: 2rem 0; color: var(--dark)}
-                    .checkout .box .logo{display: block; width: 100%; text-align: center; margin: 2rem 0}
+                    .checkout .box .logo{display: block; width: 100%; text-align: center; margin: 2rem 0;}
                     .checkout .box .caixa{display: block; width: 100%; background: #fff; padding: 2rem; border-radius: 1rem; box-shadow: 0px 0px 15px 0px rgb(0 0 0 / 15%); margin: 0 0 2rem}
                     .checkout .box .caixa h2:first-child{display: block; width: 100%; font-size: 1.3rem; margin: 0 0 1.5rem}
                     .checkout .box .caixa h2{display: block; width: 100%; font-size: 1.3rem; margin: 1.5rem 0; color: var(--dark)}
@@ -128,4 +129,4 @@ function VerificarEmail() {
     )
 }
 
-export default VerificarEmail
+export default PagamentoRejeitado

@@ -131,7 +131,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     const data:any = {};
     data['user'] = session?.id as string ?? '';
     data['tema'] = tema ?? '';
-    data['status_correcao'] = subscription?.subscriptionType === "enem" ? "correcao_um" :  "redacao_simples";
+    data['status_correcao'] = subscription?.plano.plano_type === "enem" ? "correcao_um" :  "redacao_simples";
     body.append("data", JSON.stringify(data))
 
     if (session) {

@@ -10,8 +10,23 @@ import {
   TheKingHenrique
 } from '../components/icons'
 import { authRequired } from '../utils/helpers';
+import Strapi from 'strapi-sdk-js'
+import { planosQuery } from '../graphql/query';
 
-function Home() {
+export async function getStaticProps(ctx: any) {
+  const strapi = new Strapi({
+    url: `${process.env.NEXT_PUBLIC_URL_API}`
+});
+  const planos = await strapi.graphql({ query: planosQuery });
+  return {
+    props: {
+      planos
+    },
+    revalidate: 60 * 60,
+  }
+}
+
+function Home({ planos }: any) {
   return (
     <>
       <header>
@@ -20,8 +35,8 @@ function Home() {
           <div className="menu">
             <ul>
               <li><a href="#">Como funciona</a></li>
-              <li><a href="#">Corrige Aí</a></li>
-              <li><a href="#">Planos e preços</a></li>
+              <li><a href="#passos">Corrige Aí</a></li>
+              <li><a href="#precos">Planos e preços</a></li>
               <li><Link href="/painel" passHref><a id="login">Área do aluno</a></Link></li>
             </ul>
           </div>
@@ -175,71 +190,31 @@ function Home() {
       <div id="precos">
         <div className="container">
           <div className="columns">
-            <div className="column">
-              <span className="periodo">Plano anual</span>
-              <span className="boxPreco">
-                <span className="parcelas">12x</span>
-                <span className="preco">R$ 00,00</span>
-              </span>
-              <div className="lista">
-                <ul>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                </ul>
-                <span className="botao">
-                  <Link href="/checkout">Comprar agora</Link>
-                </span>
-              </div>
-            </div>
 
-            <div className="column">
-              <span className="periodo">Plano semestral</span>
-              <span className="boxPreco">
-                <span className="parcelas">12x</span>
-                <span className="preco">R$ 00,00</span>
-              </span>
-              <div className="lista">
-                <ul>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                </ul>
-                <span className="botao">
-                  <Link href="/checkout">Comprar agora</Link>
+            {planos && planos.length > 0 && planos.map((plano: any, index: number) =>
+              <div className="column" key={index}>
+                <span className="periodo">{plano.name}</span>
+                <span className="boxPreco">
+                  <span className="parcelas">{plano.parcelamentoTexto}</span>
+                  <span className="preco">{plano.totalTexto}</span>
                 </span>
+                <div className="lista">
+                  <ul>
+                    {plano.infos.length > 0 && plano.infos.map((info: any, index: number) => (
+                      <li key={index}>
+                        <span className="icon">
+                          <Image src={check} className="img-responsive" alt="" /></span>
+                          {info}
+                      </li>))}
+                  </ul>
+                  <span className="botao">
+                    <Link href={`/checkout/${plano.id}`}>Comprar agora</Link>
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="column">
-              <span className="periodo">Plano trimestral</span>
-              <span className="boxPreco">
-                <span className="parcelas">12x</span>
-                <span className="preco">R$ 00,00</span>
-              </span>
-              <div className="lista">
-                <ul>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                  <li><span className="icon"><Image src={check} className="img-responsive" alt="" /></span>Lorem ipsum lorem ipsum</li>
-                </ul>
-                <span className="botao">
-                  <Link href="/checkout">Comprar agora</Link>
-                </span>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

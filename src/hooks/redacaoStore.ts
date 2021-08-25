@@ -37,6 +37,7 @@ const redacaoStore = create<IRedacaoStore>((set, get) => ({
                 await strapi(token).update("subscriptions", subscription.id, {
                     envios:  nEnvios < 0 ? 0 : nEnvios  
                 });
+                
                 await get().updateRedacoes(id, token);
                 return { error: false, data: { message: 'Redação enviada!'}};
             }

@@ -68,15 +68,18 @@ export const PLANOS = (plano_id:number) => {
     switch (plano_id) {
         case 1395688:
               return <IPlano>{
+
                   plano_type: 1,
                   parcela_number: 1,
                   total_envios: 8,
                   days: 30,
+
                   plano: "Acesso Mensal",
                   meses: "1 mês",
                   total: "R$ 80,00",
                   parcelamento: "1x",
                   infos: ["", "", ""]
+                  
               }
         default:
             return null

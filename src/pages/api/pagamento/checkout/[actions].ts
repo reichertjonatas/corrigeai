@@ -1,14 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/client";
 import { ERROR_NOT_LOGGED } from "../../constants";
-import { startAssinatura } from "./_PagamentoController";
-import moment from "moment";
-import { PLANOS } from "../../../../utils/helpers";
+import { capturarPagamento, startAssinatura, tokenAsBackend } from "./_PagamentoController";
 import Strapi from 'strapi-sdk-js'
+import { strapi } from "../../../../services/strapi";
+import { planoById } from "../../../../graphql/query";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { actions } = req.query;
-
 
   console.log(" ===> ", actions);
 
@@ -16,107 +14,140 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     case 'capturarPagamento':
       if (req.method === 'POST') {
         try {
-          const { payment_method, amount, customer, card_hash } = req.body;
+          const { modoAssinatura , token, payment_method, customer, card_hash, amount, planoIdDb } = req.body;
 
-          const strapi = new Strapi()
-
-          const plano_id = 1395688;
-
-          console.log("above ", req.body)
-
-          if (!amount) throw new Error("Transação inválida!");
-
-          console.log(" above  ===> ")
-
-          // const assinatura = await startAssinatura(
-          //   plano_id,
-          //   card_hash == undefined ? null : card_hash,
-          //   payment_method,
-          //   amount,
-          //   customer
-          // )
-
-          // console.log("date: =>", moment(new Date().setDate(new Date().getDate() + 30)).format('YYYY-MM-DD HH:mm:ss'), " == ", assinatura);
-
-          // if (!assinatura) throw new Error("Assinatura não efetuada!");
-
+          const strapiLocal = new Strapi({
+            url: `${process.env.NEXT_PUBLIC_URL_API}`
+        })
+          const recoverPlanoDado: any = await strapiLocal.graphql({ query: planoById(planoIdDb) })
           
+          const tokenAth = await tokenAsBackend();
+          if (!amount && modoAssinatura) throw new Error("Transação inválida!");
+          
+          const transacao: any = await strapi(tokenAth).create('transacaos', {
+            metodo: payment_method,
+            plano_id: recoverPlanoDado.pagarme_plano_id,
+            status: 'waiting_payment',
+            data: req.body
+          });
+          
+          let assinatura:any
 
-          if (true) {//assinatura?.current_transaction.status == "paid") {
-            console.log(" ==> <== ")
-            const user: any = await strapi.find('users', { email: customer.email });
-            console.log(" ===> user ", user)
-            if (!user[0]) {
+          if(modoAssinatura){
+            assinatura = await startAssinatura(
+              recoverPlanoDado.pagarme_plano_id,
+              card_hash == undefined ? null : card_hash,
+              payment_method,
+              amount,
+              customer,
+              planoIdDb,
+              transacao.id
+            )
 
-              const novoUser = await strapi.register({ username: 'kellvem', email: 'kellvem222@gmail.com', password:'123456' })
-              console.log(" ===> ", novoUser);
+            console.log("assinatura", assinatura)
+            if (!assinatura) throw new Error("Assinatura não efetuada!");
+          } else {
+            console.log("else modoAssinatura");
+            assinatura = await capturarPagamento(token, amount, planoIdDb, transacao.id);
+            console.log(" ====> ", assinatura)
 
-              //   // await signIn('email', { redirect: false, email: capture.customer.email });
-              // const novoUser = new User({
-              //   email: assinatura.customer.email.toLowerCase(),
-              //   name: assinatura.customer.name ?? '',
-              //   userType: 1,
-              //   informacoes: {
-              //     endereco: customer.address,
-              //     telefone: assinatura.phone != undefined ? assinatura.phone : null,
-              //     cpf: customer.document_number,
-              //     nascimento: customer.birthday,
-              //   },
-              //   nivel: PLANOS(plano_id)!.plano_type,
-              //   subscription: {
-              //     card_hash: card_hash != undefined ? card_hash : null,
-              //     data: assinatura,
-              //     plano_id: plano_id,
-              //     subscriptionName: PLANOS(plano_id)!.plano,
-              //     envios: PLANOS(plano_id)!.total_envios,
-              //     subscriptionDate: new Date(),
-              //     subscriptionExpr: moment(new Date().setDate(new Date().getDate() + PLANOS(plano_id)!.days)).format('YYYY-MM-DD HH:mm:ss'),
-              //   }
-              // });
-              // novoUser.save(novoUser);
-            } else {
-              console.log("else")
-              // await User.updateOne({ email: assinatura.customer.email }, {
-              //   $set: {
-              //     name: assinatura.customer.name ?? '',
-              //     informacoes: {
-              //       endereco: assinatura.customer.address.toLowerCase(),
-              //       telefone: assinatura.phone != undefined ? assinatura.phone : null,
-              //       cpf: assinatura.customer.document_number,
-              //       nascimento: assinatura.customer.birthday,
-              //     },
-              //     nivel: PLANOS(plano_id)!.plano_type,
-              //     subscription: {
-              //       card_hash: card_hash != undefined ? card_hash : null,
-              //       data: assinatura,
-              //       plano_id: plano_id,
-              //       subscriptionName: PLANOS(plano_id)!.plano,
-              //       envios: PLANOS(plano_id)!.total_envios,
-              //       subscriptionDate: new Date(),
-              //       subscriptionExpr: moment(new Date().setDate(new Date().getDate() + PLANOS(plano_id)!.days)).format('YYYY-MM-DD HH:mm:ss'),
-              //     }
-              //   }
-              // });
-            }
-
-            return res.status(200).send({
-              error: false,
-              data: {
-                status: "paid", payment_method, email: customer.email
-              }
+            await strapi(tokenAth).update('transacaos', transacao.id, {
+              status: assinatura?.status === 'authorized' ? 'paid' : 'waiting_payment',
             });
+            console.log(" ====> update assinatura")
+
+            switch (assinatura?.status) {
+              case 'authorized':
+                console.log(" ====> update authorized")
+                  return res.status(200).send({
+                    error: false,
+                    data: {
+                      status: "paid",
+                      payment_method,
+                    }
+                  });
+                  
+              case 'paid':
+                console.log(" ====> update paid")
+                  return res.status(200).send({
+                    error: false,
+                    data: {
+                      status: "paid",
+                      payment_method,
+                    }
+                  });
+              case 'waiting_payment':
+                console.log(" ====> update waiting_payment")
+                return res.status(200).send({
+                  error: false,
+                  data: {
+                    status: "waiting_payment",
+                    boleto_url: payment_method === 'boleto' ? assinatura.boleto_url : '',
+                    payment_method
+                  }
+                });
+                case 'processing':
+                  console.log(" ====> update processing")
+                  return res.status(200).send({
+                    error: false,
+                    data: {
+                      status: "waiting_payment",
+                      boleto_url: payment_method === 'boleto' ? assinatura.boleto_url : '',
+                      payment_method
+                    }
+                  });
+              default:
+                console.log(" ====> update default")
+                return res.status(200).send({
+                  error: true,
+                  data: {
+                    message: 'Transação não efetuada.',
+                    status: "nao_autorizada",
+                  }
+                });
+            }
           }
 
-          // console.log("capturarPagamento", capture);
+          await strapi(tokenAth).update('transacaos', transacao.id, {
+            status: assinatura.current_transaction.status,
+          });
+
+          switch (assinatura.current_transaction.status) {
+            case 'paid':
+              return res.status(200).send({
+                error: false,
+                data: {
+                  status: "paid",
+                  payment_method,
+                  email: customer.email
+                }
+              });
+            case 'waiting_payment':
+              return res.status(200).send({
+                error: false,
+                data: {
+                  status: "waiting_payment",
+                  payment_method
+                }
+              });
+            default:
+              return res.status(200).send({
+                error: true,
+                data: {
+                  message: 'Transação não efetuada.',
+                  status: "nao_autorizada",
+                }
+              });
+          }
+
+        } catch (error) {
           return res.status(200).send({
-            error: false,
+            error: true,
             data: {
-              status: "waiting_payment",
-              payment_method
+              message: 'Transação não efetuada.',
+              status: "error",
             }
           });
-        } catch (error) {
-          return res.status(500).send({ error: true, errorMessage: error.message });
         }
       }
       break;
@@ -143,3 +174,54 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 export default handler;
+
+
+
+
+
+                // await signIn('email', { redirect: false, email: capture.customer.email });
+                // const novoUser = new User({
+                //   email: assinatura.customer.email.toLowerCase(),
+                //   name: assinatura.customer.name ?? '',
+                //   userType: 1,
+                //   informacoes: {
+                //     endereco: customer.address,
+                //     telefone: assinatura.phone != undefined ? assinatura.phone : null,
+                //     cpf: customer.document_number,
+                //     nascimento: customer.birthday,
+                //   },
+                //   nivel: PLANOS(plano_id)!.plano_type,
+                //   subscription: {
+                //     card_hash: card_hash != undefined ? card_hash : null,
+                //     data: assinatura,
+                //     plano_id: plano_id,
+                //     subscriptionName: PLANOS(plano_id)!.plano,
+                //     envios: PLANOS(plano_id)!.total_envios,
+                //     subscriptionDate: new Date(),
+                //     subscriptionExpr: moment(new Date().setDate(new Date().getDate() + PLANOS(plano_id)!.days)).format('YYYY-MM-DD HH:mm:ss'),
+                //   }
+                // });
+                // novoUser.save(novoUser);
+
+
+                // await User.updateOne({ email: assinatura.customer.email }, {
+                //   $set: {
+                //     name: assinatura.customer.name ?? '',
+                //     informacoes: {
+                //       endereco: assinatura.customer.address.toLowerCase(),
+                //       telefone: assinatura.phone != undefined ? assinatura.phone : null,
+                //       cpf: assinatura.customer.document_number,
+                //       nascimento: assinatura.customer.birthday,
+                //     },
+                //     nivel: PLANOS(plano_id)!.plano_type,
+                //     subscription: {
+                //       card_hash: card_hash != undefined ? card_hash : null,
+                //       data: assinatura,
+                //       plano_id: plano_id,
+                //       subscriptionName: PLANOS(plano_id)!.plano,
+                //       envios: PLANOS(plano_id)!.total_envios,
+                //       subscriptionDate: new Date(),
+                //       subscriptionExpr: moment(new Date().setDate(new Date().getDate() + PLANOS(plano_id)!.days)).format('YYYY-MM-DD HH:mm:ss'),
+                //     }
+                //   }
+                // });

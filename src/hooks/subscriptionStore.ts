@@ -1,15 +1,19 @@
 import create from "zustand";
 import { strapi } from "../services/strapi";
 
+export interface IPlano {
+    name: string
+    total_envios: number
+    plano_type: string
+}
+
 export interface ISubscription {
     id:	string
     envios: number
-    plano_id: number
-    subscriptionName: string
-    subscriptionType: string
     enviosAvulsos:	number
     subscriptionDate: string | null
     subscriptionExpr: string | null
+    plano: IPlano
 }
 
 export interface ISubscriptionInterface {

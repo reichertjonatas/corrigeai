@@ -102,7 +102,9 @@ function MeuPerfil({ session }: any) {
                                                                 <button
                                                                     className="button continuar"
                                                                     onClick={async () => {
-                                                                        const strapi = new Strapi()
+                                                                        const strapi = new Strapi({
+                                                                            url: `${process.env.NEXT_PUBLIC_URL_API}`
+                                                                        })
                                                                         await strapi.forgotPassword({ email: session.user.email })
                                                                             .then((response : any) => {
                                                                                 console.log("======> reset pass ", response)

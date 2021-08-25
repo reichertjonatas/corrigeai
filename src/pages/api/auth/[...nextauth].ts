@@ -113,7 +113,7 @@ const options = {
       session.jwt = user.jwt;
       session.id = user.id;
 
-      if(user?.subscription) session.subscription = { ...user.subscription, transacaos: null }
+      if(user?.subscription) session.subscription = { ...user.subscription, transacaos: null, card_hash: null }
       
       // if(user?.subscription) session.subscription = {
       //   id: user.subscription.envios._id,

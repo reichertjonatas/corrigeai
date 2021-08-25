@@ -31,6 +31,8 @@
     "nextjs-progressbar": "^0.0.11",
     "pagarme": "^4.19.3",
     "pdfjs-dist": "2.4.456",
+    "query-string": "^7.0.1",
+    "raw-body": "^2.4.1",
     "rc-upload": "^4.3.1",
     "react": "17.0.2",
     "react-accessible-accordion": "^3.3.5",

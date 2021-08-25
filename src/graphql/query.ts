@@ -72,6 +72,39 @@ const mediaCorrigeAi = `query mediaCorrigeAi{
   }
 }`
 
+const planosQuery = `query queryPlano{
+  planos{
+    id
+    name
+    totalTexto
+    juros
+    parcelamentoTexto
+    precoPagarme
+    parcela_number
+    plano_type
+    total_envios
+    dias
+    infos
+  }
+}`
+
+const planoById = (id: String) => `query queryPlano{
+  plano(id: "${id}"){
+    id
+    name
+    totalTexto
+    juros
+    pagarme_plano_id
+    parcelamentoTexto
+    precoPagarme
+    parcela_number
+    plano_type
+    total_envios
+    dias
+    infos
+  }
+}` 
+
 const redacaoById = (id: string) => `query RedacoesPerId {
   redacao(id: "${id}"){
     id
@@ -175,6 +208,8 @@ export {
   queryCaed,
   sobreQuery,
   mediaCorrigeAi,
+  planosQuery,
+  planoById,
   minhasRedacoes,
   redacaoById,
   redacaoParaCorrigir,
