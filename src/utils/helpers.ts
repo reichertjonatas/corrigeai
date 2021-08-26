@@ -86,17 +86,21 @@ export const PLANOS = (plano_id:number) => {
     }
   }
 
-export const notaTotalRedacao = (redacao: IRedacoes) => {
+export const notaTotalRedacao = (redacao : any) => {
+    console.log("chegou aqui ==>")
     if (redacao) {
         var ultimasNotas: number[][] = [];
+        console.log("chegou aqui ==>")
         
-        redacao.correcoes.map((correcoes, index:number) => {
+        redacao.correcaos.map((correcoes:any, index:number) => {
             var ultimaNotaCalc = 0;
-            correcoes.competencias.map(competencia => {
+            console.log("correcoes ==> ", correcoes );
+            correcoes.competencias.map((competencia:any) => {
                 ultimaNotaCalc = ultimaNotaCalc + competencia.nota;
             })
             ultimasNotas.push([ultimaNotaCalc]);
         })
+        console.log("chegou aqui redacao.correcaos.map ==>")
 
         
         if(ultimasNotas.length > 0) {
@@ -125,11 +129,12 @@ export const notaTotalRedacao = (redacao: IRedacoes) => {
     return 0;
 }
 
-export const mediaRedacaoPorCompetencia = (redacao: IRedacoes, competencia: number) => {
+export const mediaRedacaoPorCompetencia = (redacao: any, competencia: number) => {
     if (redacao) {
         var ultimasNotas: number[][] = [];
-        debugPrint(" ===> ", redacao.correcoes.length)
-        redacao.correcoes.map((correcoes, index:number) => {
+        debugPrint(" ===> ", redacao.correcaos.length)
+
+        redacao.correcaos.map((correcoes:any, index:number) => {
             ultimasNotas.push([correcoes.competencias[competencia].nota]);
         })
 

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { getSession, session, signOut, useSession } from 'next-auth/client'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
@@ -92,6 +93,7 @@ const MainLayout = ({ children, menuType = 1, role = "authenticated" }: MainLayo
         return <PreLoader />
     }
 
+
     return (
         <>
             <div className="bg-green"></div>
@@ -117,7 +119,7 @@ const MainLayout = ({ children, menuType = 1, role = "authenticated" }: MainLayo
                                     trigger={open => (
                                         <li>
                                             <span className="photo">
-                                                <Image src={IcPhoto} className="img-responsive" alt="" />
+                                                <img src={session?.user?.image ? `${process.env.NEXT_PUBLIC_URL_API}${session.user.image}` : "/upload/perfil/no-foto.png"} className="img-responsive" alt="" />
                                             </span>
                                         </li>
                                     )}

@@ -7,7 +7,7 @@ import {
     RectangleSelector,
     // @ts-ignore
 } from 'react-image-annotation/lib/selectors'
-import { corretor_type, initialCompetencias, IObsEnemFilter, obs_enem } from "../utils/helpers";
+import { corretor_type, initialCompetencias, IObsEnemFilter, notaTotalRedacao, obs_enem } from "../utils/helpers";
 import { debugPrint } from "../utils/debugPrint";
 import { session } from "next-auth/client";
 import { strapi } from "../services/strapi";
@@ -157,11 +157,9 @@ const corretorStore = create<{
             correcoes.push(novaCorrecao.id);
             console.log("salvarCorrecao: ===> ", correcoes)
 
-
             let novoStatus 
             if(redacao.status_correcao){
                 switch (redacao.status_correcao) {
-
                     case "redacao_simples":
                             novoStatus = "finalizada"
                         break;
@@ -169,23 +167,29 @@ const corretorStore = create<{
                     case "correcao_um":
                             novoStatus = "correcao_dois"
                         break;
-                    
+                        
                     case "correcao_dois":
-                            var descrepancia = false
+                            var discrepancia = false
 
-                            console.log("aqui vai calc descrepancia");
+                            console.log("aqui vai calc discrepancia");
 
-                            novoStatus = descrepancia ? "descrepancia" : "finalizada"
+                            novoStatus = discrepancia ? "discrepancia" : "finalizada"
                         break;
                 }
             }
-
             console.log("before switch")
 
             const updated:any = await strapi((session as any).jwt).update('redacaos', idRedacao, {
                 status_correcao: novoStatus,
                 correcaos: correcoes
             })
+
+
+            if(novoStatus == "finalizada"){
+                const redacaoFinalStatus = await strapi((session as any).jwt).findOne('redacaos', redacao.id);
+                await strapi((session as any).jwt).update('redacaos', redacao.id, { nota_final: notaTotalRedacao(redacaoFinalStatus) })
+            }
+            
 
             if(!updated?.id) throw new Error("Correção não foi salva!")
             

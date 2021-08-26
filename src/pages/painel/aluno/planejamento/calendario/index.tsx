@@ -170,7 +170,7 @@ function Calendario({ session } : any) {
           <div className="opcoes">
             <span className="opcao" onClick={() => addEvent({ ...event, title: "Estudar redação" })}>Estudar redação</span>
             <span className="opcao" onClick={() => addEvent({ ...event, title: "Escrever redação" })}>Escrever redação</span>
-            <span className="opcao" onClick={() => addEvent({ ...event, title: "Aulda de redação" })}>Aulda de redação</span>
+            <span className="opcao" onClick={() => addEvent({ ...event, title: "Aula de redação" })}>Aula de redação</span>
             <span className="opcao" onClick={() => addEvent({ ...event, title: "Ciências Humanas" })}>Ciências Humanas</span>
             <span className="opcao" onClick={() => addEvent({ ...event, title: "Ciências da Natureza" })}>Ciências da Natureza</span>
             <span className="opcao" onClick={() => addEvent({ ...event, title: "Matemática" })}>Matemática</span>

@@ -11,6 +11,7 @@ import shallow from 'zustand/shallow'
 import { getSession } from 'next-auth/client'
 import { strapi } from '../../../../services/strapi'
 import { redacaoPerUserSortDate } from '../../../../graphql/query'
+import { toast } from 'react-toastify'
 
 export async function getServerSideProps(ctx : any) {
     const session = await getSession(ctx);
@@ -83,7 +84,7 @@ function SeusEnvios( { redacoes  } : any) {
                         {envios?.length > 0 && envios.slice(0, 10).map((envio, index) => {
                             return (
                                 <div className="list-item" key={index}>
-                                    <Link href={`/painel/aluno/seus-envios/redacao/${envio._id}`} passHref>
+                                    <Link href={envio.status_correcao === 'finalizada' ? `/painel/aluno/seus-envios/redacao/${envio._id}` : '/painel/aluno/seus-envios'} passHref>
 
                                         {/* {index % 4 == 0 && <div className="ballon-left">
                                             <div className="conteudo-ballon">
@@ -94,7 +95,7 @@ function SeusEnvios( { redacoes  } : any) {
                                             </div>
                                         </div>} */}
 
-                                        <div className="item" style={{ cursor: 'pointer' }}>
+                                        <div onClick={envio.status_correcao != 'finalizada'  ? () => toast.info("A redação ainda não foi corrigida!"): () => {}}  className="item" style={{ cursor: 'pointer' }}>
                                             <div className="data">{Moment(envio.createdAt).format('DD/MM')}</div>
                                             <div className="tema">{envio.tema.titulo}</div>
                                             <div className="nota">{envio.nota_final == 0 ? '---' : envio.nota_final}</div>

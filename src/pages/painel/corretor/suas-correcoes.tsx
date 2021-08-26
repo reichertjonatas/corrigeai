@@ -1,14 +1,14 @@
 import React from 'react'
-import MainLayout from '../../../../components/layout/MainLayout'
-import Seo from '../../../../components/layout/Seo'
-import { useCorretorStore } from '../../../../hooks/corretorStore'
+import MainLayout from '../../../components/layout/MainLayout'
+import Seo from '../../../components/layout/Seo'
+import { useCorretorStore } from '../../../hooks/corretorStore'
 import shallow from 'zustand/shallow'
 import Link from 'next/link'
 import Moment from 'moment';
 import { getSession } from 'next-auth/client'
-import { strapi } from '../../../../services/strapi'
-import { minhasRedacoes } from '../../../../graphql/query'
-import { corretor_type } from '../../../../utils/helpers'
+import { strapi } from '../../../services/strapi'
+import { minhasRedacoes } from '../../../graphql/query'
+import { corretor_type } from '../../../utils/helpers'
 
 
 export async function getServerSideProps(ctx: any) {

@@ -110,11 +110,13 @@ const redacaoById = (id: string) => `query RedacoesPerId {
     id
     in_review
     nota_final
-    redacao{
+    status_correcao
+    redacao {
       url
     }
     correcaos {
       id
+      discrepante
       competencias {
         nota
         title
@@ -142,6 +144,38 @@ const queryTemas = (categoria: string) => `query Temas {
     }
   }`
 
+
+const redacaoParaCorrigirDiscrepancia = (turma: string) => `query RedacoesCorrecao {
+  redacaos(where: { status_correcao: "${turma}"}, sort: "createdAt:asc", limit: 20){
+    id
+    in_review
+    nota_final
+    status_correcao
+    redacao{
+      url
+    }
+    correcaos {
+      competencias {
+        nota
+        title
+        obs
+        obs_enem
+      }
+      corretor {
+        id
+      }
+      marcacoes 
+    }
+    user {
+      email
+    }
+    tema {
+      titulo
+    }
+    createdAt
+  }
+}
+ `
 
 const redacaoParaCorrigir = (turma: string) => `query RedacoesCorrecao {
   redacaos(where: { status_correcao: "${turma}"}, sort: "createdAt:asc", limit: 20){
@@ -204,6 +238,19 @@ const redacaoParaCorrigir = (turma: string) => `query RedacoesCorrecao {
   }
 }`
 
+const queryTransacoes = (id: string) => `query queryTransacoes{
+  subscription(id: "${id}"){
+    id
+    transacaos (limit: 3){
+      data
+      status
+      metodo
+      updatedAt
+      createdAt
+    }
+  }
+}`
+
 export {
   queryCaed,
   sobreQuery,
@@ -215,5 +262,7 @@ export {
   redacaoParaCorrigir,
   queryTemas,
   redacaoPerUser,
-  redacaoPerUserSortDate
+  redacaoPerUserSortDate,
+  redacaoParaCorrigirDiscrepancia,
+  queryTransacoes
 }

@@ -1,12 +1,12 @@
 import { getSession } from 'next-auth/client';
 import React from 'react'
-import MainLayout from '../../../../components/layout/MainLayout'
-import { useCorretorStore } from '../../../../hooks/corretorStore';
+import MainLayout from '../../../components/layout/MainLayout'
+import { useCorretorStore } from '../../../hooks/corretorStore';
 import Moment from 'moment';
 import Link from 'next/link';
-import { strapi } from '../../../../services/strapi';
-import { redacaoParaCorrigir } from '../../../../graphql/query';
-import { corretor_type } from '../../../../utils/helpers';
+import { strapi } from '../../../services/strapi';
+import { redacaoParaCorrigir } from '../../../graphql/query';
+import { corretor_type } from '../../../utils/helpers';
 
 export async function getServerSideProps(ctx: any) {
     const session = await getSession(ctx);

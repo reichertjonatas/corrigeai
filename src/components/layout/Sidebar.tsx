@@ -4,6 +4,7 @@ import { Logo, IcPainelAluno, IcDesempenho, IcTemas, IcCaed, IcSobre, IcPlanejam
 import Link from 'next/link'
 import { Cookie, withCookie, useCookie } from 'next-cookie'
 import { useMenuStore } from '../../hooks/menuStore'
+import { useSession } from 'next-auth/client'
 
 interface SidebarProps {
     menuType?: number;
@@ -18,6 +19,7 @@ interface MenuProps {
 
 function Sidebar(props: any) {
 
+    const [ session, loading ] = useSession();
     const { menuType } = props;
     const menuOpen = useMenuStore(state => state.menuOpen);
     const setMenuOpen = useMenuStore(state => state.setMenuOpen);
@@ -78,6 +80,9 @@ function Sidebar(props: any) {
                     <ItemMenu href="/painel/corretor" icon={IcPainelAluno} name="Painel do Corretor" />
                     <ItemMenu href="/painel/corretor/redacoes-simples" icon={IconRedacoes} name="Redações simples" />
                     <ItemMenu href="/painel/corretor/suas-correcoes" icon={suas_correcoes} name="Suas correções" />
+                    { 
+                    // @ts-ignore
+                    session?.discrepancia && <ItemMenu href="/painel/corretor/discrepancias" icon={suas_correcoes} name="Discrepâncias" />}
                     <hr />
                     <li className="itemFechado" >
                         <a onClick={() => { setMenuOpen() }}>

@@ -101,7 +101,7 @@ const options = {
 
           if(user?.user?.role?.type == 'corretor') {
             token.corretor_type = user.user.corretor_type;
-            token.descrepancia  = user.user.descrepancia;
+            token.discrepancia  = user.user.discrepancia;
           }
           console.log(token)
         }
@@ -133,7 +133,7 @@ const options = {
 
       if(user?.role?.type == 'corretor') {
         session.corretor_type = user.corretor_type;
-        session.descrepancia  = user.descrepancia;
+        session.discrepancia  = user.discrepancia;
       }
 
       // console.log("session final ", session);

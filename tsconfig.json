@@ -17,6 +17,6 @@
   "ts-jest": {
     "isolatedModules": false
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "node_modules/pagarme-js-types/index.d.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

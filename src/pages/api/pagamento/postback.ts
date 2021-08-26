@@ -38,6 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       console.log( " postBack valido!" )
 
       const body:any = qs.parse(req.body);
+      
       console.log( " payload ==> ", body )
 
       if(!body?.transaction?.metadata?.idPlanoDb){

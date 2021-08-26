@@ -322,8 +322,8 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
           <div className="grades">
             <ul>
               <li>Sua última nota: {ultimaNota()}</li>
-              <li>Sua média geral: {mediaGeral(redacoes)} </li>
-              <li>Média Corrige Aí: { Math.round(mediaCorrigeAi)}</li>
+              <li>Sua média geral: {mediaGeral(redacoes) === 0 ? '---' : mediaGeral(redacoes)} </li>
+              <li>Média Corrige Aí: { Math.round(mediaCorrigeAi) === 0 ? '---' : Math.round(mediaCorrigeAi)}</li>
               <li className="desempenho">
                 <Link href="/painel/aluno/desempenho">VER DESEMPENHO COMPLETO</Link>
               </li>
@@ -373,16 +373,26 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
                       </div>
 
                       {!createObjectURL && <span className="upload">
+                      <span>* Tipos de arquivos aceitos: <strong>.jpef, .png, .jpg</strong><br/> </span>
                         <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={uploadFileClient} disabled={tema == null} />
                         <label className="custom-file-upload">
                           ESCOLHER ARQUIVO
                         </label>
                       </span>}
                       <br />
-                      {tema == null && <span>*Selecione primeiro o tema!</span>}
+                      {tema == null && <span>*Selecione primeiro o tema! <br /> * Tipos de arquivos aceitos: <strong>.jpef, .png, .jpg</strong></span>}
                       {createObjectURL !== null &&
                         <>
-                          <button className="uploadRemove" type="button" onClick={remove} >Tentar novamente</button>
+                        <span>
+                          * A visualização de baixa qualidade, não representa a qualidade real do arquivo. <br />
+                         </span>
+                         <br />
+                         <span>
+                           <h3> Deixe uma mensagem para o corretor: </h3>
+                           <textarea placeholder="" />
+                         </span>
+                        <br />
+                          <button className="uploadRemove" type="button" onClick={remove} >Trocar redação</button>
                         </>
                       }
                     </span>

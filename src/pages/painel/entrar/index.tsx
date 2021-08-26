@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Seo from '../../../components/layout/Seo'
 import Link from 'next/link'
 import { useForm } from "react-hook-form";
@@ -6,6 +6,9 @@ import { signIn } from 'next-auth/client'
 import Image from 'next/image'
 import { LogoLogin } from '../../../components/icons'
 import PreLoader from '../../../components/PreLoader';
+import Strapi from 'strapi-sdk-js';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 
 interface DataProps {
@@ -21,23 +24,34 @@ function Entrar() {
     const [recoverPass, setRecoverPass] = React.useState(false);
     
     const [isLoading, setIsLoading] = React.useState(false)
+    const router = useRouter();
+    const { error } = router.query;
 
     const onSubmit = async (data : DataProps) => {
         setIsLoading(true);
         if(isEmail){
-            await signIn('email', { 
-                email: data.email, 
-                callbackUrl: `${process.env.NEXT_PUBLIC_URL_REDIRECT_POS_LOGIN}` 
+            const strapi = new Strapi();
+            await strapi.forgotPassword({
+                email: data.email
+            }).then((res:any) => {
+                toast.info('E-mail de recuperação enviado!');
+            }).catch((err:any) => {
+                toast.warning('E-mail não encontrado.');
             });
-        }else
+            router.push('/painel/verificar-email');
+        }else{
             await signIn('credentials', { 
                 email: data.email, 
                 password: data.password, 
                 callbackUrl: `${process.env.NEXT_PUBLIC_URL_REDIRECT_POS_LOGIN}` 
             });
-            
-        setIsLoading(false);
+            setIsLoading(false);
+        }
     };
+
+    useEffect(() => {
+        if(error) toast.error(' Combinação inválida!');
+    }, [error])
 
     return (
         <div style={{background : "#72b01d", minHeight: "100vh", minWidth: "100vw",display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
@@ -57,19 +71,27 @@ function Entrar() {
                         { !isLoading && <>
                             <span className="name">E-mail</span>
                             <input {...register("email", { required: true })} type="text" className={`${(errors.email) ? 'errorInput' : ''}`} />
-                            { errors.email && <p style={{ marginTop: -12, marginBottom: 12, color: "red" }}>E-mail é necessário!</p> }
+                            { errors.email && <p style={{ marginTop: -12, marginBottom: 12, color: "red" }}>E-mail necessário!</p> }
 
                             {!isEmail && <><span className="name">Senha</span>
                             <input {...register("password", { required: !isEmail })} type="password" className={`${( !isEmail && errors.password) ? 'errorInput' : ''}`} /></>}
                         </>}
                         
-                        <button type="submit" disabled={isLoading}>Entrar</button>
+                        {!isEmail && <button type="submit" disabled={isLoading}>Entrar</button>}
+                        {isEmail && <button type="submit" disabled={isLoading}>Recuperar senha</button>}
                     </form>
-                    <span className="esqueceu">
-                        <a style={{cursor: "pointer"}} onClick={() => setIsEmail(!isEmail)}>Logar apenas com email</a> 
+                    {!isEmail &&<span className="esqueceu">
+                        <a style={{cursor: "pointer"}} onClick={() => {
+                            setIsEmail(!isEmail)
+                        }}>Esqueceu a senha?</a> 
                         <br />
-                        <Link href="/painel/registrar">Esqueci minha senha</Link>
-                    </span>
+                    </span>}
+                    {isEmail && <span className="esqueceu">
+                        <a style={{cursor: "pointer"}} onClick={() => {
+                            setIsEmail(!isEmail)
+                        }}>Entrar com e-mail e senha</a> 
+                        <br />
+                    </span>}
                 </div>
             </div>
             <style jsx>

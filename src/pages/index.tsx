@@ -13,16 +13,15 @@ import { authRequired } from '../utils/helpers';
 import Strapi from 'strapi-sdk-js'
 import { planosQuery } from '../graphql/query';
 
-export async function getStaticProps(ctx: any) {
+export async function getServerSideProps(ctx: any) {
   const strapi = new Strapi({
-    url: `${process.env.NEXT_PUBLIC_URL_API}`
-});
+            url: `${process.env.NEXT_PUBLIC_URL_API}`
+        });
   const planos = await strapi.graphql({ query: planosQuery });
   return {
     props: {
       planos
-    },
-    revalidate: 60 * 60,
+    }
   }
 }
 

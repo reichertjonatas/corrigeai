@@ -4,12 +4,12 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import Popup from 'reactjs-popup'
-import { IcPhoto } from '../../../../components/icons'
-import MainLayout from '../../../../components/layout/MainLayout'
-import Seo from '../../../../components/layout/Seo'
-import PreLoader from '../../../../components/PreLoader'
-import { useMeStore } from '../../../../hooks/meStore'
-import { capitalizeTxt } from '../../../../utils/helpers'
+import { IcPhoto } from '../../../components/icons'
+import MainLayout from '../../../components/layout/MainLayout'
+import Seo from '../../../components/layout/Seo'
+import PreLoader from '../../../components/PreLoader'
+import { useMeStore } from '../../../hooks/meStore'
+import { capitalizeTxt } from '../../../utils/helpers'
 import Strapi from 'strapi-sdk-js'
 
 export async function getServerSideProps(ctx: any) {
@@ -86,7 +86,7 @@ function MeuPerfil({ session }: any) {
                                                 nested
                                             >
                                                 {(close: any) => (
-                                                    <div className="popRedacao">
+                                                    <div className="popPerfil popRedacao ">
                                                         <button className="close" onClick={close}>
                                                             &times;
                                                         </button>
@@ -97,7 +97,7 @@ function MeuPerfil({ session }: any) {
                                                                 Ao clicar em continuar será enviado um e-mail com as instruções para alterar a senha!
                                                             </p>
 
-                                                            <div>
+                                                            <div className="buttons">
 
                                                                 <button
                                                                     className="button continuar"
@@ -161,6 +161,87 @@ function MeuPerfil({ session }: any) {
 
             <style jsx>
                 {`
+
+
+.popPerfil{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 0!important;
+}
+
+.popup-content{
+  padding: 0;
+  border: none;
+}
+
+.popPerfil .close{
+  position: absolute;
+  right: -1.5rem;
+  top: -1.5rem;
+  border: none;
+  background: #ffffff;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  color: #000;
+  text-align: center;
+  line-height: 2.5rem;
+  border: 1px solid #cccccc29;
+  cursor: pointer;
+}
+
+.popPerfil .header{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  min-height: 4rem;
+  background: var(--green);
+  align-items: center;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.popPerfil .content{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  color: var(--gray40);
+  font-size: 1.2rem;
+  font-weight: 300;
+  max-width: 600px;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.popPerfil .buttons{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin: 2rem 0 0;
+}
+
+.popPerfil .buttons button{
+  border: none;
+  background: var(--gray30);
+  font-size: 1rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.popPerfil .buttons button:hover{
+  transform: scale(0.9);
+}
+
+.continuar{
+  background-color: var(--green)!important;
+  color: #fff!important;
+}
 
           .popRedacao{display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; padding: 1rem 0;}
           .popRedacao h1{display: block; width: 100%; text-align: center; color: #002400; font-weight: 700; font-size: 1.4rem; font-family: 'Poppins', sans-serif; margin-bottom: 1rem}
