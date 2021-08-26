@@ -81,7 +81,7 @@ const options = {
     }),
 
   ],
-  database: process.env.NEXT_PUBLIC_DATABASE_URL,
+  database: process.env.MONGODB_URI_DB,
   session: {
     jwt: true,
   },

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start",
+    "start": "next build && next start",
     "lint": "next lint",
     "export": "npm run build && next export -o _static"
   },
@@ -15,6 +15,7 @@
     "@phuocng/react-pdf-viewer": "^1.7.0",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "draftjs-to-html": "^0.9.1",
     "express": "^4.17.1",
@@ -51,6 +52,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/cors": "^2.8.12",
     "@types/draft-js": "^0.11.4",
     "@types/draftjs-to-html": "^0.8.1",
     "@types/formidable": "^1.2.3",
