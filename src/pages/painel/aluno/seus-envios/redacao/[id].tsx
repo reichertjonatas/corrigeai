@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from 'next/router';
 import React from 'react'
 import Seo from '../../../../../components/layout/Seo'
@@ -6,16 +7,64 @@ import shallow from 'zustand/shallow'
 import Image from 'next/image'
 import MainLayout from '../../../../../components/layout/MainLayout';
 import { mediaRedacaoPorCompetencia } from '../../../../../utils/helpers';
+import { getSession } from 'next-auth/client';
+import { strapi } from '../../../../../services/strapi';
+import { redacaoById } from '../../../../../graphql/query';
+import Link from 'next/link';
 
 
-function Redacao() {
+export async function getServerSideProps(ctx : any) {
+    const session = await getSession(ctx);
+    const { id }  = await ctx.query;
+
+    if(!session) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar',
+            }
+        }
+    }
+
+    if(!id){
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/aluno/seus-envios',
+            }
+        }
+    }
+
+    const redacaoProps:any = await strapi(session.jwt).graphql({
+        query: redacaoById(id)
+    })
+
+    if(redacaoProps?.status_correcao != 'finalizada' || redacaoProps == null ){
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/aluno/seus-envios',
+            }
+        }
+    }
+
+    return {
+        props: {
+          session: session,
+          redacaoProps
+        }
+    }
+}
+
+
+function Redacao({ redacaoProps, session } : any) {
 
     const router = useRouter()
-    const { id } = router.query;
 
     const [
         redacao,
         annotations, setAnnotations,
+        setRedacao,
         // annotation, setAnnotation,
         // type, setType,
         // editorType, setEditorType,
@@ -26,10 +75,12 @@ function Redacao() {
         setObs,
         salvarCorrecao,
         setCorrecaoNull,
-        setCorrecaoFrontEnd,
+        setCorrecaoFrontEnd, 
+        setNullCorrecoes
     ] = useCorretorStore(state => ([
         state.redacao,
         state.annotations, state.setAnnotations,
+        state.setRedacao,
         // state.annotation, state.setAnnotation,
         // state.type, state.setType,
         // state.editorType, state.setEditorType,
@@ -39,24 +90,24 @@ function Redacao() {
         state.setNota,
         state.setObs,
         state.salvarCorrecao,
-        state.setCorrecaoNull, state.setCorrecaoFrontEnd
+        state.setCorrecaoNull, state.setCorrecaoFrontEnd, state.setNullCorrecoes
     ]), shallow);
 
 
-    // React.useEffect(() => {
-    //     if (router.asPath !== router.route) {
-    //         // router.query.lang is defined
-    //         initData(id as string);
-    //     }
-    //     // return () => setCorrecaoNull()
-    //     // eslint-disable-next-line
-    // }, [router])
+    React.useEffect(() => {
+        setRedacao(redacaoProps)
+
+        return () => {
+            setCorrecaoNull()
+            setNullCorrecoes()
+        }
+    }, [])
 
 
     if (!redacao) return (<h1></h1>);
 
     const urlRedacao = ({ src, width, quality }: any) => {
-        return `${process.env.NEXT_PUBLIC_URL_PUBLICA}${process.env.NEXT_PUBLIC_URL_REDACAO}${redacao?.redacao}?w=${width}&q=${quality || 75}`
+        return `${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}?w=${width}&q=${quality || 75}`
     }
 
     return (
@@ -67,13 +118,15 @@ function Redacao() {
                 <div className="content">
 
                     <div className="boxTema">
+
                         <div className="competencia">
                             <h1>Correção 1</h1>
                         </div>
 
                         <div className="redacao">
-                            <Image layout="fill" loader={urlRedacao} src='me.png' className="img-responsive" alt="" />
+                            <img src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`} className="img-responsive" alt="" />
                         </div>
+
                     </div>
                 </div>
 
@@ -112,15 +165,8 @@ function Redacao() {
                     <h1>Correções completas</h1>
 
                     <div className="novasCorrecoes">
-                        { redacao.correcoes.length > 0 && redacao.correcoes.map( (correcao:any, index:number) => {
-                            return (<a key={ index }href="#" onClick={() => {
-                                
-                                router.push('/painel/aluno/seus-envios/redacao/correcao')
-                                setAnnotations(correcao.marcacoes);
-                                setCompetenciaOffline(correcao.competencias)
-                                setCorrecaoFrontEnd(correcao);
-                                
-                            }}>Ver correção {index+1} completa</a>);
+                        { redacao.correcaos.length > 0 && redacao.correcaos.map( (correcao:any, index:number) => {
+                            return (<Link key={ index } href={`/painel/aluno/seus-envios/correcao/${redacao.id}/${correcao.id}`} passHref><a>Ver correção {index+1} completa </a></Link>);
                         })}
                     </div>
                 </div>

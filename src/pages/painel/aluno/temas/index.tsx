@@ -75,11 +75,11 @@ function Temas({ session } : any ) {
                         {currentTema != null && <div className="conteudo" dangerouslySetInnerHTML={{ __html: currentTema.content }}></div>}
                     </div>
 
-                    <span className="botao">
+                    {/* <span className="botao">
                         <Link href="/painel/aluno" passHref>
                             <a> Escolher esse tema</a>
                         </Link>
-                    </span> 
+                    </span>  */}
                 </div>
 
 

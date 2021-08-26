@@ -31,7 +31,9 @@ const corretorStore = create<{
 
     minhasCorrecoes: ICorrecoesCorretor[],
 
-    correcao: ICorrecoes | null,
+    correcao: any | null,
+
+    setCorrecao: (correcao: any) => void,
 
     setRedacoes: (redacoes: any[]) => void,
 
@@ -70,6 +72,10 @@ const corretorStore = create<{
     competenciasOffline: initialCompetencias,
     minhasCorrecoes: [],
     correcao: null,
+
+    setCorrecao: (correcao: any ) => {
+        set({correcao: correcao});
+    },
 
     setRedacoes: (redacoes: any[]) => {
         set({ redacoes: redacoes?.length >= 0 ? redacoes : [] });

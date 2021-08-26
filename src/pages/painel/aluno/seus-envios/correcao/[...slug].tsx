@@ -15,11 +15,69 @@ import { RenderHighlight } from '../../../../../components/editor/RenderHighligh
 import { RenderOverlay } from '../../../../../components/editor/RenderOverley';
 import { RenderSelector } from '../../../../../components/editor/RenderSelector';
 import { debugPrint } from '../../../../../utils/debugPrint';
+import { strapi } from '../../../../../services/strapi';
+import { correcaoById, redacaoById } from '../../../../../graphql/query';
+import { getSession } from 'next-auth/client';
 
-function Correcao() {
-    const router = useRouter()
+export async function getServerSideProps(ctx : any) {
+    const session = await getSession(ctx);
+    const { slug }  = await ctx.query;
 
+    if(!session) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar',
+            }
+        }
+    }
+
+    console.log(" slug ", slug)
+
+    if(!slug[0] || !slug[1]){
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/aluno/seus-envios',
+            }
+        }
+    }
+
+
+    const redacaoProps:any = await strapi(session.jwt).graphql({
+        query: correcaoById(slug[0], slug[1])
+    })
+
+    if(redacaoProps  == null || redacaoProps.correcaos.length == 0 ){
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/aluno/seus-envios',
+            }
+        }
+    }
+
+    if(redacaoProps?.status_correcao != 'finalizada' || redacaoProps == null ){
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/aluno/seus-envios',
+            }
+        }
+    }
+
+    return {
+        props: {
+          session: session,
+          redacaoProps,
+        }
+    }
+}
+
+function Correcao({ session, redacaoProps } : any) {
     const [
+        setRedacao,
+        setCorrecao,
         redacao,
         correcao,
         annotations, setAnnotations,
@@ -33,6 +91,8 @@ function Correcao() {
         salvarCorrecao,
         setCorrecaoNull
     ] = useCorretorStore(state => ([
+        state.setRedacao,
+        state.setCorrecao,
         state.redacao,
         state.correcao,
         state.annotations, state.setAnnotations,
@@ -49,10 +109,9 @@ function Correcao() {
 
 
     React.useEffect(() => {
-        // if (router.asPath !== router.route) {
-        //     // router.query.lang is defined
-        //     initData(id as string);
-        // }
+        console.log(" ==> ")
+        setRedacao(redacaoProps)
+        setCorrecao(redacaoProps.correcaos[0])
         return () => setCorrecaoNull()
         // eslint-disable-next-line
     }, [])
@@ -119,7 +178,7 @@ function Correcao() {
                 }}
             >
                 <div style={{ marginBottom: '0.25rem', fontSize: '0.8rem', fontWeight: 'bold' }}>{nomeCompetencia}</div>
-                {annotation.data && annotation.data.text}
+                { annotation.data && annotation.data.text }
                 <div style={{ textAlign: 'center', marginTop: '0.4rem' }}>
                    
                 </div>
@@ -143,7 +202,7 @@ function Correcao() {
 
                         <div className="redacao">
                                 <Annotation
-                                    src={`${process.env.NEXT_PUBLIC_URL_PUBLICA}${process.env.NEXT_PUBLIC_URL_REDACAO}${redacao?.redacao}`}
+                                    src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
                                     alt=''
                                     annotations={annotations}
                                     renderOverlay={RenderOverlay}

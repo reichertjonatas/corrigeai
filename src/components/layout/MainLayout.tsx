@@ -2,15 +2,13 @@
 import { getSession, session, signOut, useSession } from 'next-auth/client'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { IcPainelAlunoGlobal, IcPhoto } from '../icons'
-import LayoutCarregando from './LayoutCarregando'
 import Sidebar from './Sidebar'
 import Popup from 'reactjs-popup'
 import Link from 'next/link'
 import PreLoader from '../PreLoader'
-import App from 'next/app'
-
+import { useMeStore } from '../../hooks/meStore'
 
 interface MainLayoutProps {
     children: React.ReactNode;
@@ -54,11 +52,15 @@ const MainLayout = ({ children, menuType = 1, role = "authenticated" }: MainLayo
     const router = useRouter();
     const [ session, loading] = useSession()
     const [loadingPerfil, setLoadingPerfil] = React.useState(true)
+    const user = useMeStore(state => state.user);
+    const setMe = useMeStore(state => state.setMe);
 
     React.useEffect(() => {
         const checkRoles = () => { 
             // @ts-ignore
             const permission: any = session.role;
+
+            setMe(session?.jwt)
 
             if (role && permission.type) {
                 console.log(permission.type != role, permission.type, role)
@@ -119,7 +121,7 @@ const MainLayout = ({ children, menuType = 1, role = "authenticated" }: MainLayo
                                     trigger={open => (
                                         <li>
                                             <span className="photo">
-                                                <img src={session?.user?.image ? `${process.env.NEXT_PUBLIC_URL_API}${session.user.image}` : "/upload/perfil/no-foto.png"} className="img-responsive" alt="" />
+                                                <img src={user?.image ? `${process.env.NEXT_PUBLIC_URL_API}${user.image}` : "/upload/perfil/no-foto.png"} className="img-responsive" alt="" />
                                             </span>
                                         </li>
                                     )}

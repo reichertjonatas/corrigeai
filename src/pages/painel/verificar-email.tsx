@@ -12,6 +12,7 @@ function VerificarEmail() {
                         <Image src={LogoLogin}  className="img-responsive" alt="CorrigeAi" />
                     </span>
                     <h1>Verifique seu email</h1>
+                    
                     <div className="caixa" style={{textAlign: 'center'}}>
                         <p>A plataforma enviou um email, clique no link para definir uma nova senha! <br />
                             <span style={{ fontSize: '12px' }}>Obs: Se não encontrar o e-mail verifique a caixa de spam!</span>

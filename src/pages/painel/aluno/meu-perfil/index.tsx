@@ -44,7 +44,7 @@ function MeuPerfil({ session, plano, transacaos }: any) {
     const user = useMeStore(state => state.user);
     const setMe = useMeStore(state => state.setMe);
     const [isLoading, setIsLoading] = useState(true)
-    const [files,setFiles] = useState<any>()
+    const [isLoadingUpload, setIsLoadingUpload] = useState(false)
 
     React.useEffect(() => {
         console.log("useEffect ==>", isLoading)
@@ -61,11 +61,13 @@ function MeuPerfil({ session, plano, transacaos }: any) {
 
 
     const uploadImage = async (e:any) => {
-        console.log(" e.target.value ==> ", e.target.files[0])
-        setFiles(e.target.files[0]);
+        setIsLoadingUpload(true)
         e.preventDefault();
 
-        console.log(" files ==> ", files)
+        if(e.target.files[0] == undefined || e.target.files[0] === null){
+            toast.warning('Selecione um arquivo!')
+            return;
+        }
         
         const formData = new FormData()
         const data:any = {};
@@ -76,7 +78,7 @@ function MeuPerfil({ session, plano, transacaos }: any) {
         data['field'] = 'foto'
 
         formData.append('data', JSON.stringify(data))
-        formData.append('files', files)
+        formData.append('files', e.target.files[0])
         formData.append('ref', 'user')
         formData.append('source', 'users-permissions')
         formData.append('refId', session.id)
@@ -84,6 +86,7 @@ function MeuPerfil({ session, plano, transacaos }: any) {
 
         try {
             await strapi(session.jwt).create('upload', formData).then(async(res:any) => {
+                setMe(session.jwt);
                 toast.success('Foto atualizada com sucesso!')
             }).catch((err) => {
                 throw new Error("Imagem não pode ser atualizada!");
@@ -91,6 +94,9 @@ function MeuPerfil({ session, plano, transacaos }: any) {
         } catch (error) {
             toast.warning('Imagem não pode ser atualizada!');
         }
+        setTimeout(() => {
+            setIsLoadingUpload(false);
+        }, 500)
     }
 
     return (
@@ -100,12 +106,19 @@ function MeuPerfil({ session, plano, transacaos }: any) {
                 <div className="content">
                     <div className="box">
                         <div className="botaoDelete profile-pic">
+
                             <label className="-label" htmlFor="file">
                                 <span className="glyphicon glyphicon-camera"></span>
                                 <span>Atualizar foto</span>
                             </label>
-                            <input id="file" type="file" onChange={(e ) => uploadImage(e)}/>
-                            <img src={session.user.image ? `${process.env.NEXT_PUBLIC_URL_API}${session.user.image}` : "/upload/perfil/no-foto.png"} className="imgAvatar" id="output" width="200" alt="" />
+                            {isLoadingUpload && <div style={{position: 'absolute', zIndex: 100, backgroundColor: 'var(--green)', width: '165px', height: '165px', borderRadius: 120,}}>
+                                <PreLoader />
+                            </div>}
+                            <input id="file" type="file" onChange={(e:any ) => {
+                                uploadImage(e)
+                            }}/>
+
+                            {!isLoadingUpload && <img src={user?.image ? `${process.env.NEXT_PUBLIC_URL_API}${user?.image}` : "/upload/perfil/no-foto.png"} className="imgAvatar" id="output" width="200" alt="" />}
                         </div>
                         <h1>{capitalizeTxt(user.name)}</h1>
                         <p>E-mail: {user.email}</p>

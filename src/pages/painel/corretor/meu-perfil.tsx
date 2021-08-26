@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import moment from 'moment'
 import { getSession } from 'next-auth/client'
 import Image from 'next/image'
@@ -57,7 +58,7 @@ function MeuPerfil({ session }: any) {
                 <div className="content">
                     <div className="box">
                         <div className="botaoDelete">
-                            <Image src={IcPhoto} className="img-responsive" alt="" />
+                            <img src={user?.image ? `${process.env.NEXT_PUBLIC_URL_API}${user?.image}` : "/upload/perfil/no-foto.png"}  className="img-responsive" alt="" />
                         </div>
                         <h1>{capitalizeTxt(user!.name)}</h1>
                         <p>E-mail: {user!.email}</p>

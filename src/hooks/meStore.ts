@@ -11,12 +11,14 @@ export interface IMeInterface {
         createdAt: string;
 
     } | null,
+
     setMe: (token: string | undefined | unknown) => Promise<void>;
     changePassword: () => Promise<boolean>;
 }
 
 const meStore = create<IMeInterface>((set, get) => ({
     user: null,
+
     setMe: async (token: string | undefined | unknown) => {
         const response = await strapi(token).find('users/me');
         const user: any = response as any;

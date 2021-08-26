@@ -114,7 +114,7 @@ const redacaoById = (id: string) => `query RedacoesPerId {
     redacao {
       url
     }
-    correcaos {
+    correcaos(where: { discrepante: false }){
       id
       discrepante
       competencias {
@@ -133,6 +133,36 @@ const redacaoById = (id: string) => `query RedacoesPerId {
     }
     createdAt
   }
+}`
+
+const correcaoById = (id: string, idCorrecao: string) => `query correcaoById {
+    redacao(id: "${id}"){
+      id
+      in_review
+      nota_final
+      status_correcao
+      redacao {
+        url
+      }
+      correcaos(where: { id: "${idCorrecao}", discrepante: false }){
+        id
+        discrepante
+        competencias {
+          nota
+          title
+          obs
+          obs_enem
+        }
+        corretor {
+          id
+        }
+        marcacoes 
+      }
+      tema {
+        titulo
+      }
+      createdAt
+    }
 }`
 
 const queryTemas = (categoria: string) => `query Temas {
@@ -259,6 +289,7 @@ export {
   planoById,
   minhasRedacoes,
   redacaoById,
+  correcaoById,
   redacaoParaCorrigir,
   queryTemas,
   redacaoPerUser,

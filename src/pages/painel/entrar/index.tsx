@@ -30,15 +30,18 @@ function Entrar() {
     const onSubmit = async (data : DataProps) => {
         setIsLoading(true);
         if(isEmail){
-            const strapi = new Strapi();
+            const strapi = new Strapi({
+                url: process.env.NEXT_PUBLIC_URL_API
+            });
+
             await strapi.forgotPassword({
                 email: data.email
             }).then((res:any) => {
                 toast.info('E-mail de recuperação enviado!');
+                router.push('/painel/verificar-email');
             }).catch((err:any) => {
                 toast.warning('E-mail não encontrado.');
             });
-            router.push('/painel/verificar-email');
         }else{
             await signIn('credentials', { 
                 email: data.email, 

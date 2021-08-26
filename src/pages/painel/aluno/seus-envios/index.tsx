@@ -84,7 +84,7 @@ function SeusEnvios( { redacoes  } : any) {
                         {envios?.length > 0 && envios.slice(0, 10).map((envio, index) => {
                             return (
                                 <div className="list-item" key={index}>
-                                    <Link href={envio.status_correcao === 'finalizada' ? `/painel/aluno/seus-envios/redacao/${envio._id}` : '/painel/aluno/seus-envios'} passHref>
+                                    <Link href={envio.status_correcao === 'finalizada' ? `/painel/aluno/seus-envios/redacao/${envio.id}` : '/painel/aluno/seus-envios'} passHref>
 
                                         {/* {index % 4 == 0 && <div className="ballon-left">
                                             <div className="conteudo-ballon">

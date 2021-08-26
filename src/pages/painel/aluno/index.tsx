@@ -72,7 +72,6 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
   const closeModal = () => setOpen(false);
 
   const user = useMeStore(state => state.user)
-  const setMe = useMeStore(state => state.setMe)
   const subscription = useSubscriptionStore(state => state.subscription)
   const setSubscription = useSubscriptionStore(state => state.setSubscription)
   const updateSubscription = useSubscriptionStore(state => state.updateSubscription)
@@ -90,14 +89,13 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
 
   useEffect(() => {
     if (session?.jwt && !loading) {
-      setMe(session?.jwt)
       console.log("me => ", session.jwt)
       if (session?.subscription)
         setSubscription(session.subscription as ISubscription, session.jwt)
 
       setRedacoes(redacoesProps?.length >= 0 ? redacoesProps : []);
     }
-  }, [setMe, session])
+  }, [session])
 
   useEffect(() => {
     console.log(temasProps, "temasProps")
@@ -373,14 +371,14 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
                       </div>
 
                       {!createObjectURL && <span className="upload">
-                      <span>* Tipos de arquivos aceitos: <strong>.jpef, .png, .jpg</strong><br/> </span>
-                        <input type="file" className="inputUploadRedacao" accept=".jpef, .png, .jpg" onChange={uploadFileClient} disabled={tema == null} />
+                      <span>* Tipos de arquivos aceitos: <strong>.jpeg, .png, .jpg</strong><br/> </span>
+                        <input type="file" className="inputUploadRedacao" accept=".jpeg, .png, .jpg" onChange={uploadFileClient} disabled={tema == null} />
                         <label className="custom-file-upload">
                           ESCOLHER ARQUIVO
                         </label>
                       </span>}
                       <br />
-                      {tema == null && <span>*Selecione primeiro o tema! <br /> * Tipos de arquivos aceitos: <strong>.jpef, .png, .jpg</strong></span>}
+                      {tema == null && <span>*Selecione primeiro o tema!</span>}
                       {createObjectURL !== null &&
                         <>
                         <span>
