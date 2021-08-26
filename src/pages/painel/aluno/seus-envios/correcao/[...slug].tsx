@@ -197,7 +197,7 @@ function Correcao({ session, redacaoProps } : any) {
 
                     <div className="boxTema">
                         <div className="competencia">
-                            <h1>Correção 1</h1>
+                            <h1>Correção completa</h1>
                         </div>
 
                         <div className="redacao">
