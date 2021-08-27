@@ -211,7 +211,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
 
   const ultimaNota = () => {
     if (redacoes?.length > 0) {
-      const redacoesLocal = redacoes.filter((item: any) => item.nota_final != 0);
+      const redacoesLocal = redacoes.filter((item: any) => item.status_correcao === 'finalizada' && item.nota_final != 0);
       console.log("redacoes", redacoesLocal.length)
       if (redacoesLocal.length <= 0) return '---'
       return redacoesLocal[redacoesLocal.length - 1].nota_final == 0 ? '---' : redacoesLocal[redacoesLocal.length - 1].nota_final;
@@ -225,7 +225,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     var data: { x: string, y: number, tema: string }[] = [];
 
     if (redacoes?.length > 0) {
-      const redacoesLocal = redacoes.filter((item: any) => item.nota_final != 0);
+      const redacoesLocal = redacoes.filter((item: any) => item.status_correcao === 'finalizada' && item.nota_final != 0);
       console.log("redacoes", redacoesLocal.length)
       if (redacoesLocal.length <= 0) return [];
       redacoesLocal.slice((redacoesLocal.length - 4), redacoesLocal.length).map((item: any) => {
@@ -322,7 +322,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
           <div className="grades">
             <ul>
               <li>Sua última nota: {ultimaNota()}</li>
-              <li>Sua média geral: {mediaGeral(redacoes) === 0 ? '---' : mediaGeral(redacoes)} </li>
+              <li>Sua média geral: {mediaGeral(redacoes.filter(redacao => redacao.status_correcao === 'finalizada')) === 0 ? '---' : mediaGeral(redacoes.filter(redacao => redacao.status_correcao === 'finalizada'))} </li>
               <li>Média Corrige Aí: { Math.round(mediaCorrigeAi) === 0 ? '---' : Math.round(mediaCorrigeAi)}</li>
               <li className="desempenho">
                 <Link href="/painel/aluno/desempenho">VER DESEMPENHO COMPLETO</Link>
