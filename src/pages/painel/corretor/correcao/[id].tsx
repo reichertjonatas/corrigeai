@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import { CloseIcon, PencilIcon, RedacaoPreview } from '../../../../components/icons';
 import MainLayout from '../../../../components/layout/MainLayout'
-import { withAuthSession } from '../../../../utils/helpers';
+import { numeroRomano, withAuthSession } from '../../../../utils/helpers';
 import shallow from 'zustand/shallow'
 
 // @ts-ignore
@@ -24,6 +24,7 @@ import { strapi } from '../../../../services/strapi';
 import { redacaoById } from '../../../../graphql/query';
 import PreLoader from '../../../../components/PreLoader';
 import Popup from 'reactjs-popup';
+import RowObsEnem from '../../../../components/editor/RowObsEnem';
 
 
 export async function getServerSideProps(ctx: any) {
@@ -259,15 +260,6 @@ function Correcao({ redacaoProps, session }: any) {
         )
     }
 
-    const RowObsEnem = ({ item, ...rest }: any) => {
-        return (
-            <>
-                {item.section && <span className="number">{item.section}</span>}
-                <span className="text">{item.text}</span>
-            </>
-        )
-    }
-
 
     const handlerEnviarCorrecao = async () => {
         debugPrint('handlerEnviarCorrecao', 'preenchidos ===> ', competenciasOffline.length, ' ===> ',);
@@ -477,34 +469,23 @@ function Correcao({ redacaoProps, session }: any) {
                         <h1>Selecione correção discrepante</h1>
                         <div className="competencias">
 
-                            { redacao?.correcaos?.length > 0 && redacao.correcaos.filter((correcao: any) => correcao.discrepante == false)?.map((correcao: any, index: number) => {
+                            { redacao?.correcaos?.length > 0 && redacao.correcaos.filter((correcao: any) => correcao.discrepante == false)?.map((correcao: any, indexCorrecao: number) => {
                                 var valorTotal = 0;
 
                                 return (<div onClick={() => {
                                     setCurrentDiscrepancia(currentDiscrepancia == correcao.id ? '' : correcao.id);
-                                }} key={index} className={`competenciaBox ${currentDiscrepancia === correcao.id ? 'activeDiscrepancia' : ''}`}>
-                                    <span>Correção {index + 1}</span>
+                                }} key={indexCorrecao} className={`competenciaBox ${currentDiscrepancia === correcao.id ? 'activeDiscrepancia' : ''}`}>
+                                    <span>Correção {indexCorrecao + 1}</span>
                                     <ul>
-                                        <li>
-                                            <span className="competenciaNome">Competência I</span>
-                                            <span className="competenciaNota">320</span>
-                                        </li>
-                                        <li>
-                                            <span className="competenciaNome">Competência II</span>
-                                            <span className="competenciaNota">320</span>
-                                        </li>
-                                        <li>
-                                            <span className="competenciaNome">Competência III</span>
-                                            <span className="competenciaNota">320</span>
-                                        </li>
-                                        <li>
-                                            <span className="competenciaNome">Competência IV</span>
-                                            <span className="competenciaNota">320</span>
-                                        </li>
-                                        <li>
-                                            <span className="competenciaNome">Competência V</span>
-                                            <span className="competenciaNota">320</span>
-                                        </li>
+                                        {correcao.competencias.length > 0 && correcao.competencias.map((competencia:any, indexCompetencia: number) => {
+                                        
+                                        valorTotal = valorTotal + competencia.nota;
+                                        
+                                        return (<li key={indexCompetencia}>
+                                            <span className="competenciaNome">Competência {numeroRomano(indexCompetencia)}</span>
+                                            <span className="competenciaNota">{competencia.nota}</span>
+                                        </li>)})}
+                                        
                                     </ul>
                                     <div className="notaBox">
                                         <span className="notaLabel">Total</span>

@@ -18,12 +18,14 @@ import { debugPrint } from '../../../../../utils/debugPrint';
 import { strapi } from '../../../../../services/strapi';
 import { correcaoById, redacaoById } from '../../../../../graphql/query';
 import { getSession } from 'next-auth/client';
+import RowObsEnem from '../../../../../components/editor/RowObsEnem';
+import { numeroRomano } from '../../../../../utils/helpers';
 
-export async function getServerSideProps(ctx : any) {
+export async function getServerSideProps(ctx: any) {
     const session = await getSession(ctx);
-    const { slug }  = await ctx.query;
+    const { slug } = await ctx.query;
 
-    if(!session) {
+    if (!session) {
         return {
             redirect: {
                 permanent: false,
@@ -34,7 +36,7 @@ export async function getServerSideProps(ctx : any) {
 
     console.log(" slug ", slug)
 
-    if(!slug[0] || !slug[1]){
+    if (!slug[0] || !slug[1]) {
         return {
             redirect: {
                 permanent: false,
@@ -44,11 +46,11 @@ export async function getServerSideProps(ctx : any) {
     }
 
 
-    const redacaoProps:any = await strapi(session.jwt).graphql({
+    const redacaoProps: any = await strapi(session.jwt).graphql({
         query: correcaoById(slug[0], slug[1])
     })
 
-    if(redacaoProps  == null || redacaoProps.correcaos.length == 0 ){
+    if (redacaoProps == null || redacaoProps.correcaos.length == 0) {
         return {
             redirect: {
                 permanent: false,
@@ -57,7 +59,7 @@ export async function getServerSideProps(ctx : any) {
         }
     }
 
-    if(redacaoProps?.status_correcao != 'finalizada' || redacaoProps == null ){
+    if (redacaoProps?.status_correcao != 'finalizada' || redacaoProps == null) {
         return {
             redirect: {
                 permanent: false,
@@ -68,13 +70,13 @@ export async function getServerSideProps(ctx : any) {
 
     return {
         props: {
-          session: session,
-          redacaoProps,
+            session: session,
+            redacaoProps,
         }
     }
 }
 
-function Correcao({ session, redacaoProps } : any) {
+function Correcao({ session, redacaoProps }: any) {
     const [
         setRedacao,
         setCorrecao,
@@ -112,20 +114,21 @@ function Correcao({ session, redacaoProps } : any) {
         console.log(" ==> ")
         setRedacao(redacaoProps)
         setCorrecao(redacaoProps.correcaos[0])
+
+        setAnnotations(redacaoProps.correcaos[0]['marcacoes'] ?? [])
         return () => setCorrecaoNull()
         // eslint-disable-next-line
     }, [])
 
-
     // if (!(annotations.length > 0)) return (<h1></h1>);
 
     function renderPopUp({ annotation }: any) {
-    
+
         const { geometry } = annotation
-    
+
         var cor = 'black';
         var nomeCompetencia = '';
-    
+
         switch (annotation.data.competencia) {
             case 2:
                 cor = '#fb5400';
@@ -143,7 +146,7 @@ function Correcao({ session, redacaoProps } : any) {
                 cor = '#3f37c9';
                 break;
         }
-    
+
         switch (annotation.data.competencia) {
             case 2:
                 nomeCompetencia = 'Competência II';
@@ -161,7 +164,7 @@ function Correcao({ session, redacaoProps } : any) {
                 nomeCompetencia = 'Competência I';
                 break;
         }
-    
+
         return (
             <div
                 key={annotation.data.id}
@@ -178,9 +181,9 @@ function Correcao({ session, redacaoProps } : any) {
                 }}
             >
                 <div style={{ marginBottom: '0.25rem', fontSize: '0.8rem', fontWeight: 'bold' }}>{nomeCompetencia}</div>
-                { annotation.data && annotation.data.text }
+                {annotation.data && annotation.data.text}
                 <div style={{ textAlign: 'center', marginTop: '0.4rem' }}>
-                   
+
                 </div>
             </div>
         )
@@ -201,22 +204,22 @@ function Correcao({ session, redacaoProps } : any) {
                         </div>
 
                         <div className="redacao">
-                                <Annotation
-                                    src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
-                                    alt=''
-                                    annotations={annotations}
-                                    renderOverlay={RenderOverlay}
-                                    renderContent={renderPopUp}
-                                    renderHighlight={RenderHighlight}
-                                    renderSelector={RenderSelector}
-                                    renderEditor={RenderEditor}
+                            <Annotation
+                                src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
+                                alt=''
+                                annotations={annotations}
+                                renderOverlay={RenderOverlay}
+                                renderContent={renderPopUp}
+                                renderHighlight={RenderHighlight}
+                                renderSelector={RenderSelector}
+                                renderEditor={RenderEditor}
 
-                                    type={type}
-                                    value={annotation}
-                                    onChange={() => {}}
-                                    onSubmit={() => {}}
-                                    className="img-responsive"
-                                />
+                                type={type}
+                                value={annotation}
+                                onChange={() => { }}
+                                onSubmit={() => { }}
+                                className="img-responsive"
+                            />
                         </div>
                     </div>
                 </div>
@@ -225,14 +228,21 @@ function Correcao({ session, redacaoProps } : any) {
                 <div className="notas">
                     <h1>Notas das competências</h1>
                     <span className="criterios">
-                        {   correcao != null && correcao.competencias?.length > 0 && correcao.competencias.map((competencia: any, index: number) => {
-                            { competencia }
-                            return ( competencia.obs.length > 0 ? (
-                                <span className="criterio" key={index}>
-                                    <span className="title">Marcação {index+1}:</span>
-                                    <span className="nota">{competencia.obs.length > 0 && `${competencia.obs}`}</span>
-                                </span>
-                            ) : <></>)
+                        {correcao != null && correcao.competencias?.length > 0 && correcao.competencias.map((competencia: any, index: number) => {
+                            console.log(" ===> competencia obs eneme ", competencia.obs_enem)
+                            return (
+                                <div key={index}>
+                                    <span className="titulo">Competência {numeroRomano(index + 1)}</span>
+                                    {competencia.obs.length > 0 && <span className="criterio" >
+                                        <span className="title">Observação do corretor:</span>
+                                        <span className="nota">{competencia.obs.length > 0 && `${competencia.obs}`}</span>
+                                    </span>}
+                                    {competencia.obs_enem != null && <div className={`popCompetencia ${competencia.obs_enem!.color}`} style={{ marginTop: '12px' }}>
+                                        {competencia.obs_enem != null && competencia.obs_enem.items.map((item: any, index: number) => <RowObsEnem key={index} item={item} />
+                                        )}
+                                    </div>}
+                                </div>
+                            )
                         })}
                     </span>
                 </div>
@@ -260,7 +270,7 @@ function Correcao({ session, redacaoProps } : any) {
                       .gridTemas .notas{display: block; width: 100%; height: max-content; border-radius: 0.75rem; background: var(--gray20); padding: 1.875rem 1.5625rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
                       .gridTemas .notas h1{display: block; width: 100%; text-align: center; font-size: 1.5625rem; margin: 0 0 2rem}
                       .gridTemas .notas .criterios{display: block; width: 100%; margin: 0 0 2rem}
-                      .gridTemas .notas .criterios .criterio{display: flex; flex-direction: row; gap: 1rem; margin: 0 0 1rem; background: var(--gray30); align-items: center; justify-content: center; padding: 0.5rem 1rem; border-radius: 0.5rem}
+                      .gridTemas .notas .criterios .criterio{display: flex; flex-direction: column; gap: 1rem; margin: 0 0 1rem; background: var(--gray30); align-items: center; justify-content: center; padding: 0.5rem 1rem; border-radius: 0.5rem}
                       .gridTemas .notas .criterios .criterio .title{font-size: 1.1rem; flex: 1; font-weight: 500; color: var(--dark); border-right: 1px solid var(--dark)}
                       .gridTemas .notas .criterios .criterio .nota{font-size:1rem; flex: 3; font-weight: 500; color: var(--dark)}
                       

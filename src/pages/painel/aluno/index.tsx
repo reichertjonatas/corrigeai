@@ -64,6 +64,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
 
   const [tema, setTema] = React.useState<string | null>(null)
   const [temas, setTemas] = React.useState<{ value: string, label: string }[]>([])
+  const [alunoObs, setAlunoObs ] = React.useState('');
 
   // const [suggestions, setSuggestions] = React.useState<ITemas[]>([])
   const [timer, setTimer] = React.useState<null | any>(null);
@@ -129,6 +130,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     const data:any = {};
     data['user'] = session?.id as string ?? '';
     data['tema'] = tema ?? '';
+    data['msg_aluno'] = alunoObs ?? '';
     data['status_correcao'] = subscription?.plano.plano_type === "enem" ? "correcao_um" :  "redacao_simples";
     body.append("data", JSON.stringify(data))
 
@@ -382,12 +384,12 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
                       {createObjectURL !== null &&
                         <>
                         <span>
-                          * A visualização de baixa qualidade, não representa a qualidade real do arquivo. <br />
+                          * ATENÇÃO, CARA PÁLIDA: SE VOCÊ ESTÁ VISUALIZANDO UMA MINIATURA DA SUA REDAÇÃO, É SINAL DE QUE ESTÁ TUDO CERTO. NÃO SE PREOCUPE CASO A IMAGEM ESTEJA UM POUCO DISTORCIDA, É NORMAL! PARA O CORRETOR, ELA APARECERÁ PERFEITAMENTE. <br />
                          </span>
                          <br />
                          <span>
                            <h3> Deixe uma mensagem para o corretor: </h3>
-                           <textarea placeholder="" />
+                           <textarea onChange={(e) => setAlunoObs(e.target.value)} placeholder="" />
                          </span>
                         <br />
                           <button className="uploadRemove" type="button" onClick={remove} >Trocar redação</button>

@@ -1,8 +1,28 @@
+import { getSession } from 'next-auth/client';
 import React from 'react'
 import MainLayout from '../../../../../components/layout/MainLayout'
 import Seo from '../../../../../components/layout/Seo'
 
-function RedacaoIndexPlanejamento() {
+export async function getServerSideProps(ctx : any) {
+    const session = await getSession(ctx);
+  
+    if(!session) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/painel/entrar',
+            }
+        }
+    }
+  
+    return {
+        props: {
+            session,
+        }
+    }
+  }
+
+function RedacaoIndexPlanejamento({ session } : any) {
     return (
         <MainLayout>
             <Seo title="Planejamento da redação"/>
@@ -34,12 +54,15 @@ function RedacaoIndexPlanejamento() {
                         </span>
                     </div>
                     <span className="botao">
-                        <a href="#">Planeje sua semana</a>
+                        <a style={{cursor: "pointer"}} onClick={() => {
+                            if(typeof window != undefined) {
+                                window.print()
+                            }
+                        }}>Planeje sua semana</a>
                     </span>
                 </div>
             </div>
-
-            <style jsx>
+            <style global jsx>
                 {
                     `
                     @media print{
@@ -61,8 +84,12 @@ function RedacaoIndexPlanejamento() {
                             display: none;
                         }
 
-                    }
-
+                    }`
+                }
+            </style>
+            <style jsx>
+                {
+                    `
                     .gridPlanejamento {
                         display: grid;
                         grid-template-columns: 1fr;

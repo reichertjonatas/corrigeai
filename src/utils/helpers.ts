@@ -85,7 +85,20 @@ export const PLANOS = (plano_id:number) => {
             return null
     }
   }
-
+export const numeroRomano = (numero: number) => {
+    switch (numero) {
+        case 2:
+            return 'II'
+        case 3:
+            return 'III'
+        case 4:
+            return 'IV'
+        case 5:
+            return 'V'
+        default:
+            return 'I'
+    }
+}
 export const notaTotalRedacao = (redacao : any) => {
     console.log("chegou aqui ==>")
     if (redacao) {
