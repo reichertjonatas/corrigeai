@@ -98,7 +98,7 @@ function SeusEnvios( { redacoes  } : any) {
                                         <div onClick={envio.status_correcao != 'finalizada'  ? () => toast.info("A redação ainda não foi corrigida!"): () => {}}  className="item" style={{ cursor: 'pointer' }}>
                                             <div className="data">{Moment(envio.createdAt).format('DD/MM')}</div>
                                             <div className="tema">{envio.tema.titulo}</div>
-                                            <div className="nota">{envio.nota_final == 0 ? '---' : envio.nota_final}</div>
+                                            <div className="nota">{envio.status_correcao != 'finalizada' ? '---' : envio.nota_final == 0 ? '---' : envio.nota_final}</div>
                                         </div>
 
                                         {/* {index % 4 == 0 && <div className="ballon-right">
