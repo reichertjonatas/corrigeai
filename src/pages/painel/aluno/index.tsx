@@ -388,7 +388,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
                          </span>
                          <br />
                          <span>
-                           <h3> Deixe uma mensagem para o corretor: </h3>
+                           <h3> A Corrige Aí te escuta, deixe uma mensagem para o corretor: </h3>
                            <textarea onChange={(e) => setAlunoObs(e.target.value)} placeholder="" />
                          </span>
                         <br />
