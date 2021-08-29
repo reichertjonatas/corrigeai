@@ -131,7 +131,7 @@ function SeusEnvios( { redacoes  } : any) {
                         {envios?.length > 0 && envios.filter(envio => envio.status_correcao == 'finalizada').slice(0, 6).reverse().map((envio, index) => {
                             return envio.nota_final > 0 && (<span className="column" key={index}>
                                 <span className="height">
-                                    <span className={`rate ${envios.length == index + 1 ? 'active' : ''}`} style={{ minHeight: `${envio.nota_final / 10}%` }}>&nbsp;</span>
+                                    <span className={`rate ${envios.length == index + 1 ? 'active' : ''}`} style={{ minHeight: `${notaTotalRedacao(envio) / 10}%` }}>&nbsp;</span>
                                 </span>
                                 <span className="number">{notaTotalRedacao(envio)}</span>
                             </span>)
