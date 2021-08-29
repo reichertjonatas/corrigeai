@@ -194,16 +194,19 @@ const corretorStore = create<{
             if(novoStatus == "finalizada"){
                 const redacaoFinalStatus = await strapi((session as any).jwt).findOne('redacaos', redacao.id);
                 await strapi((session as any).jwt).update('redacaos', redacao.id, { nota_final: notaTotalRedacao(redacaoFinalStatus) })
-            }
-
-
-            if(novoStatus == "finalizada" && oldStatus == 'correcao_dois'){
-                const discrepante = checkDiscrepancia(redacao, 100);
-                if(discrepante)
-                    await strapi((session as any).jwt).update('redacaos', idRedacao, {
-                        status_correcao: 'discrepancia',
-                        correcaos: correcoes
-                    })
+                
+                if(oldStatus == 'correcao_dois'){
+                    const discrepante = checkDiscrepancia(redacaoFinalStatus, 100);
+                    if(discrepante){
+                        await strapi((session as any).jwt).update('redacaos', idRedacao, {
+                            status_correcao: 'discrepancia',
+                            correcaos: correcoes
+                        })
+    
+                        const redacaoFinalStatus = await strapi((session as any).jwt).findOne('redacaos', redacao.id);
+                        await strapi((session as any).jwt).update('redacaos', redacao.id, { nota_final: notaTotalRedacao(redacaoFinalStatus) })
+                    }
+                }
             }
 
             if(!updated?.id) throw new Error("Correção não foi salva!")
