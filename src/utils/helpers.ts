@@ -158,7 +158,7 @@ export const notaTotalCorrecao = (correcao: any) => {
 
 export const checkDiscrepancia = (redacao: any, notaParaDiscrepancia: any) => {
     var notasPorCompetencia = 0;
-    var correcoes = redacao.correcaos
+    var correcoes = redacao.correcaos ?? []
     var discrepante = false;
     var notaTotalPorCorrecao: any[] = [];
     var notaPorCompetencia: number[][] = [];
@@ -181,8 +181,10 @@ export const checkDiscrepancia = (redacao: any, notaParaDiscrepancia: any) => {
 
             initCount++;
             notaPorCompetencia.push([]);
+            
+            console.log("competenciasBug => ", correcao.competencias);
 
-            correcao.competencias.map((competencia: any) => {
+            correcao.competencias?.map((competencia: any) => {
 
                 notaPorCompetencia[indexCorrecao].push(competencia.nota)
                 notasPorCompetencia = notasPorCompetencia + competencia.nota;

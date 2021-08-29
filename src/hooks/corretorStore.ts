@@ -191,11 +191,11 @@ const corretorStore = create<{
                 correcaos: correcoes
             })
 
-
             if(novoStatus == "finalizada"){
                 const redacaoFinalStatus = await strapi((session as any).jwt).findOne('redacaos', redacao.id);
                 await strapi((session as any).jwt).update('redacaos', redacao.id, { nota_final: notaTotalRedacao(redacaoFinalStatus) })
             }
+
 
             if(novoStatus == "finalizada" && oldStatus == 'correcao_dois'){
                 const discrepante = checkDiscrepancia(redacao, 100);

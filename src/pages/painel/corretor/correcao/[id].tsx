@@ -379,62 +379,67 @@ function Correcao({ redacaoProps, session }: any) {
             <div className="gridTemas">
 
                 <div className="content">
-                    {!isLoadingSending && <div className="boxTema">
+                    <div className="boxTema">
+                        {isLoadingSending && <PreLoader />}
+                        {!isLoadingSending &&
+                            <>
+                                <div className="competencia">
+                                    <span onClick={() => handlerCompetencia(1)} className={competencia == 1 ? 'active' : ''} style={{ "background": "#3f37c9" }}>Competência I</span>
+                                    <span onClick={() => handlerCompetencia(2)} className={competencia == 2 ? 'active' : ''} style={{ "background": "#fb5400" }}>Competência II</span>
+                                    <span onClick={() => handlerCompetencia(3)} className={competencia == 3 ? 'active' : ''} style={{ "background": "#b5179e" }}>Competência III</span>
+                                    <span onClick={() => handlerCompetencia(4)} className={competencia == 4 ? 'active' : ''} style={{ "background": "#fcbe21" }}>Competência IV</span>
+                                    <span onClick={() => handlerCompetencia(5)} className={competencia == 5 ? 'active' : ''} style={{ "background": "#8ac925" }}>Competência V</span>
+                                </div>
 
-                        <div className="competencia">
-                            <span onClick={() => handlerCompetencia(1)} className={competencia == 1 ? 'active' : ''} style={{ "background": "#3f37c9" }}>Competência I</span>
-                            <span onClick={() => handlerCompetencia(2)} className={competencia == 2 ? 'active' : ''} style={{ "background": "#fb5400" }}>Competência II</span>
-                            <span onClick={() => handlerCompetencia(3)} className={competencia == 3 ? 'active' : ''} style={{ "background": "#b5179e" }}>Competência III</span>
-                            <span onClick={() => handlerCompetencia(4)} className={competencia == 4 ? 'active' : ''} style={{ "background": "#fcbe21" }}>Competência IV</span>
-                            <span onClick={() => handlerCompetencia(5)} className={competencia == 5 ? 'active' : ''} style={{ "background": "#8ac925" }}>Competência V</span>
-                        </div>
+                                <div className="tasks">
 
-                        <div className="tasks">
+                                    <span onClick={() => handlerEditorType(1)} className={editorType == 1 ? `task` : 'task'} style={{ border: editorType == 1 ? `2px solid ${getColorActivite(competencia)}` : 'none' }}>
+                                        <span className="img">
+                                            <Image src={CloseIcon} className="img-responsive" alt="" />
+                                        </span>
+                                        <span className="text">Adicionar &quot;x&quot;</span>
+                                    </span>
 
-                            <span onClick={() => handlerEditorType(1)} className={editorType == 1 ? `task` : 'task'} style={{ border: editorType == 1 ? `2px solid ${getColorActivite(competencia)}` : 'none' }}>
-                                <span className="img">
-                                    <Image src={CloseIcon} className="img-responsive" alt="" />
-                                </span>
-                                <span className="text">Adicionar &quot;x&quot;</span>
-                            </span>
+                                    <span onClick={() => handlerEditorType(2)} className={editorType == 2 ? `task` : 'task'} style={{ border: editorType == 2 ? `2px solid ${getColorActivite(competencia)}` : 'none' }} >
+                                        <span className="img">
+                                            <Image src={PencilIcon} className="img-responsive" alt="" />
+                                        </span>
+                                        <span className="text">Traçado de lápis</span>
+                                    </span>
+                                    <span onClick={() => handlerEditorType(3)} className={editorType == 3 ? `task` : 'task'} style={{ border: editorType == 3 ? `2px solid ${getColorActivite(competencia)}` : 'none' }}>
+                                        <span className="img">
+                                            <Image src={PencilIcon} className="img-responsive" alt="" />
+                                        </span>
+                                        <span className="text">Destacar texto</span>
+                                    </span>
+                                </div>
+                                <div className="redacao">
+                                    <Annotation
+                                        src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
+                                        alt=''
+                                        annotations={annotations}
+                                        renderOverlay={RenderOverlay}
+                                        renderContent={renderPopUp}
+                                        renderHighlight={RenderHighlight}
+                                        renderSelector={RenderSelector}
+                                        renderEditor={RenderEditor}
 
-                            <span onClick={() => handlerEditorType(2)} className={editorType == 2 ? `task` : 'task'} style={{ border: editorType == 2 ? `2px solid ${getColorActivite(competencia)}` : 'none' }} >
-                                <span className="img">
-                                    <Image src={PencilIcon} className="img-responsive" alt="" />
-                                </span>
-                                <span className="text">Traçado de lápis</span>
-                            </span>
-                            <span onClick={() => handlerEditorType(3)} className={editorType == 3 ? `task` : 'task'} style={{ border: editorType == 3 ? `2px solid ${getColorActivite(competencia)}` : 'none' }}>
-                                <span className="img">
-                                    <Image src={PencilIcon} className="img-responsive" alt="" />
-                                </span>
-                                <span className="text">Destacar texto</span>
-                            </span>
-                        </div>
-                        <div className="redacao">
-                            <Annotation
-                                src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
-                                alt=''
-                                annotations={annotations}
-                                renderOverlay={RenderOverlay}
-                                renderContent={renderPopUp}
-                                renderHighlight={RenderHighlight}
-                                renderSelector={RenderSelector}
-                                renderEditor={RenderEditor}
-
-                                type={type}
-                                value={annotation}
-                                onChange={onChange}
-                                onSubmit={onSubmit}
-                                className="img-responsive"
-                            />
-                            {/* <Image src={RedacaoPreview}  alt="" /> */}
-                        </div>
-                    </div>}
+                                        type={type}
+                                        value={annotation}
+                                        onChange={onChange}
+                                        onSubmit={onSubmit}
+                                        className="img-responsive"
+                                    />
+                                    {/* <Image src={RedacaoPreview}  alt="" /> */}
+                                </div>
+                            </>
+                        }
+                    </div>
                 </div>
 
 
                 <div className="notas">
+                    {isLoadingSending && <PreLoader />}
                     {!isLoadingSending && (<><h1>Notas</h1>
                         <span className="criterios">
 
