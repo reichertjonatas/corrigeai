@@ -100,20 +100,22 @@ export const numeroRomano = (numero: number) => {
 }
 export const notaTotalRedacao = (redacao: any) => {
     console.log("chegou aqui ==>")
+
     if (redacao) {
         var ultimasNotas: number[][] = [];
         console.log("chegou aqui ==>")
 
-        redacao.correcaos.filter((correcao:any) => correcao.discrepante != true ).map((correcoes: any, index: number) => {
+        console.log("redacao ======> ", redacao)
+        redacao.correcaos.filter((correcao:any) => correcao.discrepante == false ).map((correcoes: any, index: number) => {
             var ultimaNotaCalc = 0;
             console.log("correcoes ==> ", correcoes);
-            if(correcoes?.competencias != undefined){
-                correcoes?.competencias?.map((competencia: any) => {
+            correcoes?.competencias?.map((competencia: any) => {
                 ultimaNotaCalc = ultimaNotaCalc + competencia.nota;
-                })
-            }
+            });
             ultimasNotas.push([ultimaNotaCalc]);
         })
+
+
         console.log("chegou aqui redacao.correcaos.map ==>")
 
 

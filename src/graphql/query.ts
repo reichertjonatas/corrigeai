@@ -14,6 +14,7 @@ const redacaoPerUser = (id: any) => `query{
         corretor {
           id
         }
+        discrepante
       }
       tema {
         titulo
@@ -38,6 +39,7 @@ const redacaoPerUserSortDate = (id: any) => `query{
         corretor {
           id
         }
+        discrepante
       }
       tema {
         titulo
@@ -127,6 +129,7 @@ const redacaoById = (id: string) => `query RedacoesPerId {
         id
       }
       marcacoes 
+      discrepante
     }
     tema {
       titulo
@@ -157,6 +160,7 @@ const correcaoById = (id: string, idCorrecao: string) => `query correcaoById {
           id
         }
         marcacoes 
+        discrepante
       }
       tema {
         titulo
@@ -195,6 +199,7 @@ const redacaoParaCorrigirDiscrepancia = (turma: string) => `query RedacoesCorrec
         id
       }
       marcacoes 
+      discrepante
     }
     user {
       email
@@ -227,6 +232,7 @@ const redacaoParaCorrigir = (turma: string) => `query RedacoesCorrecao {
         id
       }
       marcacoes 
+      discrepante
     }
     user {
       email
@@ -257,6 +263,7 @@ const redacaoParaCorrigir = (turma: string) => `query RedacoesCorrecao {
         id
       }
       marcacoes 
+      discrepante
     }
     user {
       email
