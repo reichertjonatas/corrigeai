@@ -520,6 +520,18 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
         .inputUploadRedacao:disabled ~ label {
             background: #9c9c9c !important;
         }
+
+        .popRedacao textarea{
+          width: 100%;
+          margin: 1rem 0 0;
+          height: 6rem;
+          border: 1px solid var(--gray50);
+          border-radius: 0.5rem;
+        }
+        
+        .popRedacao img{
+          object-fit: cover !important;
+        }
           `
       } </style>
       <style jsx>

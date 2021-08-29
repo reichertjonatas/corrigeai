@@ -49,9 +49,10 @@ function Temas({ session } : any ) {
             <Seo title="Temas" />
             <div className={"grid-temas"}>
                 <div className="content">
+                    
                     <div className="head-box">
 
-                        <a className="box" onClick={ () => setCategoria("enem", session.jwt)}>
+                        <a className={currentTema != null ? categoria == 'enem' ? "box active" : "box" : "box"}  onClick={ () => setCategoria("enem", session.jwt)}>
                             <span className="icon">
                             <Image src={TemaEnem} className="img-responsive" alt="" />
                             </span>
@@ -60,7 +61,7 @@ function Temas({ session } : any ) {
                             </span>
                         </a>
 
-                        <a className="box" onClick={ () => setCategoria("corrigeai", session.jwt)}>
+                        <a className={currentTema != null ? categoria == 'corrigeai' ? "box active" : "box" : "box"} onClick={ () => setCategoria("corrigeai", session.jwt)}>
                             <span className="icon">
                                 <Image src={TemaCorrigeAi} className="img-responsive" alt="" />
                             </span>
@@ -74,12 +75,6 @@ function Temas({ session } : any ) {
                         {currentTema != null && <h1>{currentTema.titulo}</h1>}
                         {currentTema != null && <div className="conteudo" dangerouslySetInnerHTML={{ __html: currentTema.content }}></div>}
                     </div>
-
-                    {/* <span className="botao">
-                        <Link href="/painel/aluno" passHref>
-                            <a> Escolher esse tema</a>
-                        </Link>
-                    </span>  */}
                 </div>
 
 
@@ -117,7 +112,15 @@ function Temas({ session } : any ) {
                     }
                     .btnNavegacao:hover { background: var(--green)}
 
-
+                    .grid-temas .box{
+                        cursor: pointer;
+                    }
+                    
+                    .grid-temas .active{
+                        background: var(--dark) !important;
+                        color: var(--white) !important;
+                    }
+                    
                     .paginas {
                         background: white;
                         padding: 12px;

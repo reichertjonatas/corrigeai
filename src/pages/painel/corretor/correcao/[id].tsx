@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import { CloseIcon, PencilIcon, RedacaoPreview } from '../../../../components/icons';
 import MainLayout from '../../../../components/layout/MainLayout'
-import { numeroRomano, withAuthSession } from '../../../../utils/helpers';
+import { checkDiscrepancia, numeroRomano, withAuthSession } from '../../../../utils/helpers';
 import shallow from 'zustand/shallow'
 
 // @ts-ignore
@@ -267,7 +267,7 @@ function Correcao({ redacaoProps, session }: any) {
         if (redacao.status_correcao === 'discrepancia') {
             setOpen(!checkErrorValidations())
         } else {
-            if(!checkErrorValidations())
+            if (!checkErrorValidations())
                 nextEnvio()
         }
     }
@@ -299,11 +299,11 @@ function Correcao({ redacaoProps, session }: any) {
         const response = await salvarCorrecao(id as string, session);
         debugPrint('salvar response', response)
         console.log(" ==> nota simples: ", redacao);
-        
-        if (response.error){
+
+        if (response.error) {
             setIsloadingSending(false)
             toast.error(response.message)
-        }else {
+        } else {
             toast.success(response.message)
             router.replace('/painel/corretor')
         }
@@ -315,12 +315,6 @@ function Correcao({ redacaoProps, session }: any) {
     return (
         <MainLayout menuType={2} role="corretor">
             <style global jsx>{`
-                .content-global{
-                    max-width: 95%!important;
-                    margin: 0 auto!important;
-                }
-                
-                .sidebar{ display: none !important; }
                 
                 .gridTemas .content .boxTema .redacao{
                     display: block;
@@ -333,11 +327,59 @@ function Correcao({ redacaoProps, session }: any) {
                     width: 100%!important;
                 }
 
+                .competenciaModal{
+                    padding: 1.3rem;
+                    text-align: center;
+                  }
+                  
+                  .competenciaModal h1{
+                    text-align: center;
+                    font-size: 1.3rem;
+                    margin: 0 0 2rem;
+                    text-transform: uppercase;
+                  }
+                  
+                  .competenciaModal .btnContinuar{
+                    display: inline-block;
+                    margin: 3rem 0 0;
+                  }
+                  
+                  .competenciaBox span{
+                    font-size: 1.2rem;
+                    font-weight: 600;
+                    margin: 0 0 1rem;
+                  }
+                  
+                  ul li .competenciaNome{
+                    font-weight: 400;
+                    margin: 0 1rem 0 0;
+                    font-size: 1rem;
+                  }
+                  
+                  .competenciaNota{
+                    color: var(--black);
+                  }
+                  
+                  .notaBox{
+                    margin: 1rem 0 0;
+                  }
+                  
+                  .notaLabel{
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                  }
+                  
+                  .notaFinal{
+                    font-size: 2rem;
+                    font-weight: 700;
+                    color: var(--green);
+                  }
+                  
             `}</style>
             <div className="gridTemas">
 
                 <div className="content">
-                    { !isLoadingSending && <div className="boxTema">
+                    {!isLoadingSending && <div className="boxTema">
 
                         <div className="competencia">
                             <span onClick={() => handlerCompetencia(1)} className={competencia == 1 ? 'active' : ''} style={{ "background": "#3f37c9" }}>Competência I</span>
@@ -393,71 +435,71 @@ function Correcao({ redacaoProps, session }: any) {
 
 
                 <div className="notas">
-                { !isLoadingSending && (<><h1>Notas</h1>
-                    <span className="criterios">
+                    {!isLoadingSending && (<><h1>Notas</h1>
+                        <span className="criterios">
 
-                        {competenciasOffline.map((competenciaItem: any, index: number) => (
-                            <span className="criterio" key={index}>
-                                <span className="title">{competenciaItem.title}</span>
-                                <span className="subtitle">Selecione uma nota.</span>
+                            {competenciasOffline.map((competenciaItem: any, index: number) => (
+                                <span className="criterio" key={index}>
+                                    <span className="title">{competenciaItem.title}</span>
+                                    <span className="subtitle">Selecione uma nota.</span>
 
-                                <span className="notasCriterios" onChange={(e: any) => {
-                                    debugPrint('competencia: ', index, ' - ', parseInt(e.target.value));
-                                    setNota(parseInt(e.target.value), index);
-                                }}>
-                                    <span className="nota">
-                                        <input type="radio" id={`${index}0`} name={`${index}`} value="0" />
-                                        <label htmlFor={`${index}0`}>0</label>
-                                    </span>
-
-                                    <span className="nota">
-                                        <input type="radio" id={`${index}40`} name={`${index}`} value="40" />
-                                        <label htmlFor={`${index}40`}>40</label>
-                                    </span>
-
-                                    <span className="nota">
-                                        <input type="radio" id={`${index}80`} name={`${index}`} value="80" />
-                                        <label htmlFor={`${index}80`}>80</label>
-                                    </span>
-
-                                    <span className="nota">
-                                        <input type="radio" id={`${index}120`} name={`${index}`} value="120" />
-                                        <label htmlFor={`${index}120`}>120</label>
-                                    </span>
-
-                                    <span className="nota">
-                                        <input type="radio" id={`${index}160`} name={`${index}`} value="160" />
-                                        <label htmlFor={`${index}160`}>160</label>
-                                    </span>
-
-                                    <span className="nota">
-                                        <input type="radio" id={`${index}200`} name={`${index}`} value="200" />
-                                        <label htmlFor={`${index}200`}>200</label>
-                                    </span>
-                                </span>
-                                {(competenciaItem.nota >= 0 && competenciaItem.nota < 200) && (
-                                    <textarea onChange={(e) => {
-                                        debugPrint("teste =====> ", e.target.value[0])
-                                        setObs(e.target.value as string, index);
-                                    }} rows={5} style={{
-                                        width: '100%',
-                                        marginTop: '12px',
-                                        borderRadius: '0.5rem',
+                                    <span className="notasCriterios" onChange={(e: any) => {
+                                        debugPrint('competencia: ', index, ' - ', parseInt(e.target.value));
+                                        setNota(parseInt(e.target.value), index);
                                     }}>
+                                        <span className="nota">
+                                            <input type="radio" id={`${index}0`} name={`${index}`} value="0" />
+                                            <label htmlFor={`${index}0`}>0</label>
+                                        </span>
 
-                                    </textarea>
-                                )}
-                                {competenciaItem.obs_enem != null && <div className={`popCompetencia ${competenciaItem.obs_enem!.color}`} style={{ marginTop: '12px' }}>
-                                    {competenciaItem.obs_enem != null && competenciaItem.obs_enem.items.map((item: any, index: number) => <RowObsEnem key={index} item={item} />
+                                        <span className="nota">
+                                            <input type="radio" id={`${index}40`} name={`${index}`} value="40" />
+                                            <label htmlFor={`${index}40`}>40</label>
+                                        </span>
+
+                                        <span className="nota">
+                                            <input type="radio" id={`${index}80`} name={`${index}`} value="80" />
+                                            <label htmlFor={`${index}80`}>80</label>
+                                        </span>
+
+                                        <span className="nota">
+                                            <input type="radio" id={`${index}120`} name={`${index}`} value="120" />
+                                            <label htmlFor={`${index}120`}>120</label>
+                                        </span>
+
+                                        <span className="nota">
+                                            <input type="radio" id={`${index}160`} name={`${index}`} value="160" />
+                                            <label htmlFor={`${index}160`}>160</label>
+                                        </span>
+
+                                        <span className="nota">
+                                            <input type="radio" id={`${index}200`} name={`${index}`} value="200" />
+                                            <label htmlFor={`${index}200`}>200</label>
+                                        </span>
+                                    </span>
+                                    {(competenciaItem.nota >= 0 && competenciaItem.nota < 200) && (
+                                        <textarea onChange={(e) => {
+                                            debugPrint("teste =====> ", e.target.value[0])
+                                            setObs(e.target.value as string, index);
+                                        }} rows={5} style={{
+                                            width: '100%',
+                                            marginTop: '12px',
+                                            borderRadius: '0.5rem',
+                                        }}>
+
+                                        </textarea>
                                     )}
-                                </div>}
+                                    {competenciaItem.obs_enem != null && <div className={`popCompetencia ${competenciaItem.obs_enem!.color}`} style={{ marginTop: '12px' }}>
+                                        {competenciaItem.obs_enem != null && competenciaItem.obs_enem.items.map((item: any, index: number) => <RowObsEnem key={index} item={item} />
+                                        )}
+                                    </div>}
 
-                            </span>))}
+                                </span>))}
 
-                        <span className="botao">
-                            <button onClick={handlerEnviarCorrecao}>Enviar correção</button>
-                        </span>
-                    </span></>)}
+                            <span className="botao">
+                                <button onClick={handlerEnviarCorrecao}>Enviar correção</button>
+                            </span>
+                        </span></>)}
                 </div>
             </div>
 
@@ -469,7 +511,7 @@ function Correcao({ redacaoProps, session }: any) {
                         <h1>Selecione correção discrepante</h1>
                         <div className="competencias">
 
-                            { redacao?.correcaos?.length > 0 && redacao.correcaos.filter((correcao: any) => correcao.discrepante == false)?.map((correcao: any, indexCorrecao: number) => {
+                            {redacao?.correcaos?.length > 0 && redacao.correcaos.filter((correcao: any) => correcao.discrepante == false)?.map((correcao: any, indexCorrecao: number) => {
                                 var valorTotal = 0;
 
                                 return (<div onClick={() => {
@@ -477,15 +519,16 @@ function Correcao({ redacaoProps, session }: any) {
                                 }} key={indexCorrecao} className={`competenciaBox ${currentDiscrepancia === correcao.id ? 'activeDiscrepancia' : ''}`}>
                                     <span>Correção {indexCorrecao + 1}</span>
                                     <ul>
-                                        {correcao.competencias.length > 0 && correcao.competencias.map((competencia:any, indexCompetencia: number) => {
-                                        
-                                        valorTotal = valorTotal + competencia.nota;
-                                        
-                                        return (<li key={indexCompetencia}>
-                                            <span className="competenciaNome">Competência {numeroRomano(indexCompetencia)}</span>
-                                            <span className="competenciaNota">{competencia.nota}</span>
-                                        </li>)})}
-                                        
+                                        {correcao.competencias.length > 0 && correcao.competencias.map((competencia: any, indexCompetencia: number) => {
+
+                                            valorTotal = valorTotal + competencia.nota;
+
+                                            return (<li key={indexCompetencia}>
+                                                <span className="competenciaNome">Competência {numeroRomano(indexCompetencia)}</span>
+                                                <span className="competenciaNota">{competencia.nota}</span>
+                                            </li>)
+                                        })}
+
                                     </ul>
                                     <div className="notaBox">
                                         <span className="notaLabel">Total</span>
@@ -552,7 +595,7 @@ function Correcao({ redacaoProps, session }: any) {
                     }
 
                     .activeDiscrepancia{
-                        background-color: var(--green);
+                        background-color: #ccc;
                         color: var(--white);
                     }
 
@@ -589,8 +632,6 @@ function Correcao({ redacaoProps, session }: any) {
   margin: 0 auto;
 }
 
-.sidebar{ display: none!important; }
-
 .gridTemas .content .boxTema .redacao{
     display: block;
     width: 100%;
@@ -606,26 +647,22 @@ function Correcao({ redacaoProps, session }: any) {
 @media(max-width: 1920px){
   /* .content-global{max-width: 1200px; margin: 0 0 0 27.75rem} */
   .content-global{ max-width: 95%!important; margin: 0 auto!important;}
-  .sidebar{ display: none!important; }
 }
 
 @media(max-width: 1700px){
   /* .content-global{max-width: 1200px; margin: 0 0 0 27.75rem} */
   .content-global{ max-width: 95%!important; margin: 0 auto!important;}
-  .sidebar{ display: none!important; }
 }
 
 @media(max-width: 1630px){
   /* .content-global{max-width: 1150px; margin: 0 0 0 26.75rem} */
   /* html {font-size: 14px} */
   .content-global{ max-width: 95%!important; margin: 0 auto!important;}
-  .sidebar{ display: none!important; }
 }
 
 @media(max-width: 1440px){
   /* .content-global{max-width: 70%} */
   .content-global{ max-width: 95%!important; margin: 0 auto!important;}
-  .sidebar{ display: none!important; }
   .gridTemas .content .boxTema .competencia{grid-template-columns: repeat(3, 1fr)}
   .gridTemas .content .boxTema .tasks{grid-template-columns: repeat(3, 1fr)}
 }
@@ -634,19 +671,16 @@ function Correcao({ redacaoProps, session }: any) {
 @media(max-width: 1240px){
   /* .content-global{max-width: 70%; margin: 0 0 0 25rem} */
   .content-global{ max-width: 95%!important; margin: 0 auto!important;}
-  .sidebar{ display: none!important; }
 }
 
 @media(max-width: 1100px){
   .content-global{ max-width: 95%!important; margin: 0 auto!important;}
-  .sidebar{ display: none!important; }
   
   /* .content-global{max-width: 90%; margin: 0 auto} */
 }
 
 @media(max-width: 640px){
   .content-global{ max-width: 95%!important; margin: 0 auto!important;}
-  .sidebar{ display: none!important; }
 
   .gridTemas .content .boxTema .competencia{grid-template-columns: repeat(3, 1fr)}
   .gridTemas .content .boxTema .tasks{grid-template-columns: repeat(3, 1fr)}
@@ -655,7 +689,6 @@ function Correcao({ redacaoProps, session }: any) {
 
 @media(max-width: 480px){
   .content-global{ max-width: 95%!important; margin: 0 auto!important;}
-  .sidebar{ display: none!important; }
 
   .gridTemas .content .boxTema .competencia{grid-template-columns: repeat(2, 1fr)}
   .gridTemas .content .boxTema .tasks{grid-template-columns: repeat(2, 1fr)}

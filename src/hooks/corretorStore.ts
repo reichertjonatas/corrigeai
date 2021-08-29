@@ -7,7 +7,7 @@ import {
     RectangleSelector,
     // @ts-ignore
 } from 'react-image-annotation/lib/selectors'
-import { corretor_type, initialCompetencias, IObsEnemFilter, notaTotalRedacao, obs_enem } from "../utils/helpers";
+import { checkDiscrepancia, corretor_type, initialCompetencias, IObsEnemFilter, notaTotalRedacao, obs_enem } from "../utils/helpers";
 import { debugPrint } from "../utils/debugPrint";
 import { session } from "next-auth/client";
 import { strapi } from "../services/strapi";
@@ -164,6 +164,7 @@ const corretorStore = create<{
             console.log("salvarCorrecao: ===> ", correcoes)
 
             let novoStatus 
+            const oldStatus = redacao.status_correcao;
             if(redacao.status_correcao){
                 switch (redacao.status_correcao) {
                     case "redacao_simples":
@@ -195,7 +196,15 @@ const corretorStore = create<{
                 const redacaoFinalStatus = await strapi((session as any).jwt).findOne('redacaos', redacao.id);
                 await strapi((session as any).jwt).update('redacaos', redacao.id, { nota_final: notaTotalRedacao(redacaoFinalStatus) })
             }
-            
+
+            if(novoStatus == "finalizada" && oldStatus == 'correcao_dois'){
+                const discrepante = checkDiscrepancia(redacao, 100);
+                if(discrepante)
+                    await strapi((session as any).jwt).update('redacaos', idRedacao, {
+                        status_correcao: 'discrepancia',
+                        correcaos: correcoes
+                    })
+            }
 
             if(!updated?.id) throw new Error("Correção não foi salva!")
             

@@ -4,13 +4,12 @@ import { ICalenderEvents, IObsEnem, IRedacoes } from "../models/User"
 import { API } from "../services/api";
 import { debugPrint } from "./debugPrint";
 
-export const corretor_type = (corretor_turma:string) => {
+export const corretor_type = (corretor_turma: string) => {
     return corretor_turma == 'turma_um' ? 'correcao_um' : 'correcao_dois';
 }
 
 
-export function datecomp( d1: any, d2: any )
-{
+export function datecomp(d1: any, d2: any) {
     var a1 = d1.split("/");
     var a2 = d2.split("/");
     a1 = a1[2] + a1[0] + a1[1];
@@ -19,30 +18,30 @@ export function datecomp( d1: any, d2: any )
 }
 
 export const mediaGeral = (redacoes: any[]) => {
-  if (redacoes.length > 0) {
-      var ultimasNotas:number[] = [];
+    if (redacoes.length > 0) {
+        var ultimasNotas: number[] = [];
 
-      redacoes.filter(item => item.nota_final != 0).map(item => {
-        ultimasNotas.push(item.nota_final);
-        return item;
-      })
+        redacoes.filter(item => item.nota_final != 0).map(item => {
+            ultimasNotas.push(item.nota_final);
+            return item;
+        })
 
-      debugPrint(" ===> ", ultimasNotas.length)
+        debugPrint(" ===> ", ultimasNotas.length)
 
-      if(ultimasNotas.length > 0) {
-        var mediaGeralCalc = 0;
-        ultimasNotas.map(item => {
-          mediaGeralCalc = mediaGeralCalc + item
-          return item;
-        });
-        return Math.round(mediaGeralCalc / ultimasNotas.length) == 0 ? '---' : Math.round(mediaGeralCalc / ultimasNotas.length);
-      } else {
-        return 0;
-      }
-  }
+        if (ultimasNotas.length > 0) {
+            var mediaGeralCalc = 0;
+            ultimasNotas.map(item => {
+                mediaGeralCalc = mediaGeralCalc + item
+                return item;
+            });
+            return Math.round(mediaGeralCalc / ultimasNotas.length) == 0 ? '---' : Math.round(mediaGeralCalc / ultimasNotas.length);
+        } else {
+            return 0;
+        }
+    }
 }
 
-export const capitalizeTxt = (txt: any)  => {
+export const capitalizeTxt = (txt: any) => {
     return txt[0].toUpperCase() + txt.slice(1);// txt.charAt(0).toUpperCase() + txt.slice(1); //or if you want lowercase the rest txt.slice(1).toLowerCase();
 }
 
@@ -51,40 +50,40 @@ export interface ICheckoutPlano {
 }
 
 export interface IPlano {
-        plano_type: number;
-        parcela_number: number;
-        total_envios: number,
-        days: number,
-        plano: string;
-        meses: string;
-        total: string;
-        parcelamento: string;
-        infos: string[]
-    
+    plano_type: number;
+    parcela_number: number;
+    total_envios: number,
+    days: number,
+    plano: string;
+    meses: string;
+    total: string;
+    parcelamento: string;
+    infos: string[]
+
 }
 
 
-export const PLANOS = (plano_id:number) => {
+export const PLANOS = (plano_id: number) => {
     switch (plano_id) {
         case 1395688:
-              return <IPlano>{
+            return <IPlano>{
 
-                  plano_type: 1,
-                  parcela_number: 1,
-                  total_envios: 8,
-                  days: 30,
+                plano_type: 1,
+                parcela_number: 1,
+                total_envios: 8,
+                days: 30,
 
-                  plano: "Acesso Mensal",
-                  meses: "1 mês",
-                  total: "R$ 80,00",
-                  parcelamento: "1x",
-                  infos: ["", "", ""]
-                  
-              }
+                plano: "Acesso Mensal",
+                meses: "1 mês",
+                total: "R$ 80,00",
+                parcelamento: "1x",
+                infos: ["", "", ""]
+
+            }
         default:
             return null
     }
-  }
+}
 export const numeroRomano = (numero: number) => {
     switch (numero) {
         case 2:
@@ -99,24 +98,24 @@ export const numeroRomano = (numero: number) => {
             return 'I'
     }
 }
-export const notaTotalRedacao = (redacao : any) => {
+export const notaTotalRedacao = (redacao: any) => {
     console.log("chegou aqui ==>")
     if (redacao) {
         var ultimasNotas: number[][] = [];
         console.log("chegou aqui ==>")
-        
-        redacao.correcaos.map((correcoes:any, index:number) => {
+
+        redacao.correcaos.map((correcoes: any, index: number) => {
             var ultimaNotaCalc = 0;
-            console.log("correcoes ==> ", correcoes );
-            correcoes.competencias.map((competencia:any) => {
+            console.log("correcoes ==> ", correcoes);
+            correcoes.competencias.map((competencia: any) => {
                 ultimaNotaCalc = ultimaNotaCalc + competencia.nota;
             })
             ultimasNotas.push([ultimaNotaCalc]);
         })
         console.log("chegou aqui redacao.correcaos.map ==>")
 
-        
-        if(ultimasNotas.length > 0) {
+
+        if (ultimasNotas.length > 0) {
             var mediasNotas: number[] = [];
             ultimasNotas.map(ultimaNota => {
                 var mediaGeralCalc = 0;
@@ -126,7 +125,7 @@ export const notaTotalRedacao = (redacao : any) => {
                 });
                 mediasNotas.push(Math.round(mediaGeralCalc / ultimaNota.length));
             })
-            if(mediasNotas.length > 0) {
+            if (mediasNotas.length > 0) {
                 var mediaFinal = 0;
                 mediasNotas.map(item => {
                     mediaFinal = mediaFinal + item
@@ -136,23 +135,127 @@ export const notaTotalRedacao = (redacao : any) => {
             }
             return 0;
         } else {
-          return 0;
+            return 0;
         }
     }
     return 0;
 }
+
+
+/** Discrepancia calc */
+export const notaTotalCorrecao = (correcao: any) => {
+    var notaTotalCorrecao: number = 0;
+
+    correcao.competencias.map((item: any) => {
+        notaTotalCorrecao = notaTotalCorrecao + item.nota;
+        return item;
+    })
+
+    return notaTotalCorrecao;
+}
+
+export const checkDiscrepancia = (redacao: any, notaParaDiscrepancia: any) => {
+    var notasPorCompetencia = 0;
+    var correcoes = redacao.correcaos
+    var discrepante = false;
+    var notaTotalPorCorrecao: any[] = [];
+    var notaPorCompetencia: number[][] = [];
+
+    // check Discrepancia Nota por competencia 
+    if (correcoes.length > 0) {
+
+        // map correcoes para pegar cada correcao e fazer um map.
+        // também tem um filtro para separar correcoes já discrepantes
+        /** entrada: 
+         * @correcao any
+         * @indexCorrecao type number
+         * 
+         * irá popular notaPorCompetencia | notaTotalPorCorrecao
+         */
+
+        console.log("init ==> ", correcoes);
+        var initCount = 0
+        correcoes.filter((correcao: any) => correcao.discrepancia != true).map((correcao: any, indexCorrecao: number) => {
+
+            initCount++;
+            notaPorCompetencia.push([]);
+
+            correcao.competencias.map((competencia: any) => {
+
+                notaPorCompetencia[indexCorrecao].push(competencia.nota)
+                notasPorCompetencia = notasPorCompetencia + competencia.nota;
+                return correcao;
+            });
+
+            notaTotalPorCorrecao.push(notasPorCompetencia)
+            notasPorCompetencia = 0;
+            return correcao;
+        })
+
+        console.log(" fim count ===> ", initCount, " notaTotalPorCorrecao ====> ", notaTotalPorCorrecao, " =====> ", notaPorCompetencia)
+
+    }
+
+    // CHeck discrepancia nas notas por competencia com valores para calc
+    if (notaPorCompetencia.length > 0 && (notaPorCompetencia.length % 2) == 0) {
+        notaPorCompetencia.filter(notas => notas.length == 5).forEach((notas: any, indexNotas: number) => {
+            // checa se o número é par antes de calcular, lembrando que apenas numeros pares serão calculados
+            if ((indexNotas % 2) == 0){
+                notas.forEach((nota: number, indexNota: number) => {
+                    let calculoDiscrepancia
+                    calculoDiscrepancia = nota - notaPorCompetencia[indexNotas + 1][indexNota];
+                    if(discrepante == false)
+                        discrepante = Math.abs(calculoDiscrepancia) > notaParaDiscrepancia
+                })
+            }
+        })
+    } else {
+        console.log("calculo deu merda, entrou no else notaPorCompetencia")
+    }
+
+
+    console.log("notaPorCompetencia é discrepante? ", discrepante)
+
+    // CHeck discrepancia na nota total com valores para calc
+    if (notaTotalPorCorrecao.length > 0 && (notaPorCompetencia.length % 2) == 0) {
+        notaTotalPorCorrecao.map((nota,index) => { 
+
+            let calculoDiscrepancia
+            calculoDiscrepancia = nota - notaTotalPorCorrecao[ index + 1];
+            if(discrepante == false)
+                discrepante = Math.abs(calculoDiscrepancia) > notaParaDiscrepancia
+        })
+    }else{
+        console.log("calculo deu merda, entrou no else notaTotalPorCorrecao")
+    }
+
+
+    console.log("notaTotal é discrepante? ", discrepante)
+    return discrepante;
+}
+
+export const mediaRedacoeNotaFinal = (redacao: any) => {
+    var correcoesExistents = redacao.correcoes.length
+
+    if (correcoesExistents > 0) {
+        console.log(" if ===> ")
+
+    }
+}
+/** calc competencia */
+
 
 export const mediaRedacaoPorCompetencia = (redacao: any, competencia: number) => {
     if (redacao) {
         var ultimasNotas: number[][] = [];
         debugPrint(" ===> ", redacao.correcaos.length)
 
-        redacao.correcaos.map((correcoes:any, index:number) => {
+        redacao.correcaos.map((correcoes: any, index: number) => {
             ultimasNotas.push([correcoes.competencias[competencia].nota]);
         })
 
-        
-        if(ultimasNotas.length > 0) {
+
+        if (ultimasNotas.length > 0) {
             var mediasNotas: number[] = [];
             ultimasNotas.map(ultimaNota => {
                 var mediaGeralCalc = 0;
@@ -162,7 +265,7 @@ export const mediaRedacaoPorCompetencia = (redacao: any, competencia: number) =>
                 });
                 mediasNotas.push(Math.round(mediaGeralCalc / ultimaNota.length));
             })
-            if(mediasNotas.length > 0) {
+            if (mediasNotas.length > 0) {
                 var mediaFinal = 0;
                 mediasNotas.map(item => {
                     mediaFinal = mediaFinal + item
@@ -172,15 +275,15 @@ export const mediaRedacaoPorCompetencia = (redacao: any, competencia: number) =>
             }
             return 0;
         } else {
-          return 0;
+            return 0;
         }
     }
     return 0;
-  }
+}
 
 export async function authRequired(ctx: any, userType?: number | null, isIndex?: boolean) {
     const session = await getSession(ctx)
-    
+
     if (!session) {
         return {
             redirect: {
@@ -189,7 +292,7 @@ export async function authRequired(ctx: any, userType?: number | null, isIndex?:
             }
         }
     }
-    
+
     // if (isIndex) {
     //     switch (session!.user!.userType) {
     //         case 2:
