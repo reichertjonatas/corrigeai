@@ -6,7 +6,7 @@ import { useCorretorStore } from '../../../../../hooks/corretorStore';
 import shallow from 'zustand/shallow'
 import Image from 'next/image'
 import MainLayout from '../../../../../components/layout/MainLayout';
-import { mediaRedacaoPorCompetencia } from '../../../../../utils/helpers';
+import { mediaRedacaoPorCompetencia, notaTotalRedacao } from '../../../../../utils/helpers';
 import { getSession } from 'next-auth/client';
 import { strapi } from '../../../../../services/strapi';
 import { redacaoById } from '../../../../../graphql/query';
@@ -157,7 +157,7 @@ function Redacao({ redacaoProps, session } : any) {
 
                         <span className="criterio notaFinal">
                             <span className="title">Nota Final:</span>
-                            <span className="nota">{ redacao.nota_final }</span>
+                            <span className="nota">{ notaTotalRedacao(redacao) }</span>
                         </span>
                     </span>
 

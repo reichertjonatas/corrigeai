@@ -204,7 +204,9 @@ const corretorStore = create<{
                         })
     
                         const redacaoFinalStatus = await strapi((session as any).jwt).findOne('redacaos', redacao.id);
-                        await strapi((session as any).jwt).update('redacaos', redacao.id, { nota_final: notaTotalRedacao(redacaoFinalStatus) })
+                        await strapi((session as any).jwt).update('redacaos', redacao.id, { 
+                            nota_final: notaTotalRedacao(redacaoFinalStatus) 
+                        })
                     }
                 }
             }

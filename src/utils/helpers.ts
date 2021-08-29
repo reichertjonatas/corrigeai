@@ -21,8 +21,8 @@ export const mediaGeral = (redacoes: any[]) => {
     if (redacoes.length > 0) {
         var ultimasNotas: number[] = [];
 
-        redacoes.filter(item => item.nota_final != 0).map(item => {
-            ultimasNotas.push(item.nota_final);
+        redacoes.filter(item => notaTotalRedacao(item) != 0).map(item => {
+            ultimasNotas.push(notaTotalRedacao(item));
             return item;
         })
 

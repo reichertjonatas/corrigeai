@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { calendar } from '../../../../components/icons'
 import { useEnviosStore } from '../../../../hooks/enviosStore'
 import Moment from 'moment'
-import { mediaGeral } from '../../../../utils/helpers'
+import { mediaGeral, notaTotalRedacao } from '../../../../utils/helpers'
 import shallow from 'zustand/shallow'
 import { getSession } from 'next-auth/client'
 import { strapi } from '../../../../services/strapi'
@@ -98,7 +98,7 @@ function SeusEnvios( { redacoes  } : any) {
                                         <div onClick={envio.status_correcao != 'finalizada'  ? () => toast.info("A redação ainda não foi corrigida!"): () => {}}  className="item" style={{ cursor: 'pointer' }}>
                                             <div className="data">{Moment(envio.createdAt).format('DD/MM')}</div>
                                             <div className="tema">{envio.tema.titulo}</div>
-                                            <div className="nota">{envio.status_correcao != 'finalizada' ? '---' : envio.nota_final == 0 ? '---' : envio.nota_final}</div>
+                                            <div className="nota">{envio.status_correcao != 'finalizada' ? '---' : notaTotalRedacao(envio) == 0 ? '---' : notaTotalRedacao(envio)}</div>
                                         </div>
 
                                         {/* {index % 4 == 0 && <div className="ballon-right">
@@ -133,7 +133,7 @@ function SeusEnvios( { redacoes  } : any) {
                                 <span className="height">
                                     <span className={`rate ${envios.length == index + 1 ? 'active' : ''}`} style={{ minHeight: `${envio.nota_final / 10}%` }}>&nbsp;</span>
                                 </span>
-                                <span className="number">{envio.nota_final}</span>
+                                <span className="number">{notaTotalRedacao(envio)}</span>
                             </span>)
                         }
                         )}

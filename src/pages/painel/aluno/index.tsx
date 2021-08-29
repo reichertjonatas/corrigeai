@@ -4,7 +4,7 @@ import MainLayout from '../../../components/layout/MainLayout'
 import Image from 'next/image'
 import { useRouter } from 'next/dist/client/router'
 import React, { useEffect } from 'react'
-import { mediaGeral } from '../../../utils/helpers'
+import { mediaGeral, notaTotalCorrecao, notaTotalRedacao } from '../../../utils/helpers'
 import Link from 'next/link'
 import Seo from '../../../components/layout/Seo'
 import Popup from 'reactjs-popup'
@@ -211,10 +211,11 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
 
   const ultimaNota = () => {
     if (redacoes?.length > 0) {
-      const redacoesLocal = redacoes.filter((item: any) => item.status_correcao === 'finalizada' && item.nota_final != 0);
+      const redacoesLocal = redacoes.filter((item: any) => item.status_correcao === 'finalizada');
       console.log("redacoes", redacoesLocal.length)
       if (redacoesLocal.length <= 0) return '---'
-      return redacoesLocal[redacoesLocal.length - 1].nota_final == 0 ? '---' : redacoesLocal[redacoesLocal.length - 1].nota_final;
+      console.log("===> redação", redacoesLocal[redacoesLocal.length - 1])
+      return notaTotalRedacao(redacoesLocal[redacoesLocal.length - 1]) == 0 ? '---' : notaTotalRedacao(redacoesLocal[redacoesLocal.length - 1]) ;
     }
 
     return "---";
@@ -225,11 +226,20 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     var data: { x: string, y: number, tema: string }[] = [];
 
     if (redacoes?.length > 0) {
-      const redacoesLocal = redacoes.filter((item: any) => item.status_correcao === 'finalizada' && item.nota_final != 0);
+      const redacoesLocal = redacoes.filter((item: any) => item.status_correcao == 'finalizada');
+
+      console.log("redacoesLocal ====> ", redacoesLocal)
       console.log("redacoes", redacoesLocal.length)
       if (redacoesLocal.length <= 0) return [];
-      redacoesLocal.slice((redacoesLocal.length - 4), redacoesLocal.length).map((item: any) => {
-        data.push({ x: item.createdAt, y: item.nota_final, tema: item.tema.titulo });
+
+      let numeroAExibir;
+      if(redacoesLocal.length > 3){
+        numeroAExibir = 4
+      }else {
+        numeroAExibir = redacoesLocal.length
+      }
+      redacoesLocal.slice((redacoesLocal.length - numeroAExibir), redacoesLocal.length).map((item: any) => {
+        data.push({ x: item.createdAt, y: notaTotalRedacao(item), tema: item.tema.titulo });
         return item;
       });
     }
