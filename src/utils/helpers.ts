@@ -104,7 +104,7 @@ export const notaTotalRedacao = (redacao: any) => {
         var ultimasNotas: number[][] = [];
         console.log("chegou aqui ==>")
 
-        redacao.correcaos.map((correcoes: any, index: number) => {
+        redacao.correcaos.filter((correcao:any) => correcao.discrepante != true ).map((correcoes: any, index: number) => {
             var ultimaNotaCalc = 0;
             console.log("correcoes ==> ", correcoes);
             if(correcoes?.competencias != undefined){
@@ -181,7 +181,7 @@ export const checkDiscrepancia = (redacao: any, notaParaDiscrepancia: any) => {
 
             initCount++;
             notaPorCompetencia.push([]);
-            
+
             console.log("competenciasBug => ", correcao.competencias);
 
             correcao.competencias?.map((competencia: any) => {
