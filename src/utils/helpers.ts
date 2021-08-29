@@ -107,9 +107,11 @@ export const notaTotalRedacao = (redacao: any) => {
         redacao.correcaos.map((correcoes: any, index: number) => {
             var ultimaNotaCalc = 0;
             console.log("correcoes ==> ", correcoes);
-            correcoes.competencias.map((competencia: any) => {
+            if(correcoes?.competencias != undefined){
+                correcoes?.competencias?.map((competencia: any) => {
                 ultimaNotaCalc = ultimaNotaCalc + competencia.nota;
-            })
+                })
+            }
             ultimasNotas.push([ultimaNotaCalc]);
         })
         console.log("chegou aqui redacao.correcaos.map ==>")

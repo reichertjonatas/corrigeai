@@ -215,7 +215,8 @@ const corretorStore = create<{
         } catch (error) {
             return { error: true, message: error.message }
         }
-        return { error: true, message: 'Erro ao salvar sua correção!'}
+        
+        // return { error: true, message: 'Erro ao salvar sua correção!'}
     },
 
     setCorrecaoNull: () => set({ redacao: null }),

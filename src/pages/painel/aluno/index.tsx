@@ -322,7 +322,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
           <div className="grades">
             <ul>
               <li>Sua última nota: {ultimaNota()}</li>
-              <li>Sua média geral: {mediaGeral(redacoes.filter(redacao => redacao.status_correcao === 'finalizada')) === 0 ? '---' : mediaGeral(redacoes.filter(redacao => redacao.status_correcao === 'finalizada'))} </li>
+              <li>Sua média geral: {mediaGeral(redacoes.filter(redacao => redacao.status_correcao === 'finalizada')) == 0 ? '---' : mediaGeral(redacoes.filter(redacao => redacao.status_correcao === 'finalizada'))} </li>
               <li>Média Corrige Aí: { Math.round(mediaCorrigeAi) === 0 ? '---' : Math.round(mediaCorrigeAi)}</li>
               <li className="desempenho">
                 <Link href="/painel/aluno/desempenho">VER DESEMPENHO COMPLETO</Link>

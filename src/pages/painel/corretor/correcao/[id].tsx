@@ -519,7 +519,7 @@ function Correcao({ redacaoProps, session }: any) {
                                 }} key={indexCorrecao} className={`competenciaBox ${currentDiscrepancia === correcao.id ? 'activeDiscrepancia' : ''}`}>
                                     <span>Correção {indexCorrecao + 1}</span>
                                     <ul>
-                                        {correcao.competencias.length > 0 && correcao.competencias.map((competencia: any, indexCompetencia: number) => {
+                                        {correcao?.competencias != undefined && correcao?.competencias?.length > 0 && correcao?.competencias?.map((competencia: any, indexCompetencia: number) => {
 
                                             valorTotal = valorTotal + competencia.nota;
 
