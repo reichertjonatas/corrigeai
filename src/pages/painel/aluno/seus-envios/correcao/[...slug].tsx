@@ -271,7 +271,7 @@ function Correcao({ session, redacaoProps }: any) {
                       .gridTemas .notas h1{display: block; width: 100%; text-align: center; font-size: 1.5625rem; margin: 0 0 2rem}
                       .gridTemas .notas .criterios{display: block; width: 100%; margin: 0 0 2rem}
                       .gridTemas .notas .criterios .criterio{display: flex; flex-direction: column; gap: 1rem; margin: 0 0 1rem; background: var(--gray30); align-items: center; justify-content: center; padding: 0.5rem 1rem; border-radius: 0.5rem}
-                      .gridTemas .notas .criterios .criterio .title{font-size: 1.1rem; flex: 1; font-weight: 500; color: var(--dark); border-right: 1px solid var(--dark)}
+                      .gridTemas .notas .criterios .criterio .title{font-size: 1.1rem; flex: 1; font-weight: 500; color: var(--dark); }
                       .gridTemas .notas .criterios .criterio .nota{font-size:1rem; flex: 3; font-weight: 500; color: var(--dark)}
                       
                       .novasCorrecoes{display: flex; flex-direction: row; gap: 1rem; width: 100%; }

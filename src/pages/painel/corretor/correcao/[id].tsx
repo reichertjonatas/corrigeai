@@ -25,6 +25,7 @@ import { redacaoById } from '../../../../graphql/query';
 import PreLoader from '../../../../components/PreLoader';
 import Popup from 'reactjs-popup';
 import RowObsEnem from '../../../../components/editor/RowObsEnem';
+import Seo from '../../../../components/layout/Seo';
 
 
 export async function getServerSideProps(ctx: any) {
@@ -378,6 +379,7 @@ function Correcao({ redacaoProps, session }: any) {
             `}</style>
             <div className="gridTemas">
 
+                <Seo title="Correção" />
                 <div className="content">
                     <div className="boxTema">
                         {isLoadingSending && <PreLoader />}

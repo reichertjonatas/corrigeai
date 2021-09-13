@@ -58,7 +58,7 @@ function RedacaoIndexPlanejamento({ session } : any) {
                             if(typeof window != undefined) {
                                 window.print()
                             }
-                        }}>Planeje sua semana</a>
+                        }}>Imprimir planejamento</a>
                     </span>
                 </div>
             </div>

@@ -6,5 +6,5 @@ export const Box = ({ children, geometry, style }: any) => (
         top: `${geometry.y}%`,
         height: `${geometry.height}%`,
         width: `${geometry.width}%`,
-    }}>{children}</div>
+    }}>{ children }</div>
 )

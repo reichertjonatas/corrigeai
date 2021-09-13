@@ -231,6 +231,12 @@ function SeusEnvios( { redacoes  } : any) {
                     <Link href="/painel/aluno/desempenho" passHref><a>VEJA O SEU DESEMPENHO COMPLETO</a></Link>
                 </div>
             </div>
+            <style global jsx>
+                { `
+                    .container-envios h1{gap: 1rem !important}
+                    .container-envios .lista .content .list-item .item .tema{padding: 0.5rem !important}
+                ` }
+            </style>
             <style jsx>
                 {
                     `

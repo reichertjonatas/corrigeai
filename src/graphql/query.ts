@@ -244,6 +244,40 @@ const redacaoParaCorrigir = (turma: string) => `query RedacoesCorrecao {
   }
 }
  `
+
+
+ const redacaoParaCorrigirNovoMetodo = `query RedacoesCorrecao {
+  redacaos(where: { status_correcao: ["correcao_um", "correcao_dois"]}, sort: "createdAt:asc", limit: 20){
+    id
+    in_review
+    nota_final
+    status_correcao
+    redacao{
+      url
+    }
+    correcaos {
+      competencias {
+        nota
+        title
+        obs
+        obs_enem
+      }
+      corretor {
+        id
+      }
+      marcacoes 
+      discrepante
+    }
+    user {
+      email
+    }
+    tema {
+      titulo
+    }
+    createdAt
+  }
+}`
+
  const minhasRedacoes = (id: any) => `query RedacoesPerId {
   redacaos( where:{correcaos:{corretor:{id:"${id}"}}}, sort: "createdAt:desc", limit: 15){
     id
@@ -293,6 +327,7 @@ export {
   sobreQuery,
   mediaCorrigeAi,
   planosQuery,
+  redacaoParaCorrigirNovoMetodo,
   planoById,
   minhasRedacoes,
   redacaoById,

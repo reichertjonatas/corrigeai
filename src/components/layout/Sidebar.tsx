@@ -77,8 +77,8 @@ function Sidebar(props: any) {
                     </li>
                 </ul>}
                 {menuType == 2 && <ul>
-                    <ItemMenu href="/painel/corretor" icon={IcPainelAluno} name="Painel do Corretor" />
-                    <ItemMenu href="/painel/corretor/redacoes-simples" icon={IconRedacoes} name="Redações simples" />
+                    <ItemMenu href="/painel/corretor" icon={IcPainelAluno} name="Correções duplas" />
+                    <ItemMenu href="/painel/corretor/redacoes-simples" icon={IconRedacoes} name="Correções simples" />
                     <ItemMenu href="/painel/corretor/suas-correcoes" icon={suas_correcoes} name="Suas correções" />
                     { 
                     // @ts-ignore

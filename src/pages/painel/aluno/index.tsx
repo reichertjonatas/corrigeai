@@ -1,5 +1,5 @@
-import { getSession, session, useSession } from 'next-auth/client'
-import { IcAlert, IcLike, IcGraphic, IcUltimosEnvios, IcRocket } from '../../../components/icons'
+import { getSession, useSession } from 'next-auth/client'
+import { IcAlert, IcLike, IcUltimosEnvios, IcRocket } from '../../../components/icons'
 import MainLayout from '../../../components/layout/MainLayout'
 import Image from 'next/image'
 import { useRouter } from 'next/dist/client/router'
@@ -239,7 +239,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
         numeroAExibir = redacoesLocal.length
       }
       redacoesLocal.slice((redacoesLocal.length - numeroAExibir), redacoesLocal.length).map((item: any) => {
-        data.push({ x: item.createdAt, y: notaTotalRedacao(item), tema: item.tema.titulo });
+        data.push({ x: item.createdAt, y: notaTotalRedacao(item), tema: item.tema.titulo ?? '' });
         return item;
       });
     }

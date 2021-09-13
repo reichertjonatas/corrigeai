@@ -7,9 +7,10 @@ import { useUserStore } from '../../../hooks/userStore';
 import { debugPrint } from '../../../utils/debugPrint';
 import { useCorretorStore } from '../../../hooks/corretorStore';
 import { strapi } from '../../../services/strapi';
-import { redacaoParaCorrigir } from '../../../graphql/query';
+import { redacaoParaCorrigir, redacaoParaCorrigirNovoMetodo } from '../../../graphql/query';
 import { getSession } from 'next-auth/client';
 import { corretor_type } from '../../../utils/helpers';
+import Seo from '../../../components/layout/Seo';
 
 export async function getServerSideProps(ctx: any) {
     const session = await getSession(ctx);
@@ -22,7 +23,9 @@ export async function getServerSideProps(ctx: any) {
             }
         }
 
-    const redacoes = await strapi(session.jwt).graphql({ query: redacaoParaCorrigir(corretor_type(session.corretor_type as string)) })
+    const redacoes = await strapi(session.jwt).graphql({ 
+        query: redacaoParaCorrigirNovoMetodo //redacaoParaCorrigir(corretor_type(session.corretor_type as string)) 
+    })
 
     return {
         props: {
@@ -45,13 +48,15 @@ function DashboardCorretor({ redacoesProps }: any) {
 
     return (
         <MainLayout menuType={2} role="corretor">
+            <Seo title="Correções duplas" />
+            
             <div className="redacoes-box">
                 <div className="content">
                     <div className="head">
                         <div className="data">Data</div>
                         <div className="tema">Tema</div>
                         <div className="estudante">Estudante</div>
-                        {/* <div className="circle">Segunda Correção</div> */}
+                        <div className="circle">Segunda Correção</div>
                     </div>
 
                     <div className="list-item">
@@ -68,9 +73,9 @@ function DashboardCorretor({ redacoesProps }: any) {
                                             <div className="tema">{redacao.tema.titulo}</div>
                                             <div className="estudante">{redacao.user.email}</div>
 
-                                            {/* <div className="circle">
-                                                <span className="ic" style={{"background": "#72b01e"}}>&nbsp;</span>
-                                            </div> */}
+                                            <div className="circle">
+                                                <span className="ic" style={ redacao.status_correcao == "correcao_um" ? {"background": "#c60501"} : {"background": "#72b01e"}}>&nbsp;</span>
+                                            </div>
                                         </div>
                                     </Link>)
                             // });

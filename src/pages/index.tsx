@@ -396,7 +396,9 @@ function Home({ planos }: any) {
             #precos{padding: 10rem 0;}
           }
           
-          
+          .match .img img {max-width: 100% !important; height: auto !important; width: auto;}
+#one{width: 26rem; height: 26rem;}
+#five{left: -6rem; width: 33rem; height: 33rem;}
           `
         }
       </style>

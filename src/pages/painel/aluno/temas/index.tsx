@@ -10,12 +10,12 @@ import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css'
 import shallow from 'zustand/shallow'
 import { getSession } from 'next-auth/client'
 import PreLoader from '../../../../components/PreLoader'
-import Markdown, { compiler } from 'markdown-to-jsx';
+import Markdown, { compiler } from 'markdown-to-jsx';
 
-export async function getServerSideProps(ctx : any) {
+export async function getServerSideProps(ctx: any) {
     const session = await getSession(ctx);
-  
-    if(!session) {
+
+    if (!session) {
         return {
             redirect: {
                 permanent: false,
@@ -23,18 +23,18 @@ export async function getServerSideProps(ctx : any) {
             }
         }
     }
-  
+
     return {
         props: {
-          session: session,
+            session: session,
         }
     }
-  }
+}
 
-function Temas({ session } : any ) {
+function Temas({ session }: any) {
     const [
         temas, currentTema, categoria, isLoading, getAllTemas, setCurrentTema, setCategoria
-    ] = useTemaStore( state => [
+    ] = useTemaStore(state => [
         state.temas, state.currentTema, state.categoria, state.isLoading, state.getAllTemas, state.setCurrentTema,
         state.setCategoria
     ], shallow)
@@ -49,19 +49,19 @@ function Temas({ session } : any ) {
             <Seo title="Temas" />
             <div className={"grid-temas"}>
                 <div className="content">
-                    
+
                     <div className="head-box">
 
-                        <a className={currentTema != null ? categoria == 'enem' ? "box active" : "box" : "box"}  onClick={ () => setCategoria("enem", session.jwt)}>
+                        <a className={currentTema != null ? categoria == 'enem' ? "box active" : "box" : "box"} onClick={() => setCategoria("enem", session.jwt)}>
                             <span className="icon">
-                            <Image src={TemaEnem} className="img-responsive" alt="" />
+                                <Image src={TemaEnem} className="img-responsive" alt="" />
                             </span>
                             <span className="texto">
                                 Temas ENEM
                             </span>
                         </a>
 
-                        <a className={currentTema != null ? categoria == 'corrigeai' ? "box active" : "box" : "box"} onClick={ () => setCategoria("corrigeai", session.jwt)}>
+                        <a className={currentTema != null ? categoria == 'corrigeai' ? "box active" : "box" : "box"} onClick={() => setCategoria("corrigeai", session.jwt)}>
                             <span className="icon">
                                 <Image src={TemaCorrigeAi} className="img-responsive" alt="" />
                             </span>
@@ -79,23 +79,28 @@ function Temas({ session } : any ) {
 
 
                 <div className="lista-temas">
-                    {isLoading ? 
+                    {isLoading ?
                         <PreLoader />
-                    : <ul>
-                        {temas != null && temas.length > 0 && temas.map((temaRow:any, index:number) => {
-                            return (
-                                <li key={index}>
-                                    <a className={currentTema != null ? temaRow.id == currentTema.id ? "activeTema" : "" : ""} onClick={() => setCurrentTema(temaRow) }>
-                                       {temaRow.titulo}
-                                    </a>
-                                </li>
-                            )
-                        })}
-                    </ul>}
+                        : <ul>
+                            {temas != null && temas.length > 0 && temas.map((temaRow: any, index: number) => {
+                                return (
+                                    <li key={index}>
+                                        <a className={currentTema != null ? temaRow.id == currentTema.id ? "activeTema" : "" : ""} onClick={() => setCurrentTema(temaRow)}>
+                                            {temaRow.titulo}
+                                        </a>
+                                    </li>
+                                )
+                            })}
+                        </ul>}
                 </div>
 
             </div>
-            
+            <style global jsx>{`
+                    .grid-temas .content .box-tema .conteudo p{margin: auto !important}
+                    .grid-temas .content .box-tema .conteudo img{max-width: 100% !important}
+                    .grid-temas .content .box-tema .conteudo ul{padding: 0 0 0 1.2rem !important}
+                `}</style>
+
             <style jsx>
                 {`
                     .navegacao {

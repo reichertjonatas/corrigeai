@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 import MainLayout from '../../../../../components/layout/MainLayout'
-import BigCalendar, { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import 'moment/locale/pt-br';
@@ -10,8 +10,6 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { msToTime } from '../../../../../utils/helpers';
 import { ICalenderEvents } from '../../../../../models/User';
-import { useUserStore } from '../../../../../hooks/userStore';
-import { API } from '../../../../../services/api';
 import { debugPrint } from '../../../../../utils/debugPrint';
 import { useCalenderStore } from '../../../../../hooks/calenderStore';
 import { getSession, useSession } from 'next-auth/client';

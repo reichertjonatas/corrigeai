@@ -44,6 +44,7 @@ function DashboardCorretor({ redacoesProps }: any) {
         <MainLayout menuType={2} role="corretor">
             <div className="redacoes-box">
                 <div className="content">
+                    
                     <div className="head">
                         <div className="data">Data</div>
                         <div className="tema">Tema</div>

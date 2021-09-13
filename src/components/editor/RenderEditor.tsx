@@ -60,7 +60,7 @@ export function RenderEditor(props: any) {
                 backgroundColor: cor,
                 borderRadius: 6,
                 position: 'absolute',
-                left: `${geometry.x}%`,
+                left: `${geometry.x > 71 ? 71 : geometry.x}%`,
                 top: `${geometry.y + geometry.height}%`,
             }}
         >
