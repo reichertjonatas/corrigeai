@@ -11,6 +11,10 @@ import shallow from 'zustand/shallow'
 import { getSession } from 'next-auth/client'
 import PreLoader from '../../../../components/PreLoader'
 import Markdown, { compiler } from 'markdown-to-jsx';
+import { strapi } from '../../../../services/strapi'
+import EnviarRedacao from '../../../../components/EnviarRedacao'
+import Popup from 'reactjs-popup'
+import { useSubscriptionStore } from '../../../../hooks/subscriptionStore'
 
 export async function getServerSideProps(ctx: any) {
     const session = await getSession(ctx);
@@ -24,14 +28,25 @@ export async function getServerSideProps(ctx: any) {
         }
     }
 
+
+    const temas = await strapi(session.jwt).graphql({
+        query: `query{
+      temas {
+        id
+        titulo
+      }
+    }`
+    })
+
     return {
         props: {
             session: session,
+            temasProps: temas
         }
     }
 }
 
-function Temas({ session }: any) {
+function Temas({ session , temasProps } : any) {
     const [
         temas, currentTema, categoria, isLoading, getAllTemas, setCurrentTema, setCategoria
     ] = useTemaStore(state => [
@@ -42,6 +57,17 @@ function Temas({ session }: any) {
     useEffect(() => {
         getAllTemas(session.jwt)
     }, [getAllTemas])
+
+    const [open, setOpen] = React.useState(false);
+    const closeModal = () => setOpen(false);
+
+    const subscription = useSubscriptionStore(state => state.subscription)
+    const setSubscription = useSubscriptionStore(state => state.setSubscription)
+
+    useEffect(() => {
+          if (session?.subscription)
+            setSubscription(session.subscription, session.jwt)
+      }, [])
 
 
     return (
@@ -75,6 +101,10 @@ function Temas({ session }: any) {
                         {currentTema != null && <h1>{currentTema.titulo}</h1>}
                         {currentTema != null && <div className="conteudo" dangerouslySetInnerHTML={{ __html: currentTema.content }}></div>}
                     </div>
+
+                    <span className="botao">
+                        <a onClick={() => setOpen(true)} style={{ cursor: 'pointer' }}>Escolher esse tema</a>
+                    </span>
                 </div>
 
 
@@ -84,7 +114,7 @@ function Temas({ session }: any) {
                         : <ul>
                             {temas != null && temas.length > 0 && temas.map((temaRow: any, index: number) => {
                                 return (
-                                    <li key={index}>
+                                    <li style={{cursor: 'pointer'}} key={index}>
                                         <a className={currentTema != null ? temaRow.id == currentTema.id ? "activeTema" : "" : ""} onClick={() => setCurrentTema(temaRow)}>
                                             {temaRow.titulo}
                                         </a>
@@ -93,12 +123,75 @@ function Temas({ session }: any) {
                             })}
                         </ul>}
                 </div>
-
+                
+            <Popup
+              open={open}
+              onClose={closeModal}
+              modal
+              nested
+              closeOnDocumentClick={false}
+            >
+              <EnviarRedacao selected={currentTema != null? { value: currentTema.id, label: currentTema.titulo} : null} session={session} temasProps={temasProps} closeModal={closeModal}/>
+            </Popup>
             </div>
             <style global jsx>{`
                     .grid-temas .content .box-tema .conteudo p{margin: auto !important}
                     .grid-temas .content .box-tema .conteudo img{max-width: 100% !important}
                     .grid-temas .content .box-tema .conteudo ul{padding: 0 0 0 1.2rem !important}
+                    .react-select-container { flex: 1 } 
+
+          .chart {
+            height:50vh;
+            width:60vw;
+            background: white;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+          }
+
+          .chart:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+          }
+
+
+          .popup-content{ border-radius: 0.5rem !important;}
+          .popup-overlay {
+              background: rgb(0 0 0 / 60%)!important;
+          }
+
+          .react-autosuggest__container {
+            width: 100%;
+          }
+
+          ul.react-autosuggest__suggestions-list {
+            list-style: none;
+        }
+        
+        ul.react-autosuggest__suggestions-list li {
+            cursor: pointer;
+            background: var(--gray20);
+            padding: 0.5rem 1rem;
+            margin: 0 0 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.5s ease;
+        }
+        
+        ul.react-autosuggest__suggestions-list li:hover{
+          background: var(--dark);
+          color: var(--white);
+        }
+        .uploadRemove{
+          border: none;
+          background: none;
+          border-bottom: 2px solid var(--dark);
+          font-size: 1rem;
+          font-weight: 400;
+          margin: 1rem 0 0;
+          font-family: 'Poppins',sans-serif;
+        }
+
+        .inputUploadRedacao:disabled ~ label {
+            background: #9c9c9c !important;
+        }
                 `}</style>
 
             <style jsx>

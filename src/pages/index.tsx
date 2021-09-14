@@ -12,6 +12,7 @@ import {
 import { authRequired } from '../utils/helpers';
 import Strapi from 'strapi-sdk-js'
 import { planosQuery } from '../graphql/query';
+import { useState } from 'react';
 
 export async function getServerSideProps(ctx: any) {
   const strapi = new Strapi({
@@ -26,12 +27,13 @@ export async function getServerSideProps(ctx: any) {
 }
 
 function Home({ planos }: any) {
+  const [menuOpened, setMenuOpened] = useState(false)
   return (
     <>
       <header>
         <div className="container">
-          <a href="#" className="toogle">TOOGLE</a>
-          <div className="menu">
+          <a onClick={() => setMenuOpened(!menuOpened)} className="toogle" style={{cursor: 'pointer'}}>Menu</a>
+          <div className="menu" style={{ display: menuOpened ? 'none' : 'block' }}>
             <ul>
               <li><a href="#">Como funciona</a></li>
               <li><a href="#passos">Corrige Aí</a></li>
@@ -352,7 +354,7 @@ function Home({ planos }: any) {
             .banner .texto .desc{font-size: 2rem;}
             .banner hr{margin: 0 0 3rem}
             .toogle{display: inline-block; position: absolute; right: 3rem;}
-            .menu li a{display: none; padding: 1rem 0;}
+            .menu {display: none; padding: 1rem 0;}
           }
           
           @media(max-width: 800px){
@@ -399,6 +401,9 @@ function Home({ planos }: any) {
           .match .img img {max-width: 100% !important; height: auto !important; width: auto;}
 #one{width: 26rem; height: 26rem;}
 #five{left: -6rem; width: 33rem; height: 33rem;}
+
+#precos .columns{display: flex; align-items: center; justify-content: center;}
+.passo4 .desc{font-size: 1rem}
           `
         }
       </style>

@@ -11,6 +11,8 @@ import { redacaoParaCorrigir, redacaoParaCorrigirNovoMetodo } from '../../../gra
 import { getSession } from 'next-auth/client';
 import { corretor_type } from '../../../utils/helpers';
 import Seo from '../../../components/layout/Seo';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 export async function getServerSideProps(ctx: any) {
     const session = await getSession(ctx);
@@ -23,7 +25,7 @@ export async function getServerSideProps(ctx: any) {
             }
         }
 
-    const redacoes = await strapi(session.jwt).graphql({ 
+    const redacoes = await strapi(session.jwt).graphql({
         query: redacaoParaCorrigirNovoMetodo //redacaoParaCorrigir(corretor_type(session.corretor_type as string)) 
     })
 
@@ -35,21 +37,40 @@ export async function getServerSideProps(ctx: any) {
     }
 }
 
-function DashboardCorretor({ redacoesProps }: any) {
+function DashboardCorretor({ redacoesProps, session }: any) {
     const redacoes = useCorretorStore(state => state.redacoes);
     const setRedacoes = useCorretorStore(state => state.setRedacoes);
     const setNullRedacoes = useCorretorStore(state => state.setNullRedacoes);
+    const router = useRouter();
 
     React.useEffect(() => {
+        console.log("==> ", session)
         setRedacoes(redacoesProps);
         return () => setNullRedacoes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const getUrl = (redacao: any) => {
+
+        if(redacao.status_correcao == "correcao_dois"){
+            if(session.corretor_type == "turma_um")
+                toast.warning("Redação será corrigida por outra turma!");
+            else
+                router.push(`/painel/corretor/correcao/${redacao.id}`)
+
+        }else{
+            if(session.corretor_type == "turma_dois")
+                toast.warning("Redação será corrigida por outra turma!");
+            else
+                router.push(`/painel/corretor/correcao/${redacao.id}`)
+        }       
+    }
 
     return (
         <MainLayout menuType={2} role="corretor">
             <Seo title="Correções duplas" />
-            
+
+
             <div className="redacoes-box">
                 <div className="content">
                     <div className="head">
@@ -62,22 +83,22 @@ function DashboardCorretor({ redacoesProps }: any) {
                     <div className="list-item">
                         {redacoes && redacoes?.length <= 0 && <h1 className="msg_nada_encontrado">Nenhuma redação para corrigir.</h1>}
                         {redacoes?.length > 0 && redacoes.map((redacao: any, index: number) => {
-                            console.log("redacao => ", redacao )
+                            console.log("redacao => ", redacao)
                             // console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
                             // return redacaosPerUser.redacoes.map((redacao: any, index: number) => {
-                                const date = Moment(redacao.createdAt);
-                                return (
-                                    <Link href={`/painel/corretor/correcao/${redacao.id}`} key={index} passHref>
-                                        <div className="item" style={{ cursor: 'pointer' }}>
-                                            <div className="data">{`${date.format("DD/MM")}`}</div>
-                                            <div className="tema">{redacao.tema.titulo}</div>
-                                            <div className="estudante">{redacao.user.email}</div>
+                            const date = Moment(redacao.createdAt);
+                            return (
+                                <a onClick={() => getUrl(redacao)} key={index}>
+                                    <div className="item" style={{ cursor: 'pointer' }}>
+                                        <div className="data">{`${date.format("DD/MM")}`}</div>
+                                        <div className="tema">{redacao.tema.titulo}</div>
+                                        <div className="estudante">{redacao.user.email}</div>
 
-                                            <div className="circle">
-                                                <span className="ic" style={ redacao.status_correcao == "correcao_um" ? {"background": "#c60501"} : {"background": "#72b01e"}}>&nbsp;</span>
-                                            </div>
+                                        <div className="circle">
+                                            <span className="ic" style={redacao.status_correcao == "correcao_um" ? { "background": "#c60501" } : { "background": "#72b01e" }}>&nbsp;</span>
                                         </div>
-                                    </Link>)
+                                    </div>
+                                </a>)
                             // });
                         })}
                     </div>
