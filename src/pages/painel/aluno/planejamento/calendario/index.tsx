@@ -13,6 +13,7 @@ import { ICalenderEvents } from '../../../../../models/User';
 import { debugPrint } from '../../../../../utils/debugPrint';
 import { useCalenderStore } from '../../../../../hooks/calenderStore';
 import { getSession, useSession } from 'next-auth/client';
+import Seo from '../../../../../components/layout/Seo';
 
 export async function getServerSideProps(ctx : any) {
   const session = await getSession(ctx);
@@ -101,6 +102,7 @@ function Calendario({ session } : any) {
 
   return (
     <MainLayout>
+      <Seo title="Planeje sua semana" />
       <div className="gridPlanejamento">
         <div className="content">
           <div className="box">

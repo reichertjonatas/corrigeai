@@ -135,23 +135,23 @@ function Redacao({ redacaoProps, session } : any) {
                     <h1>Notas das Competências</h1>
                     <span className="criterios">
                         <span className="criterio">
-                            <span className="title">Critério I:</span>
+                            <span className="title">Competência I:</span>
                             <span className="nota"> { mediaRedacaoPorCompetencia(redacao, 0) } </span>
                         </span>
                         <span className="criterio">
-                            <span className="title">Critério II:</span>
+                            <span className="title">Competência II:</span>
                             <span className="nota"> { mediaRedacaoPorCompetencia(redacao, 1) } </span>
                         </span>
                         <span className="criterio">
-                            <span className="title">Critério II:</span>
+                            <span className="title">Competência II:</span>
                             <span className="nota"> { mediaRedacaoPorCompetencia(redacao, 2) } </span>
                         </span>
                         <span className="criterio">
-                            <span className="title">Critério IV:</span>
+                            <span className="title">Competência IV:</span>
                             <span className="nota"> { mediaRedacaoPorCompetencia(redacao, 3) } </span>
                         </span>
                         <span className="criterio">
-                            <span className="title">Critério V:</span>
+                            <span className="title">Competência V:</span>
                             <span className="nota">{ mediaRedacaoPorCompetencia(redacao, 4) }</span>
                         </span>
 

@@ -271,9 +271,9 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
               <span className="texto">
                 Você possui {subscription?.envios} envios.
               </span>
-              {subscription != null && subscription.envios <= 0 && <span className="button">
+              {/* {subscription != null && subscription.envios <= 0 && <span className="button">
                 <Link href="/planos">Comprar agora</Link>
-              </span>}
+              </span>} */}
               <span className="hr" style={{ "background": "linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(237,28,36,1) 0%, rgba(201,203,200,1) 100%)" }}>&nbsp;</span>
             </div>
           </div>
@@ -372,7 +372,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
           <div className="themes">
             <ul>
               <li><Link href="/painel/aluno/temas">Ver todos os temas</Link></li>
-              <li><Link href="/painel/aluno/caed">Como enviar a sua redação</Link></li>
+              <li><a target="_blank" href="/images/folha_redação_1.pdf">Folha oficial CorrigeAí</a></li>
             </ul>
           </div>
         </div>

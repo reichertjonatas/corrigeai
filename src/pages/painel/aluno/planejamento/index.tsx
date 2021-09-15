@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import React from 'react'
 import MainLayout from '../../../../components/layout/MainLayout'
+import Seo from '../../../../components/layout/Seo';
 import { withAuthSession } from '../../../../utils/helpers';
 
 function Planejamento() {
     return (
         <MainLayout>
+            <Seo title="PLANEJAMENTO" />
             <div className="gridPlanejamento">
                 <div className="content">
                     <div className="box">

@@ -14,6 +14,7 @@ import 'react-accessible-accordion/dist/fancy-example.css';
 import { getSession } from 'next-auth/client';
 import { strapi } from '../../../../services/strapi';
 import { queryCaed } from '../../../../graphql/query';
+import Seo from '../../../../components/layout/Seo';
 
 export async function getServerSideProps(ctx : any) {
     const session = await getSession(ctx);
@@ -43,6 +44,7 @@ function Caed({ aloCaeds } : any) {
 
     return (
         <MainLayout>
+            <Seo title="Alô, CAED!" />
             <div className="gridPlanejamento">
                 <div className="content">
                     <div className="box">
