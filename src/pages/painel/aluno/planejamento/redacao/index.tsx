@@ -3,10 +3,10 @@ import React from 'react'
 import MainLayout from '../../../../../components/layout/MainLayout'
 import Seo from '../../../../../components/layout/Seo'
 
-export async function getServerSideProps(ctx : any) {
+export async function getServerSideProps(ctx: any) {
     const session = await getSession(ctx);
-  
-    if(!session) {
+
+    if (!session) {
         return {
             redirect: {
                 permanent: false,
@@ -14,39 +14,58 @@ export async function getServerSideProps(ctx : any) {
             }
         }
     }
-  
+
     return {
         props: {
             session,
         }
     }
-  }
+}
 
-function RedacaoIndexPlanejamento({ session } : any) {
+function RedacaoIndexPlanejamento({ session }: any) {
     return (
         <MainLayout>
-            <Seo title="Planejamento da redação"/>
+            <Seo title="Planejamento da redação" />
             <div className="gridPlanejamento">
                 <div className="content">
                     <div className="box">
                         <h1>Planeje sua redação</h1>
                         <span className="desc">
                             <form action="#">
-                                <input type="text" placeholder="Tema:" />
-                                <textarea placeholder="Qual sua opinião sobre o tema (tese):"></textarea>
+                                <label htmlFor="">Tema:</label>
+                                <input type="text" />
+                                <label htmlFor="">Qual sua opinião sobre o tema (tese):</label>
+                                <textarea></textarea>
                                 <span className="grid">
-                                    <textarea placeholder="Argumento 1"></textarea>
-                                    <textarea placeholder="Argumento 2"></textarea>
-                                    <textarea placeholder="Repertório 1"></textarea>
-                                    <textarea placeholder="Repertório 2"></textarea>
-                                    <span className="coluna">
-                                        <input type="text" placeholder="Agente" />
-                                        <input type="text" placeholder="Ação" />
-                                        <input type="text" placeholder="Modo" />
+                                    <span>
+                                        <label htmlFor="">Argumento 1:</label>
+                                        <textarea></textarea>
+                                    </span>
+                                    <span>
+                                        <label htmlFor="">Argumento 2:</label>
+                                        <textarea></textarea>
+                                    </span>
+                                    <span>
+                                        <label htmlFor="">Repertório 1:</label>
+                                        <textarea></textarea>
+                                    </span>
+                                    <span>
+                                        <label htmlFor="">Repertório 2:</label>
+                                        <textarea></textarea>
                                     </span>
                                     <span className="coluna">
-                                        <input type="text" placeholder="Finalidade" />
-                                        <textarea placeholder="Detalhamento"></textarea>
+                                        <label htmlFor="">Agente:</label>
+                                        <input type="text" />
+                                        <label htmlFor="">Ação:</label>
+                                        <input type="text" />
+                                        <label htmlFor="">Modo:</label>
+                                        <input type="text" />
+                                    </span>
+                                    <span className="coluna">
+                                        <label htmlFor="">Finalidade:</label>
+                                        <input type="text" />
+                                        <label htmlFor="">Detalhamento: </label>
+                                        <textarea></textarea>
                                     </span>
                                 </span>
 
@@ -54,8 +73,8 @@ function RedacaoIndexPlanejamento({ session } : any) {
                         </span>
                     </div>
                     <span className="botao">
-                        <a style={{cursor: "pointer"}} onClick={() => {
-                            if(typeof window != undefined) {
+                        <a style={{ cursor: "pointer" }} onClick={() => {
+                            if (typeof window != undefined) {
                                 window.print()
                             }
                         }}>Imprimir planejamento</a>
@@ -239,7 +258,9 @@ function RedacaoIndexPlanejamento({ session } : any) {
                             grid-template-columns: 1fr
                         }
                     }
-                    
+                    .gridPlanejamento .content .box .desc form label {display: block;width: 100%;color: #000;font-weight: 700;margin: 0.7rem 0.3rem 0;}
+.gridPlanejamento .content .box .desc form input{display: block; border-radius: 0.8rem; font-family: 'Poppins', sans-serif !important; margin: 0 0 1rem; width: 100%; background: var(--gray30); padding: 0.8rem 0.8rem; border: none; font-size: 1.2rem; color: #000}
+.gridPlanejamento .content .box .desc form .coluna textarea{display: block; border-radius: 0.8rem; min-height: 9.7rem; margin: 0 0 0.5rem; width: 100%; background: var(--gray30); padding: 0.8rem 0.8rem; border: none; font-size: 1.2rem; color: #000}
                     
                     `
                 }

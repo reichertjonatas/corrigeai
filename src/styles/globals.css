@@ -141,3 +141,8 @@ a:hover{color: #0a9bff;}
   .menu li{margin: 0 0 2rem;}
   .menu li:last-child{margin: 0}
 }
+
+.sidebar .menu ul li.itemFechado a .img img {
+  transform: rotate(
+-90deg);
+}

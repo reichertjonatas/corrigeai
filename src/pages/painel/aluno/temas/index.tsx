@@ -85,6 +85,7 @@ function Temas({ session , temasProps } : any) {
                             <span className="texto">
                                 Temas ENEM
                             </span>
+                            <span className="subtexto">Temas modelo ENEM autorais, originais da plataforma</span>
                         </a>
 
                         <a className={currentTema != null ? categoria == 'corrigeai' ? "box active" : "box" : "box"} onClick={() => setCategoria("corrigeai", session.jwt)}>
@@ -94,6 +95,7 @@ function Temas({ session , temasProps } : any) {
                             <span className="texto">
                                 Temas Corrige Aí
                             </span>
+                            <span className="subtexto">Temas oficiais do exame</span>
                         </a>
                     </div>
 
