@@ -154,7 +154,7 @@ function Redacao({ redacaoProps, session } : any) {
                             <span className="title">Competência V:</span>
                             <span className="nota">{ mediaRedacaoPorCompetencia(redacao, 4) }</span>
                         </span>
-
+ 
                         <span className="criterio notaFinal">
                             <span className="title">Nota Final:</span>
                             <span className="nota">{ notaTotalRedacao(redacao) }</span>
@@ -162,7 +162,7 @@ function Redacao({ redacaoProps, session } : any) {
                     </span>
 
 
-                    <h1>Correções completas</h1>
+                    <h1>Correções completas</h1> 
 
                     <div className="novasCorrecoes">
                         { redacao.correcaos.length > 0 && redacao.correcaos.map( (correcao:any, index:number) => {
