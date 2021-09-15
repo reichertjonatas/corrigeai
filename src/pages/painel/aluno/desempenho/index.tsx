@@ -9,7 +9,7 @@ function Desempenho() {
     return (
         <MainLayout>
             <Seo title="Desempenho" />
-            <div className="gridPlanejamento">
+            <div className="gridPlanejamento emBreveGraficos">
                 <div className="content">
                     <div className="box">
                         <h1>Nota por competência</h1>
@@ -82,6 +82,9 @@ function Desempenho() {
                     @media(max-width: 500px){
                         .gridPlanejamento{grid-template-columns: 1fr}
                     }
+
+                    .emBreveGraficos .content .box{background: #a2a2a2;}
+.emBreveGraficos .side .box{background: #a2a2a2;}
                     `
                 }
             </style>

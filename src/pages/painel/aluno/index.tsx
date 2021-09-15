@@ -372,7 +372,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
           <div className="themes">
             <ul>
               <li><Link href="/painel/aluno/temas">Ver todos os temas</Link></li>
-              <li><a target="_blank" href="/images/folha_redação_1.pdf">Folha oficial CorrigeAí</a></li>
+              <li><a target="_blank" href="/images/folha_redação_1.pdf">Baixar folha de redação</a></li>
             </ul>
           </div>
         </div>
