@@ -23,7 +23,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log(" ===> started ")
   try {
     if (req.method === 'POST') {
-      const apiKey = 'ak_test_TvYJGkp9WwKqe4jlMwMzaVZva1iu9D'
+      const apiKey = 'ek_live_DfaMQ0QdWLYx7p2t6Qse4WscX8wBmg'
       const verifyBody = qs.stringify(req.body)
       //@ts-ignore
       const signature = req.headers['x-hub-signature']!.replace('sha1=', '')

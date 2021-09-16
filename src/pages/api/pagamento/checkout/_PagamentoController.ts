@@ -1,6 +1,6 @@
 // @ts-ignore
 import pagarme from 'pagarme'
-const PAGARME = pagarme.client.connect({ api_key: 'ak_test_TvYJGkp9WwKqe4jlMwMzaVZva1iu9D' });
+const PAGARME = pagarme.client.connect({ api_key: 'ek_live_DfaMQ0QdWLYx7p2t6Qse4WscX8wBmg' });
 import Strapi from 'strapi-sdk-js'
 
 const contaBackend = {
