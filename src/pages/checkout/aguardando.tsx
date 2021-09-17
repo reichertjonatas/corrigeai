@@ -13,7 +13,7 @@ function AguardandoPagamento() {
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
 
-<Seo title="Aguardando" />
+            <Seo title="Aguardando pagamento" />
             <div className="checkout">
                 <div className="box">
                     <span className="logo">
