@@ -33,7 +33,7 @@ const subscriptionStore = create<ISubscriptionInterface>((set, get) => ({
         
     },
     updateSubscription: async (id: string, token: string | undefined | unknown) => {
-        console.log(" ==> subscription <== id: ", id, token);
+        //console.log(" ==> subscription <== id: ", id, token);
         const subscription = await strapi(token).findOne('subscriptions', id);
         set({subscription: subscription as ISubscription})
     }

@@ -113,7 +113,7 @@ function CheckoutPage({ planoDados }: any) {
                             ...data 
                         });
                         if (response.status == 200) {
-                            console.log(" ===> ", response.data.data)
+                            //console.log(" ===> ", response.data.data)
                             if (response.data.data.status == "paid" || response.data.data.status == 'authorized') {
                                 toast.success("Pagamento recebido com sucesso!")
                                 router.replace('/painel/verificar-email')

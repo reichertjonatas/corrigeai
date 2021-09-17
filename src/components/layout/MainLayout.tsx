@@ -15,38 +15,7 @@ interface MainLayoutProps {
     menuType?: number;
     role?: string;
 }
-
-// export async function getServerSideProps(ctx : any) {
-//     const session = await getSession(ctx); 
-//     console.log(session);
-
-//     if(!session){
-//         return {
-//             redirect: {
-//                 permanent: false,
-//                 destination: "/painel/entrar",
-//             }
-//         }
-//     }
-
-//     // @ts-ignore
-//     const permission: any = session.role;
-
-//     console.log("mainLayout", role, permission.type)
-
-//     if (role && permission.type) {
-//         if (permission.type != role) {
-//             switch (permission.type) {
-//                 case 'corretor':
-//                     router.replace('/painel/corretor');
-//                     return <PreLoader />;
-//                 default:
-//                     router.replace('/painel/aluno');
-//                     return <PreLoader />;
-//             }
-//         }
-//     }
-// }
++
 
 const MainLayout = ({ children, menuType = 1, role = "authenticated" }: MainLayoutProps) => {
     const router = useRouter();
@@ -63,7 +32,7 @@ const MainLayout = ({ children, menuType = 1, role = "authenticated" }: MainLayo
             setMe(session?.jwt)
 
             if (role && permission.type) {
-                console.log(permission.type != role, permission.type, role)
+                // console.log(permission.type != role, permission.type, role)
                 if (permission.type != role) {
                     switch (permission.type) {
                         case 'corretor':

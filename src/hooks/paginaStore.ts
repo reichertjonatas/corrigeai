@@ -59,7 +59,7 @@ const paginaStore = create<IPaginaStore>((set, get) => ({
     delete: async (id, isFaq) => {
         const response = await API.post('/painel/admin/pagina/delete', { id});
         if(response.status === 200 ){
-            console.log(isFaq);
+            //console.log(isFaq);
             get().getAll(isFaq);
         }
     },

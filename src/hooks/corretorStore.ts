@@ -100,7 +100,7 @@ const corretorStore = create<{
         competenciasOffline: state.competenciasOffline.map((item: ICompetencias, indexMap: number) => {
             const filterObsEnem: IObsEnemFilter[] = obs_enem[index].filter(item => item.nota === nota);
 
-            console.log(filterObsEnem[0], 'filterObsEnem ====>', filterObsEnem, ' nota ====> ', nota, ' index ====> ', index);
+            // console.log(filterObsEnem[0], 'filterObsEnem ====>', filterObsEnem, ' nota ====> ', nota, ' index ====> ', index);
 
             return (indexMap === index ?
                 // item.nota == nota ?
@@ -141,27 +141,27 @@ const corretorStore = create<{
         try {
 
 
-            console.log("idRedacao", idRedacao)
+            //console.log("idRedacao", idRedacao)
 
             const novaCorrecao:any = await strapi((session as any).jwt).create('correcaos', {
                 marcacoes: get().annotations,
                 competencias: get().competenciasOffline,
                 corretor: (session as any).id,
             });
-            console.log("novaCorrecao", novaCorrecao)
+            //console.log("novaCorrecao", novaCorrecao)
             if(!novaCorrecao?.id) throw new Error("Erro ao salvar correção.")
 
 
             const redacao:any = await strapi((session as any).jwt).findOne('redacaos', idRedacao)
-            console.log("redacao ====> above", redacao)
+            //console.log("redacao ====> above", redacao)
             if(!redacao?.id) throw new Error("A redação não foi encontrada no sistema para salvar a correção.")
 
-            console.log("redacao ====> before ", redacao)
+            //("redacao ====> before ", redacao)
 
             const correcoes: any[] = redacao.correcaos;
-            console.log("salvarCorrecao: ===> ", correcoes)
+            //console.log("salvarCorrecao: ===> ", correcoes)
             correcoes.push(novaCorrecao.id);
-            console.log("salvarCorrecao: ===> ", correcoes)
+            //console.log("salvarCorrecao: ===> ", correcoes)
 
             let novoStatus 
             const oldStatus = redacao.status_correcao;
@@ -178,13 +178,13 @@ const corretorStore = create<{
                     case "correcao_dois":
                             var discrepancia = false
 
-                            console.log("aqui vai calc discrepancia");
+                            //console.log("aqui vai calc discrepancia");
 
                             novoStatus = discrepancia ? "discrepancia" : "finalizada"
                         break;
                 }
             }
-            console.log("before switch")
+            //console.log("before switch")
 
             const updated:any = await strapi((session as any).jwt).update('redacaos', idRedacao, {
                 status_correcao: novoStatus,

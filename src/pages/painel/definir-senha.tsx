@@ -30,7 +30,7 @@ function DefinirSenha() {
             toast.error('Código inválido! Alteração não efetuada!');
         })
 
-        console.log(" ====> " , novoPassword)
+        //console.log(" ====> " , novoPassword)
     }
 
     return (
