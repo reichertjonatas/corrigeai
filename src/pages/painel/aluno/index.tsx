@@ -64,7 +64,7 @@ export async function getServerSideProps(ctx: any) {
 
 const cookies = new Cookies();
 
-function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
+function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
   const [session, loading] = useSession()
 
   const [timer, setTimer] = React.useState<null | any>(null);
@@ -79,10 +79,10 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
   const setRedacoes = useRedacaoStore(state => state.setRedacoes);
 
   const [open2, setOpen2] = React.useState(false);
-  
+
   useEffect(() => {
     const showModal = cookies.get('modalFundador');
-    if(!showModal){
+    if (!showModal) {
       setOpen2(true)
       cookies.set('modalFundador', 'true', { path: '/' });
     }
@@ -104,7 +104,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     }
   }, [session])
 
-  if(loading)
+  if (loading)
     return <PreLoader />
 
   if (!session && !loading) {
@@ -160,7 +160,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
       console.log("redacoes", redacoesLocal.length)
       if (redacoesLocal.length <= 0) return '---'
       console.log("===> redação", redacoesLocal[redacoesLocal.length - 1])
-      return notaTotalRedacao(redacoesLocal[redacoesLocal.length - 1]) == 0 ? '---' : notaTotalRedacao(redacoesLocal[redacoesLocal.length - 1]) ;
+      return notaTotalRedacao(redacoesLocal[redacoesLocal.length - 1]) == 0 ? '---' : notaTotalRedacao(redacoesLocal[redacoesLocal.length - 1]);
     }
 
     return "---";
@@ -178,9 +178,9 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
       if (redacoesLocal.length <= 0) return [];
 
       let numeroAExibir;
-      if(redacoesLocal.length > 3){
+      if (redacoesLocal.length > 3) {
         numeroAExibir = 4
-      }else {
+      } else {
         numeroAExibir = redacoesLocal.length
       }
       redacoesLocal.slice((redacoesLocal.length - numeroAExibir), redacoesLocal.length).map((item: any) => {
@@ -196,17 +196,6 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
   return (
     <MainLayout>
       <Seo title="Painel do Aluno" />
-
-      <Popup open={open2} closeOnDocumentClick onClose={closeModal2}>
-        <div className="modal modalPromo">
-          <a className="closeModalPromo" onClick={closeModal2}>
-            &times;
-          </a>
-          <a href="https://profhenriquearaujo.com.br/combos-promo/" rel="noreferrer" target="_blank" >
-            <img src="https://api.corrigeai.com/uploads/popup_plataforma_e23182db59.png" className="imagePopup" alt=""/>
-          </a>
-        </div>
-      </Popup>
       <div className="grid-painelaluno">
         <div className="content">
           <div className="head-box">
@@ -289,7 +278,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
             <ul>
               <li>Sua última nota: {ultimaNota()}</li>
               <li>Sua média geral: {mediaGeral(redacoes.filter(redacao => redacao.status_correcao === 'finalizada')) == 0 ? '---' : mediaGeral(redacoes.filter(redacao => redacao.status_correcao === 'finalizada'))} </li>
-              <li>Média Corrige Aí: { Math.round(mediaCorrigeAi) === 0 ? '---' : Math.round(mediaCorrigeAi)}</li>
+              <li>Média Corrige Aí: {Math.round(mediaCorrigeAi) === 0 ? '---' : Math.round(mediaCorrigeAi)}</li>
               <li className="desempenho">
                 <Link href="/painel/aluno/desempenho">VER DESEMPENHO COMPLETO</Link>
               </li>
@@ -320,7 +309,19 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
               nested
               closeOnDocumentClick={false}
             >
-              <EnviarRedacao session={session} temasProps={temasProps} closeModal={closeModal}/>
+              <EnviarRedacao session={session} temasProps={temasProps} closeModal={closeModal} />
+            </Popup>
+
+
+            <Popup open={open2} closeOnDocumentClick onClose={closeModal2}>
+              <div className="modal modalPromo">
+                <a className="closeModalPromo" onClick={closeModal2}>
+                  &times;
+                </a>
+                <a href="https://profhenriquearaujo.com.br/combos-promo/" rel="noreferrer" target="_blank" >
+                  <img src="https://api.corrigeai.com/uploads/popup_plataforma_e23182db59.png" className="imagePopup" alt="" />
+                </a>
+              </div>
             </Popup>
           </div>
 
@@ -465,7 +466,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
         }
           `
       } </style>
-      
+
     </MainLayout>
   )
 }
