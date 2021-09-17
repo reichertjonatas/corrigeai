@@ -335,8 +335,8 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
       </div>
       <style global jsx>{`
 
-          .grid-painelaluno{display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem}
-          .grid-painelaluno .content{display: block; width: 100%;}
+          .grid-painelaluno{ display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem }
+          .grid-painelaluno .content{display: block; width: 99%;}
           .grid-painelaluno .content .head-box{display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin: 0 0 3.5rem}
           .grid-painelaluno .content .head-box .box{display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 12.3125rem; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 0.8125rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
           .grid-painelaluno .content .head-box .box .icon{position: absolute; right: 0.8125rem; top: 0.8125rem}
