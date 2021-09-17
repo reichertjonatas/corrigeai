@@ -83,9 +83,9 @@ function Temas({ session , temasProps } : any) {
                                 <Image src={TemaEnem} className="img-responsive" alt="" />
                             </span>
                             <span className="texto">
-                                Temas ENEM
+                                TEMAS ENEM
                             </span>
-                            <span className="subtexto">Temas modelo ENEM autorais, originais da plataforma</span>
+                            <span className="subtexto">Propostas oficiais da prova</span>
                         </a>
 
                         <a className={currentTema != null ? categoria == 'corrigeai' ? "box active" : "box" : "box"} onClick={() => setCategoria("corrigeai", session.jwt)}>
@@ -93,9 +93,9 @@ function Temas({ session , temasProps } : any) {
                                 <Image src={TemaCorrigeAi} className="img-responsive" alt="" />
                             </span>
                             <span className="texto">
-                                Temas Corrige Aí
+                                TEMAS CORRIGE AÍ
                             </span>
-                            <span className="subtexto">Temas oficiais do exame</span>
+                            <span className="subtexto">Propostas exclusivas da plataforma</span>
                         </a>
                     </div>
 
