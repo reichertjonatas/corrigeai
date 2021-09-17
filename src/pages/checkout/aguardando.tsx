@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { LogoLogin } from '../../components/icons'
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import Seo from '../../components/layout/Seo';
 
 function AguardandoPagamento() {
     const router = useRouter();
@@ -12,6 +13,7 @@ function AguardandoPagamento() {
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
 
+<Seo title="Aguardando" />
             <div className="checkout">
                 <div className="box">
                     <span className="logo">

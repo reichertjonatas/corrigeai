@@ -1,11 +1,13 @@
 import React from 'react'
 import Image from 'next/image'
 import { LogoLogin } from '../../components/icons'
+import Seo from '../../components/layout/Seo'
 
 function PagamentoRejeitado() {
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
 
+            <Seo title="Pagamento rejeitado" />
             <div className="checkout">
                 <div className="box">
                     <span className="logo">

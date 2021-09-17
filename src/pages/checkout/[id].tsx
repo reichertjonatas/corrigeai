@@ -15,6 +15,7 @@ import { ICheckoutPlano, PLANOS } from '../../utils/helpers';
 import { useRouter } from 'next/router';
 import Strapi from 'strapi-sdk-js'
 import { planoById } from '../../graphql/query';
+import Seo from '../../components/layout/Seo';
 
 const modoAssinatura = false;
 
@@ -185,6 +186,7 @@ function CheckoutPage({ planoDados }: any) {
 
     return (
         <div>
+            <Seo title="Checkout" />
             <div className="checkout">
                 <div className="box">
                     <span className="logo">
