@@ -209,7 +209,7 @@ function CheckoutPage({ planoDados }: any) {
                                     <span className="regular">{planoDados.textoMes} de acesso à Plataforma Corrige Aí</span>
                                 </div>
                                 <div className="box_list">
-                                    <span className="bold">Total {planoDados.totalTexto}</span>
+                                    <span className="bold">Total {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(planoDados.precoPagarme)}</span>
                                     <span className="regular">Em até {planoDados.parcelamentoTexto} no cartão de crédito</span>
                                 </div>
                             </div>
