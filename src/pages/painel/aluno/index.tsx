@@ -263,7 +263,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
       <Seo title="Painel do Aluno" />
 
       <Popup open={open2} closeOnDocumentClick onClose={closeModal2}>
-        <div className="modal">
+        <div className="modal modalPromo">
           <a className="close" onClick={closeModal2}>
             &times;
           </a>
