@@ -32,25 +32,9 @@ export async function getServerSideProps(ctx: any) {
 function Home({ planos }: any) {
   const [menuOpened, setMenuOpened] = useState(false)
 
-  const [open, setOpen] = useState(false);
-  const closeModal = () => setOpen(false);
-
-  // https://api.corrigeai.com/uploads/popup_plataforma_e23182db59.png
-  useEffect(() => {
-    setOpen(true)
-  }, [])
-
   return (
     <>
       <Seo />
-      <Popup open={open} closeOnDocumentClick onClose={closeModal}>
-        <div className="modal">
-          <a className="close" onClick={closeModal}>
-            &times;
-          </a>
-          <img src="https://api.corrigeai.com/uploads/popup_plataforma_e23182db59.png" className="imagePopup" alt=""/>
-        </div>
-      </Popup>
       <header>
         <div className="container">
           <a onClick={() => setMenuOpened(!menuOpened)} className="toogle" style={{cursor: 'pointer'}}>Menu</a>

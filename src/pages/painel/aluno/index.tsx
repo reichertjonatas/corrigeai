@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { getSession, useSession } from 'next-auth/client'
 import { IcAlert, IcLike, IcUltimosEnvios, IcRocket } from '../../../components/icons'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -82,6 +83,12 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
   const updateRedacoes = useRedacaoStore((state) => state.updateRedacoes);
   const redacoes = useRedacaoStore(state => state.redacoes);
   const setRedacoes = useRedacaoStore(state => state.setRedacoes);
+
+
+  const [open2, setOpen2] = React.useState(false);
+  useEffect(() => {
+    setOpen2(true)
+  }, [])
 
   /// upload
   // const [file, setFile] = React.useState<any | null>(null);
@@ -248,10 +255,23 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     return data
   }
 
+  const closeModal2 = () => setOpen2(false);
+
 
   return (
     <MainLayout>
       <Seo title="Painel do Aluno" />
+
+      <Popup open={open2} closeOnDocumentClick onClose={closeModal2}>
+        <div className="modal">
+          <a className="close" onClick={closeModal2}>
+            &times;
+          </a>
+          <a href="https://profhenriquearaujo.com.br/combos-promo/" rel="noreferrer" target="_blank" >
+            <img src="https://api.corrigeai.com/uploads/popup_plataforma_e23182db59.png" className="imagePopup" alt=""/>
+          </a>
+        </div>
+      </Popup>
       <div className="grid-painelaluno">
         <div className="content">
           <div className="head-box">
