@@ -84,7 +84,7 @@ function CheckoutPage({ planoDados }: any) {
 
         // @ts-ignore
         let checkout = new PagarMeCheckout.Checkout({
-            encryption_key: "ek_test_t8JoT1B5Sc43OG8ztftTpf4P0QfJOX",
+            encryption_key: "ek_live_DfaMQ0QdWLYx7p2t6Qse4WscX8wBmg",
             success: async (data: any) => {
                 if (data) {
                     if(modoAssinatura){
@@ -299,7 +299,7 @@ function CheckoutPage({ planoDados }: any) {
                         {!onPayment && <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                             <span className="check" style={{ maxWidth: '60%' }}>
                                 <input type="checkbox" className="custom-control-input" {...register("termos", { required: true })} id="customCheck1" />
-                                <label htmlFor="customCheck1" className={`custom-control-label ${(errors.termos) ? 'errorTerms' : ''}`}> Li e concordo com os Termos de Uso. </label>
+                                <label htmlFor="customCheck1" className={`custom-control-label ${(errors.termos) ? 'errorTerms' : ''}`}> Li e concordo com os <a rel="noreferrer" href="https://api.corrigeai.com/uploads/TERMOS_DE_USO_b85a523cbe.pdf" target="_blank">Termos de Uso</a> e <a rel="noreferrer" href="https://api.corrigeai.com/uploads/POLITICA_DE_PRIVACIDADE_7ff66367ba.pdf" target="_blank">Política de Privacidade</a>. </label>
                             </span>
                             <span className="botaofinalizar" style={{ maxWidth: '60%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }} >
                                 <button type="submit" onClick={handleSubmit(onSubmit)} style={{ padding: 12 }}>Finalizar pagamento</button>
