@@ -48,6 +48,7 @@
     "react-toastify": "^7.0.4",
     "reactjs-popup": "^2.0.5",
     "strapi-sdk-js": "^1.0.1",
+    "universal-cookie": "^4.0.4",
     "zustand": "^3.5.7"
   },
   "devDependencies": {

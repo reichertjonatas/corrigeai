@@ -20,6 +20,7 @@ import { strapi } from '../../../services/strapi'
 import { useRedacaoStore } from '../../../hooks/redacaoStore'
 import { mediaCorrigeAi, redacaoPerUser } from '../../../graphql/query'
 import EnviarRedacao from '../../../components/EnviarRedacao'
+import Cookies from 'universal-cookie';
 
 
 export async function getServerSideProps(ctx: any) {
@@ -61,33 +62,30 @@ export async function getServerSideProps(ctx: any) {
 }
 
 
+const cookies = new Cookies();
+
 function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
   const [session, loading] = useSession()
 
-  // const [tema, setTema] = React.useState<string | null>(null)
-  // const [temas, setTemas] = React.useState<{ value: string, label: string }[]>([])
-  // const [alunoObs, setAlunoObs ] = React.useState('');
-
-  // const [suggestions, setSuggestions] = React.useState<ITemas[]>([])
   const [timer, setTimer] = React.useState<null | any>(null);
 
   const [open, setOpen] = React.useState(false);
   const closeModal = () => setOpen(false);
 
-  const user = useMeStore(state => state.user)
   const subscription = useSubscriptionStore(state => state.subscription)
   const setSubscription = useSubscriptionStore(state => state.setSubscription)
-  const updateSubscription = useSubscriptionStore(state => state.updateSubscription)
 
-  const createRedacao = useRedacaoStore((state) => state.createRedacao);
-  const updateRedacoes = useRedacaoStore((state) => state.updateRedacoes);
   const redacoes = useRedacaoStore(state => state.redacoes);
   const setRedacoes = useRedacaoStore(state => state.setRedacoes);
 
-
   const [open2, setOpen2] = React.useState(false);
+  
   useEffect(() => {
-    setOpen2(true)
+    const showModal = cookies.get('modalFundador');
+    if(!showModal){
+      setOpen2(true)
+      cookies.set('modalFundador', 'true', { path: '/' });
+    }
   }, [])
 
   /// upload
@@ -106,12 +104,6 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     }
   }, [session])
 
-  // useEffect(() => {
-  //   console.log(temasProps, "temasProps")
-  //   const options: { value: string, label: string }[] = temasProps?.map((item: any) => ({ value: item.id, label: item.titulo }));
-  //   setTemas(options);
-  // }, [])
-
   if(loading)
     return <PreLoader />
 
@@ -119,61 +111,6 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
     router.push('/painel/entrar');
     return <PreLoader />;
   }
-
-  // const uploadFileClient = (e: any) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     const i: any = e.target.files[0];
-  //     setFile(i);
-  //     setCreateObjectURL(URL.createObjectURL(i));
-  //   }
-  // }
-
-  // const onFileSubmit = async (e: any) => {
-  //   setIsLoading(true);
-  //   e.preventDefault()
-
-  //   const body = new FormData();
-  //   body.append("files.redacao", file);
-
-  //   const data:any = {};
-  //   data['user'] = session?.id as string ?? '';
-  //   data['tema'] = tema ?? '';
-  //   data['msg_aluno'] = alunoObs ?? '';
-  //   data['status_correcao'] = subscription?.plano.plano_type === "enem" ? "correcao_um" :  "redacao_simples";
-  //   body.append("data", JSON.stringify(data))
-
-  //   if (session) {
-  //     const success = await createRedacao(body, subscription!, session!.id as string, session!.jwt);
-  //     if (!success.error) {
-  //       updateSubscription(subscription?.id ?? '', session.jwt);
-  //       toast.success(success.data.message);
-  //     } else {
-  //       toast.error(success.data.message);
-  //     }
-  //   } else {
-  //     toast.error('Precisa efetuar o login para enviar a redação!');
-  //   }
-
-  //   closeModal();
-  //   remove();
-  //   setIsLoading(false);
-  // }
-
-  // const remove = () => {
-  //   setFile(null);
-  //   setCreateObjectURL(null);
-  //   setTema(null);
-  // }
-
-  // const onChange = (event: any, { newValue }: any) => {
-  //   setTema(newValue);
-  // };
-
-  // const inputProps = {
-  //   placeholder: 'Escolha o tema',
-  //   value: tema,
-  //   onChange
-  // };
 
   const CustomSymbol = ({ size, borderColor, datum }: PointSymbolProps) => {
 
@@ -256,15 +193,13 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
   }
 
   const closeModal2 = () => setOpen2(false);
-
-
   return (
     <MainLayout>
       <Seo title="Painel do Aluno" />
 
       <Popup open={open2} closeOnDocumentClick onClose={closeModal2}>
         <div className="modal modalPromo">
-          <a className="close" onClick={closeModal2}>
+          <a className="closeModalPromo" onClick={closeModal2}>
             &times;
           </a>
           <a href="https://profhenriquearaujo.com.br/combos-promo/" rel="noreferrer" target="_blank" >
@@ -511,6 +446,23 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
         }
 
         #popup-2{height: 550px; overflow: scroll}
+
+        .modalPromo{
+          text-align: center;
+        }
+        .modalPromo .imagePopup{
+          outline: none;
+        }
+        .modalPromo .closeModalPromo{
+            position: absolute;
+            top: -0.3rem;
+            right: 0.7rem;
+            font-size: 2.5rem;
+            color: #000e00;
+        }
+        #popup-2{
+          background: #fafdff
+        }
           `
       } </style>
       
