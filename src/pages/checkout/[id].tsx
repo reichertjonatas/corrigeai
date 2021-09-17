@@ -153,6 +153,7 @@ function CheckoutPage({ planoDados }: any) {
             amount: planoDados.precoPagarme,
             createToken: `${!modoAssinatura}`,
             customerData: 'true',
+            freeInstallments: 1,
             interestRate: planoDados.juros,
             maxInstallments: planoDados.parcela_number,
             uiColor: "#72b01d",
