@@ -39,11 +39,11 @@ function MeuPerfil({ session }: any) {
     const [isLoading, setIsLoading] = useState(true)
 
     React.useEffect(() => {
-        console.log("useEffect ==>", isLoading)
+        //console.log("useEffect ==>", isLoading)
         const initLoad = async () => {
             await setMe(session.jwt);
             setIsLoading(false);
-            console.log("useEffect ==> initLoad", isLoading)
+            //console.log("useEffect ==> initLoad", isLoading)
         }
         initLoad();
     }, [setMe])
@@ -108,14 +108,14 @@ function MeuPerfil({ session }: any) {
                                                                         })
                                                                         await strapi.forgotPassword({ email: session.user.email })
                                                                             .then((response : any) => {
-                                                                                console.log("======> reset pass ", response)
+                                                                                //console.log("======> reset pass ", response)
                                                                                 
                                                                                 toast.dismiss()
                                                                                 toast.info("E-mail enviado!")
 
                                                                                 close()
                                                                             }).catch((error:any) => {
-                                                                                console.log(" =======> reset pass error", error)
+                                                                                //console.log(" =======> reset pass error", error)
 
                                                                                 toast.dismiss()
                                                                                 toast.error(error?.status === 400 ? 'Requisição mal formatada!' : 'Erro desconhecido!')

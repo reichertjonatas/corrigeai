@@ -54,8 +54,8 @@ function Descrepancias({ redacoesProps }: any) {
                     <div className="list-item">
                         {redacoes && redacoes?.length <= 0 && <h1 className="msg_nada_encontrado">Nenhuma redação para corrigir.</h1>}
                         {redacoes?.length > 0 && redacoes.map((redacao: any, index: number) => {
-                            console.log("redacao => ", redacao )
-                            // console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
+                            //console.log("redacao => ", redacao )
+                            // //console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
                             // return redacaosPerUser.redacoes.map((redacao: any, index: number) => {
                                 const date = moment(redacao.createdAt);
                                 return (

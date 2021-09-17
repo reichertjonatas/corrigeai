@@ -60,7 +60,7 @@ function SuasCorretocoes({ session, minhasCorrecoes} : any) {
 
                     <div className="list-item">
                         {minhasCorrecoes != null && minhasCorrecoes?.length > 0 && minhasCorrecoes.map((redacao: any, index: number) => {
-                            console.log('redacaosPerUser.redacoes', redacao);
+                            //console.log('redacaosPerUser.redacoes', redacao);
                             // return redacaosPerUser.redacoes.map((redacao: IRedacoes, index: number) => {
                                 const date = Moment(redacao.createdAt);
                                 return (

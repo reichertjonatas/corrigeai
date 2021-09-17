@@ -105,11 +105,11 @@ function Correcao({ redacaoProps, session }: any) {
 
         if (redacao?.correcaos?.length > 0) {
             redacao?.correcaos.map(async (correcao: any) => {
-                console.log("useEffect ==> map", correcao._id)
+                //console.log("useEffect ==> map", correcao._id)
                 const correcaoDB: any = await strapi(session.jwt).findOne('correcaos', correcao.id);
 
-                // console.log("useEffect ==> db ", correcaoDB)
-                console.log(" ==> ", redacao.status_correcao)
+                // //console.log("useEffect ==> db ", correcaoDB)
+                //console.log(" ==> ", redacao.status_correcao)
 
                 if (correcaoDB.corretor.id === session.id && redacao.status_correcao != 'discrepancia') {
                     router.replace('/painel/corretor')
@@ -299,7 +299,7 @@ function Correcao({ redacaoProps, session }: any) {
         setIsloadingSending(true)
         const response = await salvarCorrecao(id as string, session);
         debugPrint('salvar response', response)
-        console.log(" ==> nota simples: ", redacao);
+        //console.log(" ==> nota simples: ", redacao);
 
         if (response.error) {
             setIsloadingSending(false)

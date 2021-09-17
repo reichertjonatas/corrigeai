@@ -24,7 +24,7 @@ function Registro({ csrfToken }: any) {
         const formEmail = data.email;
         const formPassword = data.password;
 
-        console.log('formEmail', formEmail, 'formPassword', formPassword);
+        //console.log('formEmail', formEmail, 'formPassword', formPassword);
 
         if (data.name && formEmail && formPassword) {
             await API

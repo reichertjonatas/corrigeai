@@ -34,7 +34,7 @@ export async function getServerSideProps(ctx: any) {
         }
     }
 
-    console.log(" slug ", slug)
+    //console.log(" slug ", slug)
 
     if (!slug[0] || !slug[1]) {
         return {
@@ -111,7 +111,7 @@ function Correcao({ session, redacaoProps }: any) {
 
 
     React.useEffect(() => {
-        console.log(" ==> ")
+        //console.log(" ==> ")
         setRedacao(redacaoProps)
         setCorrecao(redacaoProps.correcaos[0])
 
@@ -229,7 +229,7 @@ function Correcao({ session, redacaoProps }: any) {
                     <h1>Notas das competências</h1>
                     <span className="criterios">
                         {correcao != null && correcao.competencias?.length > 0 && correcao.competencias.map((competencia: any, index: number) => {
-                            console.log(" ===> competencia obs eneme ", competencia.obs_enem)
+                            //console.log(" ===> competencia obs eneme ", competencia.obs_enem)
                             return (
                                 <div key={index}>
                                     <span className="titulo">Competência {numeroRomano(index + 1)}</span>

@@ -96,7 +96,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
 
   useEffect(() => {
     if (session?.jwt && !loading) {
-      console.log("me => ", session.jwt)
+      ////console.log("me => ", session.jwt)
       if (session?.subscription)
         setSubscription(session.subscription as ISubscription, session.jwt)
 
@@ -157,9 +157,9 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
   const ultimaNota = () => {
     if (redacoes?.length > 0) {
       const redacoesLocal = redacoes.filter((item: any) => item.status_correcao === 'finalizada');
-      console.log("redacoes", redacoesLocal.length)
+      ////console.log("redacoes", redacoesLocal.length)
       if (redacoesLocal.length <= 0) return '---'
-      console.log("===> redação", redacoesLocal[redacoesLocal.length - 1])
+      ////console.log("===> redação", redacoesLocal[redacoesLocal.length - 1])
       return notaTotalRedacao(redacoesLocal[redacoesLocal.length - 1]) == 0 ? '---' : notaTotalRedacao(redacoesLocal[redacoesLocal.length - 1]);
     }
 
@@ -167,14 +167,14 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
   }
 
   const dataEnvios = () => {
-    console.log("dataEnvios")
+    ////console.log("dataEnvios")
     var data: { x: string, y: number, tema: string }[] = [];
 
     if (redacoes?.length > 0) {
       const redacoesLocal = redacoes.filter((item: any) => item.status_correcao == 'finalizada');
 
-      console.log("redacoesLocal ====> ", redacoesLocal)
-      console.log("redacoes", redacoesLocal.length)
+      //console.log("redacoesLocal ====> ", redacoesLocal)
+      //console.log("redacoes", redacoesLocal.length)
       if (redacoesLocal.length <= 0) return [];
 
       let numeroAExibir;

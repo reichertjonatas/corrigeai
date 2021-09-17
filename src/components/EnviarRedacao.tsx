@@ -35,10 +35,10 @@ function EnviarRedacao({session, selected, temasProps, closeModal } : any) {
     }, [])
 
     useEffect(() => {
-        console.log("tema ====>", tema , ' === > ', selected)
+        //console.log("tema ====>", tema , ' === > ', selected)
         if(selected){
             setTema(selected.value)
-            console.log("tema after ====>", tema)
+            //console.log("tema after ====>", tema)
         }
     }, [selected])
 
@@ -252,7 +252,7 @@ function EnviarRedacao({session, selected, temasProps, closeModal } : any) {
 //       }`
 //     })
 
-//     console.log("getInitialProps ==> ")
+//     //console.log("getInitialProps ==> ")
   
 //     return {
 //         session: session,

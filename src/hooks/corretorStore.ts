@@ -100,7 +100,7 @@ const corretorStore = create<{
         competenciasOffline: state.competenciasOffline.map((item: ICompetencias, indexMap: number) => {
             const filterObsEnem: IObsEnemFilter[] = obs_enem[index].filter(item => item.nota === nota);
 
-            // console.log(filterObsEnem[0], 'filterObsEnem ====>', filterObsEnem, ' nota ====> ', nota, ' index ====> ', index);
+            //console.log(filterObsEnem[0], 'filterObsEnem ====>', filterObsEnem, ' nota ====> ', nota, ' index ====> ', index);
 
             return (indexMap === index ?
                 // item.nota == nota ?
@@ -156,7 +156,7 @@ const corretorStore = create<{
             //console.log("redacao ====> above", redacao)
             if(!redacao?.id) throw new Error("A redação não foi encontrada no sistema para salvar a correção.")
 
-            //("redacao ====> before ", redacao)
+            //console.log("redacao ====> before ", redacao)
 
             const correcoes: any[] = redacao.correcaos;
             //console.log("salvarCorrecao: ===> ", correcoes)
@@ -218,6 +218,7 @@ const corretorStore = create<{
             return { error: false, message: "Correção salva com sucesso!" }
 
         } catch (error) {
+            //@ts-ignore
             return { error: true, message: error.message }
         }
         

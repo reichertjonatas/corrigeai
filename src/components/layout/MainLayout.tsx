@@ -15,7 +15,6 @@ interface MainLayoutProps {
     menuType?: number;
     role?: string;
 }
-+
 
 const MainLayout = ({ children, menuType = 1, role = "authenticated" }: MainLayoutProps) => {
     const router = useRouter();

@@ -27,7 +27,7 @@ export async function getServerSideProps(ctx: any) {
             }
         }
     }
-    console.log(session)
+    //console.log(session)
     const plano: any = await strapi(session.jwt).findOne('planos', session?.subscription?.plano);
     const { transacaos } = await strapi(session.jwt).graphql({ query: queryTransacoes(session?.subscription?.id) });
     return {
@@ -47,11 +47,11 @@ function MeuPerfil({ session, plano, transacaos }: any) {
     const [isLoadingUpload, setIsLoadingUpload] = useState(false)
 
     React.useEffect(() => {
-        console.log("useEffect ==>", isLoading)
+        //console.log("useEffect ==>", isLoading)
         const initLoad = async () => {
             await setMe(session.jwt);
             setIsLoading(false);
-            console.log("useEffect ==> initLoad", isLoading)
+            //console.log("useEffect ==> initLoad", isLoading)
         }
         initLoad();
     }, [setMe])
@@ -160,14 +160,14 @@ function MeuPerfil({ session, plano, transacaos }: any) {
                                                                         })
                                                                         await strapi.forgotPassword({ email: session.user.email })
                                                                             .then((response: any) => {
-                                                                                console.log("======> reset pass ", response)
+                                                                                //console.log("======> reset pass ", response)
 
                                                                                 toast.dismiss()
                                                                                 toast.info("E-mail enviado!")
 
                                                                                 close()
                                                                             }).catch((error: any) => {
-                                                                                console.log(" =======> reset pass error", error)
+                                                                                //console.log(" =======> reset pass error", error)
 
                                                                                 toast.dismiss()
                                                                                 toast.error(error?.status === 400 ? 'Requisição mal formatada!' : 'Erro desconhecido!')

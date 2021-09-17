@@ -99,16 +99,16 @@ export const numeroRomano = (numero: number) => {
     }
 }
 export const notaTotalRedacao = (redacao: any) => {
-    console.log("chegou aqui ==>")
+    //console.log("chegou aqui ==>")
 
     if (redacao) {
         var ultimasNotas: number[][] = [];
-        console.log("chegou aqui ==>")
+        //console.log("chegou aqui ==>")
 
-        console.log("redacao ======> ", redacao)
+        //console.log("redacao ======> ", redacao)
         redacao.correcaos.filter((correcao:any) => correcao.discrepante == false ).map((correcoes: any, index: number) => {
             var ultimaNotaCalc = 0;
-            console.log("correcoes ==> ", correcoes);
+            //console.log("correcoes ==> ", correcoes);
             correcoes?.competencias?.map((competencia: any) => {
                 ultimaNotaCalc = ultimaNotaCalc + competencia.nota;
             });
@@ -116,7 +116,7 @@ export const notaTotalRedacao = (redacao: any) => {
         })
 
 
-        console.log("chegou aqui redacao.correcaos.map ==>")
+        //console.log("chegou aqui redacao.correcaos.map ==>")
 
 
         if (ultimasNotas.length > 0) {
@@ -177,14 +177,14 @@ export const checkDiscrepancia = (redacao: any, notaParaDiscrepancia: any) => {
          * irá popular notaPorCompetencia | notaTotalPorCorrecao
          */
 
-        console.log("init ==> ", correcoes);
+        //console.log("init ==> ", correcoes);
         var initCount = 0
         correcoes.filter((correcao: any) => correcao.discrepancia != true).map((correcao: any, indexCorrecao: number) => {
 
             initCount++;
             notaPorCompetencia.push([]);
 
-            console.log("competenciasBug => ", correcao.competencias);
+            //console.log("competenciasBug => ", correcao.competencias);
 
             correcao.competencias?.map((competencia: any) => {
 
@@ -198,7 +198,7 @@ export const checkDiscrepancia = (redacao: any, notaParaDiscrepancia: any) => {
             return correcao;
         })
 
-        console.log(" fim count ===> ", initCount, " notaTotalPorCorrecao ====> ", notaTotalPorCorrecao, " =====> ", notaPorCompetencia)
+        //console.log(" fim count ===> ", initCount, " notaTotalPorCorrecao ====> ", notaTotalPorCorrecao, " =====> ", notaPorCompetencia)
 
     }
 
@@ -216,11 +216,11 @@ export const checkDiscrepancia = (redacao: any, notaParaDiscrepancia: any) => {
             }
         })
     } else {
-        console.log("calculo deu merda, entrou no else notaPorCompetencia")
+        //console.log("calculo deu merda, entrou no else notaPorCompetencia")
     }
 
 
-    console.log("notaPorCompetencia é discrepante? ", discrepante)
+    //console.log("notaPorCompetencia é discrepante? ", discrepante)
 
     // CHeck discrepancia na nota total com valores para calc
     if (notaTotalPorCorrecao.length > 0 && (notaPorCompetencia.length % 2) == 0) {
@@ -232,11 +232,11 @@ export const checkDiscrepancia = (redacao: any, notaParaDiscrepancia: any) => {
                 discrepante = Math.abs(calculoDiscrepancia) > notaParaDiscrepancia
         })
     }else{
-        console.log("calculo deu merda, entrou no else notaTotalPorCorrecao")
+        //console.log("calculo deu merda, entrou no else notaTotalPorCorrecao")
     }
 
 
-    console.log("notaTotal é discrepante? ", discrepante)
+    //console.log("notaTotal é discrepante? ", discrepante)
     return discrepante;
 }
 
@@ -244,7 +244,7 @@ export const mediaRedacoeNotaFinal = (redacao: any) => {
     var correcoesExistents = redacao.correcoes.length
 
     if (correcoesExistents > 0) {
-        console.log(" if ===> ")
+        //console.log(" if ===> ")
 
     }
 }
