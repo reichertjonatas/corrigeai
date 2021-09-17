@@ -450,7 +450,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi } : any) {
         .modalPromo{
           text-align: center;
         }
-        .modalPromo .imagePopup{
+        .modalPromo a{
           outline: none;
         }
         .modalPromo .closeModalPromo{
