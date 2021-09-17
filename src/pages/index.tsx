@@ -15,6 +15,7 @@ import Strapi from 'strapi-sdk-js'
 import { planosQuery } from '../graphql/query';
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
+import Seo from '../components/layout/Seo';
 
 export async function getServerSideProps(ctx: any) {
   const strapi = new Strapi({
@@ -41,6 +42,7 @@ function Home({ planos }: any) {
 
   return (
     <>
+      <Seo />
       <Popup open={open} closeOnDocumentClick onClose={closeModal}>
         <div className="modal">
           <a className="close" onClick={closeModal}>
