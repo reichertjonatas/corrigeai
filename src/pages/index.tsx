@@ -10,11 +10,9 @@ import {
   passo3_match,
   TheKingHenrique
 } from '../components/icons'
-import { authRequired } from '../utils/helpers';
 import Strapi from 'strapi-sdk-js'
 import { planosQuery } from '../graphql/query';
-import React, { useEffect, useState } from 'react';
-import Popup from 'reactjs-popup';
+import React, { useState } from 'react';
 import Seo from '../components/layout/Seo';
 
 export async function getServerSideProps(ctx: any) {
@@ -377,6 +375,7 @@ function Home({ planos }: any) {
           }
           
           @media(max-width: 480px){
+            #precos .columns { flex-direction: column; }
             .passo .img{width: 100%; text-align: center;}
             .passo .img img{width: 50%}
             .passo .tit{position: absolute; top: 0;}
