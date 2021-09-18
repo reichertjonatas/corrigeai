@@ -263,6 +263,11 @@ function Temas({ session , temasProps } : any) {
                         max-height: 65rem
                         overflow: scroll;
                     }
+                    
+                    .grid-temas .content .box-tema .conteudo{
+                        max-height: 43.9rem;
+                        overflow: scroll;
+                    }
                 `}
             </style>
         </MainLayout>
