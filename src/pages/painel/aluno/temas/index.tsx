@@ -261,10 +261,10 @@ function Temas({ session , temasProps } : any) {
                       .grid-temas .content .head-box{grid-template-columns: 1fr}
                     }     
                     
-                    .grid-temas .content .box-tema .conteudo{
-                        max-height: 43.9rem;
+                    .grid-temas .lista-temas{
+                        max-height: 65rem;
                         overflow: scroll;
-                    }
+                        }
                 `}
             </style>
         </MainLayout>
