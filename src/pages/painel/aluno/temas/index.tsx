@@ -257,8 +257,12 @@ function Temas({ session , temasProps } : any) {
                     
                     @media(max-width: 640px){
                       .grid-temas .content .head-box{grid-template-columns: 1fr}
-                    }                    
-                    
+                    }     
+
+                    .grid-temas .lista-temas{
+                        max-height: 65rem
+                        overflow: scroll;
+                    }
                 `}
             </style>
         </MainLayout>
