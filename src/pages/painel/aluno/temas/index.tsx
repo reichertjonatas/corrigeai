@@ -244,7 +244,9 @@ function Temas({ session , temasProps } : any) {
                     .grid-temas .content .botao{display: block; width: 100%; margin: 2rem 0 0; text-align: center;}
                     .grid-temas .content .botao a{display: flex; margin: 0 auto; box-shadow: 0px 0px 9px 0px #407610; align-items: center; justify-content: center;background: var(--dark); min-height: 3.5rem; font-weight: 500; width: 26rem; border-radius: 5.53125rem; color: var(--gray20); font-size: 1.5375em}
                     .grid-temas .content .botao a:hover{transform: scale(0.9);}
-                    .grid-temas .lista-temas{color: var(--dark); display: block; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 0.9125rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15);}
+                    .grid-temas .lista-temas{ color: var(--dark); display: block; width: 100%; border-radius: 0.75rem; background: var(--gray20); padding: 0.9125rem; position: relative; box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.15); 
+                        max-height: 65rem
+                        overflow: scroll;}
                     .grid-temas .lista-temas ul{padding: 0; margin: 0;}
                     .grid-temas .lista-temas ul li{display: inline-block; width: 100%;}
                     .grid-temas .lista-temas ul li a{display: block; width: 100%; border-radius: 1rem; font-weight: 500; padding: 0.5rem 2rem; font-size: 0.9331rem; text-align: center; color: var(--dark); background: #cbcccc; margin: 0 0 1rem}
@@ -258,11 +260,6 @@ function Temas({ session , temasProps } : any) {
                     @media(max-width: 640px){
                       .grid-temas .content .head-box{grid-template-columns: 1fr}
                     }     
-
-                    .grid-temas .lista-temas{
-                        max-height: 65rem
-                        overflow: scroll;
-                    }
                     
                     .grid-temas .content .box-tema .conteudo{
                         max-height: 43.9rem;
