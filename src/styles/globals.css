@@ -131,15 +131,15 @@ a:hover{color: #0a9bff;}
 .container-full{align-items: baseline;}
 
 .toogle{
-  color: #fff;
-  font-weight: 700;
-  font-size: 1.3rem;
-  border-bottom: 2px solid #fff;
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-size: 1.3rem !important;
+  border-bottom: 2px solid #fff !important;
 }
 
 @media(max-width: 640px){
-  .menu li{margin: 0 0 2rem;}
-  .menu li:last-child{margin: 0}
+  .menu li{margin: 0 0 2rem !important;}
+  .menu li:last-child{margin: 0 !important}
 }
 
 .sidebar .menu ul li.itemFechado a .img img{
