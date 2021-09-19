@@ -270,6 +270,9 @@ function Temas({ session , temasProps } : any) {
                         max-height: 65rem;
                         overflow: scroll;
                     }
+                    .grid-temas .content .head-box .box .texto{
+                        font-size: 2em;
+                    }
                 `}
             </style>
         </MainLayout>
