@@ -31,7 +31,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // @ts-ignore
       if (!pagarme.postback.verifySignature(apiKey, verifyBody, signature)) {
         console.log("postBack invalido! transação elimida")
-        return res.status(200).json({error: 'Invalid Postback'})
+        return res.status(500).json({error: 'Invalid Postback'})
       }
       
 
