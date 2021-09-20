@@ -87,7 +87,7 @@ const createTransaction = async (
         console.log("createTransaction card_hash: ", card_hash);
 
         const client = await PAGARME;
-        const response = await client.transactions.create({
+        const objetoTransacao = payment_method === "credit_card" ? {
             amount,
             card_hash: card_hash ?? '',
             payment_method,
@@ -96,7 +96,17 @@ const createTransaction = async (
             items,
             postback_url: `${process.env.NEXT_PUBLIC_URL}/api/pagamento/postback`,
             metadata
-        }).catch((err:any) => {
+        } : {
+            amount,
+            card_hash: card_hash ?? '',
+            payment_method,
+            customer: {...customer, document_number: customer.documents[0].number},
+            billing,
+            items,
+            postback_url: `${process.env.NEXT_PUBLIC_URL}/api/pagamento/postback`,
+            metadata
+        }
+        const response = await client.transactions.create(objetoTransacao).catch((err:any) => {
             console.log("error createTransaction ==> ", customer, err.response.errors)
         });
         return response;
