@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
 import { ERROR_NOT_LOGGED } from "../constants";
-import { tokenAsBackend } from "./checkout/_PagamentoController";
+import { capturarPagamento, tokenAsBackend } from "./checkout/_PagamentoController";
 import moment from "moment";
 import { PLANOS } from "../../../utils/helpers";
 import Strapi from 'strapi-sdk-js'
 import { strapi } from "../../../services/strapi";
-import { planoById } from "../../../graphql/query";
+import { planoById, planoByValor } from "../../../graphql/query";
 import qs from 'qs'
 import queryString from 'query-string';
 // @ts-ignore
@@ -41,23 +41,53 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       
       console.log( " payload ==> ", body )
 
+
+      const tokenAth = await tokenAsBackend();
+
+      const { transaction, old_status } = body;
+
+      let metadata:any
+
       if(!body?.transaction?.metadata?.idPlanoDb){
         console.log("metadata, indefinido! transação inválida, transação elimitada!")
-        return res.status(500).send({});
+
+        if(transaction && old_status && old_status === 'authorized' && transaction.payment_method === 'credit_card' && transaction.status === 'paid'){
+          const strapiLocal = new Strapi({
+            url: `${process.env.NEXT_PUBLIC_URL_API}`
+          })
+
+          const recoverPlanoDado: any = await strapiLocal.graphql({ query: planoByValor(transaction.amount)})
+
+          const transacao: any = await strapi(tokenAth).create('transacaos', {
+            metodo: transaction.payment_method,
+            plano_id: recoverPlanoDado.pagarme_plano_id,
+            status: 'paid',
+            data: {...body, amount: transaction.amount},
+          });
+
+          metadata = {
+            transacaoId: transacao.id,
+            idPlanoDb: recoverPlanoDado.id
+          }
+          
+        } else
+          return res.status(500).send({});
       }
 
-      const { transaction } = body;
+      const { address, customer, phone, card, payment_method, status } : any = transaction;
 
-      const { metadata, address, customer, phone, card, payment_method, status } : any = transaction;
+      if(transaction.metadata){
+        metadata = transaction.metadata;
+      }
 
       const strapiLocal = new Strapi({
         url: `${process.env.NEXT_PUBLIC_URL_API}`
-    })
+      })
+
       const recoverPlanoDado:any = await strapiLocal.graphql({query: planoById(metadata.idPlanoDb)})
 
       console.log("recoverPlanoDado ==> ", recoverPlanoDado.id)
 
-      const tokenAth = await tokenAsBackend();
       console.log("tokenAth ==> ", tokenAth)
 
       console.log("token => ", tokenAth)
