@@ -56,20 +56,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if(!body?.transaction?.metadata?.idPlanoDb){
         console.log("metadata, indefinido! transação inválida, transação elimitada!")
 
-        if(transaction && old_status && old_status === 'authorized' && transaction.payment_method === 'credit_card' && transaction.status === 'paid'){
+        if(transaction && transaction.status === 'paid'){
           
           console.log("========> atendeu as condições")
 
           console.log("========> strapiLocal", strapiLocal)
-          const recoverPlanoDadoAlternativa: any = (await strapiLocal.graphql({ query: planoByValor(transaction.amount)}) as any).planos
-          console.log("========> strapiLocal", recoverPlanoDadoAlternativa)
-          if(recoverPlanoDadoAlternativa.length === 0){
-            return res.status(500).send({});
-          }
+          const recoverPlanoDadoAlternativa: any = await strapiLocal.graphql({ query: planoById('61250caa6da7f91684ae5df5') })
+          console.log("========> recoverPlanoDadoAlternativa", recoverPlanoDadoAlternativa)
 
           const transacao: any = await strapi(tokenAth).create('transacaos', {
             metodo: transaction.payment_method,
-            plano_id: recoverPlanoDadoAlternativa[0].pagarme_plano_id,
+            plano_id: recoverPlanoDadoAlternativa.pagarme_plano_id,
             status: 'paid',
             data: {...body, amount: transaction.amount},
           });
@@ -78,7 +75,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           metadata = {
             transacaoId: transacao.id,
-            idPlanoDb: recoverPlanoDadoAlternativa[0].id
+            idPlanoDb: recoverPlanoDadoAlternativa.id
           }
           console.log("========> metadata", metadata)
 

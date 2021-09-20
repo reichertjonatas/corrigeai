@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ERROR_NOT_LOGGED } from "../../constants";
-import { capturarPagamento, startAssinatura, tokenAsBackend } from "./_PagamentoController";
+import { capturarPagamento, createTransaction, startAssinatura, tokenAsBackend } from "./_PagamentoController";
 import Strapi from 'strapi-sdk-js'
 import { strapi } from "../../../../services/strapi";
 import { planoById } from "../../../../graphql/query";
 import Cors from 'cors'
 import initMiddleware from "../../../../lib/middleware";
+import { cnpj } from 'cpf-cnpj-validator'; 
 
 // Initialize the cors middleware
 const cors = initMiddleware(
@@ -33,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           const strapiLocal = new Strapi({
             url: `${process.env.NEXT_PUBLIC_URL_API}`
-        })
+          })
 
           console.log("planoId", planoIdDb);
 
@@ -48,7 +49,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             metodo: payment_method,
             plano_id: recoverPlanoDado.pagarme_plano_id,
             status: 'waiting_payment',
-            data: req.body
+            data: []
           });
           
           let assinatura:any
@@ -68,17 +69,55 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (!assinatura) throw new Error("Assinatura não efetuada!");
           } else {
             console.log("else modoAssinatura");
-            console.log("capturarPagamento ", token, planoIdDb, transacao.id)
-            assinatura = await capturarPagamento(token, amount, planoIdDb, transacao.id);
-            console.log(" ====> ", assinatura)
+            console.log("capturarPagamento ", planoIdDb, transacao.id)
+
+            const newTransaction = await createTransaction(
+              amount,
+              card_hash,
+              payment_method,
+              {
+                type: cnpj.isValid(customer.document_number) ? 'corporation': 'individual',
+                external_id: customer.email,
+                email: customer.email,
+                name: customer.name,
+                phone_numbers: [`+55${customer.phone.ddd}${customer.phone.number}`],
+                country: 'br',
+                documents: [
+                  {
+                    type: cnpj.isValid(customer.document_number) ? 'cnpj' : 'cpf',
+                    number: customer.document_number
+                  }
+                ]
+              },
+              {
+                name: customer.name,
+                address: {...customer.address, country: 'br', complementary: customer.address.complementary.length === 0 ? 'n/a' : customer.address.complementary}
+              },
+              [
+                  {
+                      id: recoverPlanoDado.id,
+                      title: recoverPlanoDado.name,
+                      unit_price: recoverPlanoDado.precoPagarme,
+                      quantity: 1,
+                      tangible: false
+                  }
+              ],
+              {
+                transacaoId: transacao.id,
+                idPlanoDb: planoIdDb,
+              }
+            );
+            
+            // assinatura = await capturarPagamento(token, amount, planoIdDb, transacao.id);
+            console.log("status: ", newTransaction?.status, " ====> ", newTransaction)
 
             await strapi(tokenAth).update('transacaos', transacao.id, {
-              status: assinatura?.status === 'authorized' ? 'paid' : 'waiting_payment',
+              status: newTransaction?.status === 'authorized' || newTransaction?.status === 'paid' ? 'paid' : 'waiting_payment',
             });
             
-            console.log(" ====> update assinatura")
+            console.log(" ====> update assinatura to " , newTransaction?.status === 'authorized' || newTransaction?.status === 'paid' ? 'paid' : 'waiting_payment')
 
-            switch (assinatura?.status) {
+            switch (newTransaction?.status) {
               case 'authorized':
                 console.log(" ====> update authorized")
                   return res.status(200).send({
@@ -104,7 +143,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                   error: false,
                   data: {
                     status: "waiting_payment",
-                    boleto_url: payment_method === 'boleto' ? assinatura.boleto_url : '',
+                    boleto_url: payment_method === 'boleto' ? newTransaction.boleto_url : '',
                     payment_method
                   }
                 });
@@ -113,8 +152,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                   return res.status(200).send({
                     error: false,
                     data: {
-                      status: "waiting_payment",
-                      boleto_url: payment_method === 'boleto' ? assinatura.boleto_url : '',
+                      status: "processing",
+                      boleto_url: payment_method === 'boleto' ? newTransaction.boleto_url : '',
                       payment_method
                     }
                   });
@@ -166,7 +205,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(200).send({
             error: true,
             data: {
-              message: 'Transação não efetuada.',
+              message: 'Transação não efetuada. ' + error,
               status: "error",
             }
           });

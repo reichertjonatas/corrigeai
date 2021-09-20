@@ -118,6 +118,9 @@ function CheckoutPage({ planoDados }: any) {
                             if (response.data.data.status == "paid" || response.data.data.status == 'authorized') {
                                 toast.success("Pagamento recebido com sucesso!")
                                 router.replace('/painel/verificar-email')
+                            } else if(response.data.data.status == 'processing') {
+                                toast.info("Processando pagamento!")
+                                router.replace(`/checkout/processando`)
                             } else if(response.data.data.status == 'waiting_payment') {
                                 toast.info("Aguardando pagamento!")
                                 router.replace(`/checkout/aguardando?boletoUrl=${encodeURI(response.data.data.boleto_url)}`)
@@ -152,7 +155,7 @@ function CheckoutPage({ planoDados }: any) {
         checkout.open({
             buttonText: "Checkout",
             amount: planoDados.precoPagarme,
-            createToken: `${!modoAssinatura}`,
+            createToken: `false`,
             customerData: 'true',
             freeInstallments: 1,
             maxInstallments: planoDados.parcela_number,

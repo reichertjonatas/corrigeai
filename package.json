@@ -16,6 +16,7 @@
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "cpf-cnpj-validator": "^1.0.3",
     "cross-env": "^7.0.3",
     "draftjs-to-html": "^0.9.1",
     "express": "^4.17.1",

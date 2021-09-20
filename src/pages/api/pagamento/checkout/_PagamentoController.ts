@@ -64,10 +64,41 @@ const capturarPagamento = async (
     }
 }
 
-const createTransaction = async ( data:any ) => {
+const createTransaction = async (
+    amount:number,
+    card_hash: string | null,
+    payment_method: string,
+    customer:  {
+        type: string,
+        external_id: string,
+        email: string,
+        name: string,
+        phone_numbers: string[],
+        country: string,
+        documents: { type: string, number: string}[]
+      },
+    billing: any,
+    items: any,
+    metadata: {
+        transacaoId: string,
+        idPlanoDb: string,
+    }) => {
     try {
+        console.log("createTransaction card_hash: ", card_hash);
+
         const client = await PAGARME;
-        const response = await client.transactions.create(data);
+        const response = await client.transactions.create({
+            amount,
+            card_hash: card_hash ?? '',
+            payment_method,
+            customer,
+            billing,
+            items,
+            postback_url: `${process.env.NEXT_PUBLIC_URL}/api/pagamento/postback`,
+            metadata
+        }).catch((err:any) => {
+            console.log("error createTransaction ==> ", customer, err.response.errors)
+        });
         return response;
     } catch (error) {
         return error.message;
