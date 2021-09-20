@@ -95,6 +95,7 @@ const createTransaction = async (
             billing,
             items,
             postback_url: `${process.env.NEXT_PUBLIC_URL}/api/pagamento/postback`,
+            pix_expiration_date: new Date(Date.now() + ( 3600 * 1000 * 24)),
             metadata
         }).catch((err:any) => {
             console.log("error createTransaction ==> ", customer, err.response.errors)
