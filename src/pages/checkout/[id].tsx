@@ -159,7 +159,7 @@ function CheckoutPage({ planoDados }: any) {
             freeInstallments: 1,
             maxInstallments: planoDados.parcela_number,
             uiColor: "#72b01d",
-            payment_methods: "credit_card, boleto, pix",
+            payment_methods: "credit_card, boleto",
             postbackUrl: `${process.env.NEXT_PUBLIC_URL}/api/pagamento/postback`,
             items: [
                 {
