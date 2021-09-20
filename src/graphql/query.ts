@@ -108,7 +108,7 @@ const planoById = (id: String) => `query queryPlano{
 }` 
 
 const planoByValor = (valor: number) => `query queryPlano{
-  plano(pagarme_plano_id: ${valor}){
+  planos(where: {precoPagarme: ${valor}}){
     id
     name
     totalTexto
