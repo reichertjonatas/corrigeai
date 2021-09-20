@@ -88,7 +88,6 @@ function CheckoutPage({ planoDados }: any) {
             encryption_key: process.env.NEXT_PUBLIC_PAGARME_ENCRYPT_KEY,
             success: async (data: any) => {
                 if (data) {
-                    console.log("data ==> ", data)
                     if(modoAssinatura){
                         const response = await API.post('/pagamento/checkout/capturarPagamento', { modoAssinatura, planoIdDb: planoDados.id, ...data });
                         if (response.status === 200) {
