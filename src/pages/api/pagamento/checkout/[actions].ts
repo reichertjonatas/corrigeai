@@ -28,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     case 'capturarPagamento':
       if (req.method === 'POST') {
         try {
-          const { modoAssinatura , token, payment_method, customer, card_hash, parcela_number, amount, planoIdDb } = req.body;
+          const { modoAssinatura , token, payment_method, customer, card_hash, installments, amount, planoIdDb } = req.body;
 
           console.log("req body ==>", req.body)
 
@@ -103,7 +103,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                       tangible: false
                   }
               ],
-              parcela_number ?? '1',
+              installments ?? '1',
               {
                 transacaoId: transacao.id,
                 idPlanoDb: planoIdDb,
