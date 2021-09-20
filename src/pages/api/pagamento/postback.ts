@@ -42,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if(body){
         const { current_status, id } = body;
         if(id && current_status && current_status === 'refused' || current_status === 'refunded'){
-          console.log(`========> ID: ${id} || Postback recebida com sucesso, status da transação: ${current_status} <==========`)
+          console.log(`========> ID: ${id} || E-mail: ${ body.transaction.customer.email } Postback com status da transação: ${current_status} <==========`)
           return res.status(200).send({});
         }
       }
