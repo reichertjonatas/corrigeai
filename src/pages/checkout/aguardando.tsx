@@ -27,11 +27,11 @@ function AguardandoPagamento() {
                         </p>
                     </div>
 
-                    { boletoUrl && <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                    {/* { boletoUrl && <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                         <span className="botaofinalizar" style={{ maxWidth: '60%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }} >
                             <Link href={`${boletoUrl}`} passHref><button type="submit" style={{ padding: 12 }}>IMPRIMIR BOLETO BANCÁRIO</button></Link>
                         </span>
-                    </div>}
+                    </div>} */}
                 </div>
             </div>
             <style jsx>
