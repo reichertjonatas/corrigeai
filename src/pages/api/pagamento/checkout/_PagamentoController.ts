@@ -71,6 +71,7 @@ const createTransaction = async (
     customer: any,
     billing: any,
     items: any,
+    installments: string,
     metadata: {
         transacaoId: string,
         idPlanoDb: string,
@@ -85,6 +86,7 @@ const createTransaction = async (
             payment_method,
             customer,
             billing,
+            installments,
             items,
             postback_url: `${process.env.NEXT_PUBLIC_URL}/api/pagamento/postback`,
             metadata
@@ -93,6 +95,7 @@ const createTransaction = async (
             card_hash: card_hash ?? '',
             payment_method,
             customer: customer,
+            installments,
             billing,
             items,
             postback_url: `${process.env.NEXT_PUBLIC_URL}/api/pagamento/postback`,
