@@ -29,12 +29,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         try {
           const { modoAssinatura , token, payment_method, customer, card_hash, amount, planoIdDb } = req.body;
 
+          console.log("req body ==>", req.body)
+
           const strapiLocal = new Strapi({
             url: `${process.env.NEXT_PUBLIC_URL_API}`
         })
 
           console.log("planoId", planoIdDb);
-          
+
           const recoverPlanoDado: any = await strapiLocal.graphql({ query: planoById(planoIdDb) })
 
           console.log("recoverPlanoDado", recoverPlanoDado)
@@ -66,7 +68,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (!assinatura) throw new Error("Assinatura não efetuada!");
           } else {
             console.log("else modoAssinatura");
-            console.log("capturarPagamento ", planoIdDb, amount, transacao.id)
+            console.log("capturarPagamento ", token, planoIdDb, transacao.id)
             assinatura = await capturarPagamento(token, amount, planoIdDb, transacao.id);
             console.log(" ====> ", assinatura)
 

@@ -85,9 +85,10 @@ function CheckoutPage({ planoDados }: any) {
 
         // @ts-ignore
         let checkout = new PagarMeCheckout.Checkout({
-            encryption_key: "ek_live_DfaMQ0QdWLYx7p2t6Qse4WscX8wBmg",
+            encryption_key: process.env.NEXT_PUBLIC_PAGARME_ENCRYPT_KEY,
             success: async (data: any) => {
                 if (data) {
+                    console.log("data ==> ", data)
                     if(modoAssinatura){
                         const response = await API.post('/pagamento/checkout/capturarPagamento', { modoAssinatura, planoIdDb: planoDados.id, ...data });
                         if (response.status === 200) {

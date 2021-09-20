@@ -1,6 +1,6 @@
 // @ts-ignore
 import pagarme from 'pagarme'
-const PAGARME = pagarme.client.connect({ api_key: 'ak_live_QB9S4KuRNeSoHnS5Ba8s7X2rKM8J8b' });
+const PAGARME = pagarme.client.connect({ api_key: process.env.PAGARME_KEY });
 import Strapi from 'strapi-sdk-js'
 
 const contaBackend = {
@@ -56,7 +56,7 @@ const capturarPagamento = async (
                 idPlanoDb : idPlanoDb,
             },
         }).catch((err:any) => {
-            console.log("===> ", err);
+            console.log("===> ", err.errors);
         });
         return response;
     } catch (error) {

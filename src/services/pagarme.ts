@@ -2,7 +2,7 @@
 import pagarme from 'pagarme'
 import { debugPrint } from '../utils/debugPrint';
 
-export const PAGARME =  pagarme.client.connect({ api_key: 'ak_live_QB9S4KuRNeSoHnS5Ba8s7X2rKM8J8b' });
+export const PAGARME =  pagarme.client.connect({ api_key: process.env.PAGARME_KEY });
 
 export const criarPlano = async (amount:number, days:number, name:string, trial_days:number, payment_methods:any[]) => {
 

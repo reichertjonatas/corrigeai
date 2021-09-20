@@ -23,7 +23,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log(" ===> started ")
   try {
     if (req.method === 'POST') {
-      const apiKey = 'ak_live_QB9S4KuRNeSoHnS5Ba8s7X2rKM8J8b'
+      const apiKey = process.env.PAGARME_KEY
       const verifyBody = qs.stringify(req.body)
       //@ts-ignore
       const signature = req.headers['x-hub-signature']!.replace('sha1=', '')
@@ -43,7 +43,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       if(!body?.transaction?.metadata?.idPlanoDb){
         console.log("metadata, indefinido! transação inválida, transação elimitada!")
-        return res.status(200).send({});
+        return res.status(500).send({});
       }
 
       const { transaction } = body;
