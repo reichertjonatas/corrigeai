@@ -30,8 +30,10 @@ const redacaoStore = create<IRedacaoStore>((set, get) => ({
 
     createRedacao: async (body: any, subscription: ISubscription, id: string, token: string | unknown) => {
         if (subscription.envios > 0) {
-            const response = await strapi(token).create("redacaos", body);
-
+            const response:any = await strapi(token).create("redacaos", body).catch( (error) => {
+                console.log("body", body, "error ==> ", error)
+            });
+            
             if (response) {
                 const nEnvios = subscription.envios - 1;
                 await strapi(token).update("subscriptions", subscription.id, {
@@ -39,7 +41,9 @@ const redacaoStore = create<IRedacaoStore>((set, get) => ({
                 });
                 
                 await get().updateRedacoes(id, token);
-                return { error: false, data: { message: 'Redação enviada!'}};
+                console.log("redacao Res", response)
+                
+                return { error: false, data: { message: 'Redação enviada!', redacaoId: response.id}};
             }
             return { error: true, data: { message: 'Error ao enviar redação!'}};
         }

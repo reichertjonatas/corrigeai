@@ -152,7 +152,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                   return res.status(200).send({
                     error: false,
                     data: {
-                      status: "processing",
+                      status: payment_method === 'boleto' ?  "waiting_payment" : "processing",
                       boleto_url: payment_method === 'boleto' ? newTransaction.boleto_url : '',
                       payment_method
                     }
