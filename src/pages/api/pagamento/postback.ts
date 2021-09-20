@@ -48,29 +48,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       let metadata:any
 
+
+      const strapiLocal = new Strapi({
+        url: `${process.env.NEXT_PUBLIC_URL_API}`
+      })
+
       if(!body?.transaction?.metadata?.idPlanoDb){
         console.log("metadata, indefinido! transação inválida, transação elimitada!")
 
         if(transaction && old_status && old_status === 'authorized' && transaction.payment_method === 'credit_card' && transaction.status === 'paid'){
           
           console.log("========> atendeu as condições")
-          const strapiLocal = new Strapi({
-            url: `${process.env.NEXT_PUBLIC_URL_API}`
-          })
 
-          const recoverPlanoDado: any = await strapiLocal.graphql({ query: planoByValor(transaction.amount)})
+          console.log("========> strapiLocal", strapiLocal)
+          const recoverPlanoDadoAlternativa: any = await strapiLocal.graphql({ query: planoByValor(transaction.amount)})
+          console.log("========> strapiLocal", recoverPlanoDadoAlternativa)
 
           const transacao: any = await strapi(tokenAth).create('transacaos', {
             metodo: transaction.payment_method,
-            plano_id: recoverPlanoDado.pagarme_plano_id,
+            plano_id: recoverPlanoDadoAlternativa.pagarme_plano_id,
             status: 'paid',
             data: {...body, amount: transaction.amount},
           });
 
+          console.log("========> transacao", transacao)
+
           metadata = {
             transacaoId: transacao.id,
-            idPlanoDb: recoverPlanoDado.id
+            idPlanoDb: recoverPlanoDadoAlternativa.id
           }
+          console.log("========> metadata", metadata)
 
         } else
           return res.status(500).send({});
@@ -81,10 +88,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if(transaction.metadata){
         metadata = transaction.metadata;
       }
-
-      const strapiLocal = new Strapi({
-        url: `${process.env.NEXT_PUBLIC_URL_API}`
-      })
 
       const recoverPlanoDado:any = await strapiLocal.graphql({query: planoById(metadata.idPlanoDb)})
 
