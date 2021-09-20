@@ -75,20 +75,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               amount,
               card_hash,
               payment_method,
-              {
-                type: cnpj.isValid(customer.document_number) ? 'corporation': 'individual',
-                external_id: customer.email,
-                email: customer.email,
-                name: customer.name,
-                phone_numbers: [`+55${customer.phone.ddd}${customer.phone.number}`],
-                country: 'br',
-                documents: [
-                  {
-                    type: cnpj.isValid(customer.document_number) ? 'cnpj' : 'cpf',
-                    number: customer.document_number
-                  }
-                ]
-              },
+              customer,
+              // {
+              //   type: cnpj.isValid(customer.document_number) ? 'corporation': 'individual',
+              //   external_id: customer.email,
+              //   email: customer.email,
+              //   name: customer.name,
+              //   phone_numbers: [`+55${customer.phone.ddd}${customer.phone.number}`],
+              //   country: 'br',
+              //   documents: [
+              //     {
+              //       type: cnpj.isValid(customer.document_number) ? 'cnpj' : 'cpf',
+              //       number: customer.document_number
+              //     }
+              //   ]
+              // },
               {
                 name: customer.name,
                 address: {...customer.address, country: 'br', complementary: customer.address.complementary.length === 0 ? 'n/a' : customer.address.complementary}
