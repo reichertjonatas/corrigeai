@@ -38,6 +38,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       console.log( " postBack valido!" )
 
       const body:any = qs.parse(req.body);
+
+      if(body){
+        const { current_status, id } = body;
+        if(id && current_status && current_status === 'refused' || current_status === 'refunded'){
+          console.log(`========> ID: ${id} || Postback recebida com sucesso, status da transação: ${current_status} <==========`)
+          return res.status(200).send({});
+        }
+      }
       
       console.log( " payload ==> ", body )
 
