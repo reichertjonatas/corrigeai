@@ -52,6 +52,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         console.log("metadata, indefinido! transação inválida, transação elimitada!")
 
         if(transaction && old_status && old_status === 'authorized' && transaction.payment_method === 'credit_card' && transaction.status === 'paid'){
+          
+          console.log("========> atendeu as condições")
           const strapiLocal = new Strapi({
             url: `${process.env.NEXT_PUBLIC_URL_API}`
           })
@@ -69,7 +71,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             transacaoId: transacao.id,
             idPlanoDb: recoverPlanoDado.id
           }
-          
+
         } else
           return res.status(500).send({});
       }

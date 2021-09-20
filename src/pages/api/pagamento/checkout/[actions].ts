@@ -75,6 +75,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             await strapi(tokenAth).update('transacaos', transacao.id, {
               status: assinatura?.status === 'authorized' ? 'paid' : 'waiting_payment',
             });
+            
             console.log(" ====> update assinatura")
 
             switch (assinatura?.status) {

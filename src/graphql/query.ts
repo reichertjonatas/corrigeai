@@ -107,6 +107,23 @@ const planoById = (id: String) => `query queryPlano{
   }
 }` 
 
+const planoByValor = (valor: number) => `query queryPlano{
+  plano(pagarme_plano_id: ${valor}){
+    id
+    name
+    totalTexto
+    juros
+    pagarme_plano_id
+    parcelamentoTexto
+    precoPagarme
+    parcela_number
+    plano_type
+    total_envios
+    dias
+    infos
+  }
+}`
+
 const redacaoById = (id: string) => `query RedacoesPerId {
   redacao(id: "${id}"){
     id
@@ -337,5 +354,6 @@ export {
   redacaoPerUser,
   redacaoPerUserSortDate,
   redacaoParaCorrigirDiscrepancia,
-  queryTransacoes
+  queryTransacoes,
+  planoByValor,
 }
