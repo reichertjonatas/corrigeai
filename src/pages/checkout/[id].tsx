@@ -155,7 +155,6 @@ function CheckoutPage({ planoDados }: any) {
             createToken: `${!modoAssinatura}`,
             customerData: 'true',
             freeInstallments: 1,
-            interestRate: planoDados.juros,
             maxInstallments: planoDados.parcela_number,
             uiColor: "#72b01d",
             payment_methods: "credit_card, boleto",
