@@ -11,6 +11,7 @@ import qs from 'qs'
 import queryString from 'query-string';
 // @ts-ignore
 import pagarme from 'pagarme'
+import { emailBoleto } from "../../../services/emails";
 
 // export const config = {
 //   api: {
@@ -60,6 +61,43 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const strapiLocal = new Strapi({
         url: `${process.env.NEXT_PUBLIC_URL_API}`
       })
+
+      if(transaction && transaction.status === 'waiting_payment' && transaction.boleto_url){
+
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        const msg = {
+          to: transaction.customer.email,
+          from: process.env.SENDGRID_EMAIL, // Use the email address or domain you verified above
+          subject: 'Boleto gerado',
+          text: 'Boleto gerado - Para imprimir o boleto clique no botão abaixo:',
+          html: emailBoleto(transaction.boleto_url),
+        };
+        //ES6
+        sgMail
+          .send(msg)
+          .then(() => {}, (error:any) => {
+            console.error(error);
+            if (error.response) {
+              console.error(error.response.body)
+            }
+          });
+        //ES8
+        (async () => {
+          try {
+            await sgMail.send(msg);
+          } catch (error:any) {
+            console.error(error);
+
+            if (error.response) {
+              console.error(error.response.body)
+            }
+            return res.status(500).send({});
+          }
+        })();
+
+        return res.status(200).send({});
+      }
 
       if(!body?.transaction?.metadata?.idPlanoDb){
         console.log("metadata, indefinido! transação inválida, transação elimitada!")

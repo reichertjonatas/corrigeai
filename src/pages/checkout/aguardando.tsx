@@ -23,7 +23,7 @@ function AguardandoPagamento() {
                     <div className="caixa" style={{textAlign: 'center'}}>
                         <p>
                             Estamos aguardando o pagamento do plano! <br />
-                            Se já efetuou o pagamento logo receberá um e-mail com mais instruções.
+                            Receberá um e-mail com mais instruções.
                         </p>
                     </div>
 
