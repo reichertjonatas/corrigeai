@@ -66,6 +66,9 @@ const MainLayout = ({ children, menuType = 1, role = "authenticated" }: MainLayo
 
     return (
         <>
+            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T7GCH9D"
+height="0" width="0" style={{ display:'none', visibility:'hidden'}}></iframe></noscript>
+
             <div className="bg-green"></div>
             <div className="container-full">
 
