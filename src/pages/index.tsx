@@ -357,7 +357,7 @@ function Home({ planos }: any) {
             .banner .texto .desc{font-size: 2rem;}
             .banner hr{margin: 0 0 3rem}
             .toogle{display: inline-block; position: absolute; right: 3rem;}
-            .menu {display: none !important; padding: 1rem 0;}
+            .menu {display: none; padding: 1rem 0;}
           }
           
           @media(max-width: 800px){
