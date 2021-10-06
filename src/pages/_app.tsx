@@ -7,6 +7,15 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify'
 import 'reactjs-popup/dist/index.css';
 
+
+
+interface SeoProps {
+    title?: string;
+    description?: string;
+
+} 
+
+
 function CorrigeAiApp({ Component, pageProps }: AppProps) {
   return (
     <Provider session={pageProps.session}>
