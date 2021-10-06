@@ -225,6 +225,10 @@ function EnviarRedacao({session, selected, temasProps, closeModal } : any) {
             opacity: 0;
             cursor: pointer;
           }
+
+          @media(max-width: 768px){
+            .popup-content{width: 95% !important}
+          }
                     `}
       </style>
               </div>

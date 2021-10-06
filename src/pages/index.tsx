@@ -286,7 +286,7 @@ function Home({ planos }: any) {
           .coluna .subtitle{background: var(--green); left: 3.7rem; color: #fff;border-radius: 1.5rem;padding: 0.5rem 1rem;width: 100%;display: block;max-width: 12rem;text-align: center; position: absolute; top: 0;}
           .coluna .right{background: var(--green);  color: #fff;border-radius: 1.5rem;padding: 0.5rem 1rem;width: 100%;display: block;max-width: 12rem;text-align: center; position: absolute; top: 0; right: 3.7rem; left: inherit;}
           .coluna .img{display: block; width: 100%; margin: 4rem 0 0}
-          .coluna .img img{width: 80%}
+          .coluna .img img{width: auto !important; height: auto !important}
           .coluna .desc{display: block; width: 100%;  margin: 2rem 0 0; font-size: 1.3rem; text-align: center; max-width: 35rem; background: #fff; padding: 1rem; border-radius: 1rem; box-shadow: 0px 0px 15px 0px rgb(0 0 0 / 7%)}
           
           .match .img{text-align: right; right: -7rem; position: relative;}
@@ -357,7 +357,7 @@ function Home({ planos }: any) {
             .banner .texto .desc{font-size: 2rem;}
             .banner hr{margin: 0 0 3rem}
             .toogle{display: inline-block; position: absolute; right: 3rem;}
-            .menu {display: none; padding: 1rem 0;}
+            .menu {display: none !important; padding: 1rem 0;}
           }
           
           @media(max-width: 800px){
