@@ -36,7 +36,7 @@ function Home({ planos }: any) {
       <header>
         <div className="container">
           <a onClick={() => setMenuOpened(!menuOpened)} className="toogle" style={{cursor: 'pointer'}}>Menu</a>
-          <div className="menu" style={{ display: menuOpened ? 'none' : 'block' }}>
+          <div className="menu" style={{ display: menuOpened ? 'block' : 'none' }}>
             <ul>
               <li><a href="#">Como funciona</a></li>
               <li><a href="#passos">Corrige Aí</a></li>
