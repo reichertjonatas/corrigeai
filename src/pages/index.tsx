@@ -391,7 +391,7 @@ function Home({ planos }: any) {
             .match .desc{top: inherit;}
             .passo4 .box{flex-direction: column; margin: 10rem  0 0;}
             .passo4 .box .img{text-align: center;}
-            .passo4 .box .img img{width: 50%}
+            .passo4 .box .img img{width: 50%; object-fit: contain !important}
             #one{position: inherit;}
             #two{position: inherit;}
             #three{position: inherit; width: 25rem; height: 25rem; top: 5rem; margin: 0; left: inherit;}
