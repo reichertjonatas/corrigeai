@@ -33,7 +33,20 @@ function Home({ planos }: any) {
   return (
     <>
       <Seo />
-      <header>
+      <header className="desktop">
+        <div className="container">
+          <a onClick={() => setMenuOpened(!menuOpened)} className="toogle" style={{cursor: 'pointer'}}>Menu</a>
+          <div className="menu" style={{ display: menuOpened ? 'none' : 'block' }}>
+            <ul>
+              <li><a href="#">Como funciona</a></li>
+              <li><a href="#passos">Corrige Aí</a></li>
+              <li><a href="#precos">Planos e preços</a></li>
+              <li><Link href="/painel" passHref><a id="login">Área do aluno</a></Link></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <header className="mob">
         <div className="container">
           <a onClick={() => setMenuOpened(!menuOpened)} className="toogle" style={{cursor: 'pointer'}}>Menu</a>
           <div className="menu" style={{ display: menuOpened ? 'block' : 'none' }}>
@@ -242,8 +255,8 @@ function Home({ planos }: any) {
           .row1{display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;}
           .row2{display: grid; grid-template-columns: 1fr; gap: 1rem;}
           
-          
-          header{position: fixed; width: 100%; top: 0; left: 0; padding: 3rem 0; text-align: center; z-index: 999;background: rgb(114,176,29); background: linear-gradient(90deg, rgba(114,176,29,1) 0%, rgba(114,176,29,1) 0%, rgba(132,204,34,1) 100%);}
+          header.mob{display: none}
+          header.desktop{display: inline-block; position: fixed; width: 100%; top: 0; left: 0; padding: 3rem 0; text-align: center; z-index: 999;background: rgb(114,176,29); background: linear-gradient(90deg, rgba(114,176,29,1) 0%, rgba(114,176,29,1) 0%, rgba(132,204,34,1) 100%);}
           .toogle{display: none}
           .menu li{display: inline; margin: 0 3rem;}
           .menu li a{font-size: 1.375rem; color: var(--gray20)}
@@ -358,6 +371,8 @@ function Home({ planos }: any) {
             .banner hr{margin: 0 0 3rem}
             .toogle{display: inline-block; position: absolute; right: 3rem;}
             .menu {display: none; padding: 1rem 0;}
+            header.mob{display: inline-block}
+            header.desktop{display: none}
           }
           
           @media(max-width: 800px){
