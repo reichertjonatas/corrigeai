@@ -530,7 +530,7 @@ export const obs_enem: IObsEnemFilter[][] = [
                 },
                 {
                     section: 'E',
-                    text: '*Repertório legitimado E pertinente ao tema, COM uso produtivo',
+                    text: '*Repertório legitimado E pertinente ao tema, SEM uso produtivo',
                 }
             ]
         },
