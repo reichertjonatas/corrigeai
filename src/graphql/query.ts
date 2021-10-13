@@ -75,7 +75,7 @@ const mediaCorrigeAi = `query mediaCorrigeAi{
 }`
 
 const planosQuery = `query queryPlano{
-  planos{
+  planos(where:{ plano_ativo: true }){
     id
     name
     totalTexto
