@@ -84,6 +84,8 @@ const options = {
   database: process.env.MONGODB_URI_DB,
   session: {
     jwt: true,
+    maxAge: 24 * 60 * 60, // 1 days
+    updateAge: 2 * 60 * 60, // 24 hours
   },
   callbacks: {
     jwt: async (token:any, user:any, account:any) => {
