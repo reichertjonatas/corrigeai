@@ -414,6 +414,7 @@ function Correcao({ redacaoProps, session }: any) {
                                         </span>
                                         <span className="text">Destacar texto</span>
                                     </span>
+                                    
                                 </div>
                                 <div className="redacao">
                                     <Annotation
