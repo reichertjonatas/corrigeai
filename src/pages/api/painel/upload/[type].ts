@@ -51,7 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     } else
                         throw new Error("Requisição invalida!");
                 } catch (error) {
-                    return res.status(500).send({ error: true, errorMessage: error.message });
+                    return res.status(500).send({ error: true, });
                 }
                 break;
 

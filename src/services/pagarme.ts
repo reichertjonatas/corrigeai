@@ -17,7 +17,7 @@ export const criarPlano = async (amount:number, days:number, name:string, trial_
         "payment_methods": payment_methods
     };
 
-    console.log(body);
+    // console.log(body);
 
     const plans = await client.plans.create({
         amount: 15000,
