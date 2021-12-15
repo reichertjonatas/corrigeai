@@ -402,6 +402,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
               modal
               nested
               closeOnDocumentClick={false}
+              className="popUpEnvio"
             >
               <EnviarRedacao
                 session={session}
