@@ -126,7 +126,6 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                 }`
                 }
             </style>
-            <Whatsapp/>
         </MainLayout>
     )
 }

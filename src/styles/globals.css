@@ -422,6 +422,11 @@ a:hover {
   }
 }
 
+.popUpEnvio-content{
+  height: 80%;
+  overflow-y: scroll;
+}
+
 .popRedacao {
   display: flex;
   flex-direction: column;
