@@ -48,6 +48,8 @@ import circle_graf from "../../../public/images/circle-graf.png"
 import grafic2_side from "../../../public/images/grafic2-side.png"
 import graf3_side from "../../../public/images/graf3-side.png"
 import IconRedacoes from "../../../public/images/icon-redacoes.png"
+import IconWhatsapp from '../../../public/images/whatsapp.png'
+import IconDev from '../../../public/images/suporte-tecnico.png'
 
 export {
     IconRedacoes,
@@ -90,5 +92,6 @@ export {
     IcRocket,
     LogoLogin,
     TemaEnem,
-    TemaCorrigeAi
+    TemaCorrigeAi,
+    IconWhatsapp
 };

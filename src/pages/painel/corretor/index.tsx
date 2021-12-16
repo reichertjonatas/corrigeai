@@ -13,6 +13,7 @@ import { corretor_type } from '../../../utils/helpers';
 import Seo from '../../../components/layout/Seo';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import Whatsapp from '../../../components/layout/Whatsapp';
 
 export async function getServerSideProps(ctx: any) {
     const session = await getSession(ctx);
@@ -52,18 +53,7 @@ function DashboardCorretor({ redacoesProps, session }: any) {
 
     const getUrl = (redacao: any) => {
 
-        if(redacao.status_correcao == "correcao_dois"){
-            if(session.corretor_type == "turma_um")
-                toast.warning("Redação será corrigida por outra turma!");
-            else
-                router.push(`/painel/corretor/correcao/${redacao.id}`)
-
-        }else{
-            if(session.corretor_type == "turma_dois")
-                toast.warning("Redação será corrigida por outra turma!");
-            else
-                router.push(`/painel/corretor/correcao/${redacao.id}`)
-        }       
+        router.push(`/painel/corretor/correcao/${redacao.id}`)      
     }
 
     return (
@@ -77,13 +67,14 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         <div className="data">Data</div>
                         <div className="tema">Tema</div>
                         <div className="estudante">Estudante</div>
-                        <div className="circle">Segunda Correção</div>
+
+                        {/* <div className="circle">Segunda Correção</div> */}
                     </div>
 
                     <div className="list-item">
                         {redacoes && redacoes?.length <= 0 && <h1 className="msg_nada_encontrado">Nenhuma redação para corrigir.</h1>}
                         {redacoes?.length > 0 && redacoes.map((redacao: any, index: number) => {
-                            console.log("redacao => ", redacao)
+                            // console.log("redacao => ", redacao)
                             // console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
                             // return redacaosPerUser.redacoes.map((redacao: any, index: number) => {
                             const date = Moment(redacao.createdAt);
@@ -94,9 +85,9 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                                         <div className="tema">{redacao.tema.titulo}</div>
                                         <div className="estudante">{redacao.user.email}</div>
 
-                                        <div className="circle">
+                                        {/* <div className="circle">
                                             <span className="ic" style={redacao.status_correcao == "correcao_um" ? { "background": "#c60501" } : { "background": "#72b01e" }}>&nbsp;</span>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </a>)
                             // });
