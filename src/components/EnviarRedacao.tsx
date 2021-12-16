@@ -198,9 +198,7 @@ function EnviarRedacao({session, selected, temasProps, closeModal } : any) {
                   
                   .popRedacao img{
                     object-fit: cover !important;
-                  }
-          
-                  #popup-2{height: 550px; overflow: scroll}`
+                  }`
                 }</style>
                 <style jsx>
         {`

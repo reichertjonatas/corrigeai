@@ -33,6 +33,8 @@ function Painel() {
 
 
     return <PreLoader />
+
+    
 }
 
 export default Painel

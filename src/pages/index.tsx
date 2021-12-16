@@ -236,9 +236,24 @@ function Home({ planos }: any) {
         </div>
       </div>
 
-      <div className="copyright">
-        <div className="container">
-          2021 © Corrige Aí: todos os direitos reservados
+      <div className="footer-copyright">
+        <div className="footer-description">
+          <div>
+            &copy; 2021 <strong>CorrigeAí</strong> - Todos os direitos
+            reservados
+          </div>
+          <div>
+            Desenvolvido por{" "}
+            <a
+              href="https://www.cupcode.com.br"
+              title="Cupcode - Agência de Marketing Digital e Desenvolvimento"
+              className="copy"
+              target="_blank" rel="noreferrer"
+            >
+              <strong>Cupcode</strong> - Marketing e Desenvolvimento
+            </a>
+            .
+          </div>
         </div>
       </div>
 

@@ -308,20 +308,9 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
               modal
               nested
               closeOnDocumentClick={false}
+              className="popUpEnvio"
             >
               <EnviarRedacao session={session} temasProps={temasProps} closeModal={closeModal} />
-            </Popup>
-
-
-            <Popup open={open2} closeOnDocumentClick onClose={closeModal2}>
-              <div className="modal modalPromo">
-                <a className="closeModalPromo" onClick={closeModal2}>
-                  &times;
-                </a>
-                <a href="https://profhenriquearaujo.com.br/combos-promo/" rel="noreferrer" target="_blank" >
-                  <img src="https://api.corrigeai.com/uploads/popup_plataforma_e23182db59.png" className="imagePopup" alt="" />
-                </a>
-              </div>
             </Popup>
           </div>
 
@@ -445,8 +434,6 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
         .popRedacao img{
           object-fit: cover !important;
         }
-
-        #popup-2{height: 550px; overflow: scroll}
 
         .modalPromo{
           text-align: center;

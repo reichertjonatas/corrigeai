@@ -10,7 +10,28 @@
 }
 
 html{
-  font-size: 16px
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #002400 #fff;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 9px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #002400;
+  border-radius: 10px;
+  border: 1px none #ffffff;
 }
 
 :root {
@@ -151,4 +172,105 @@ a:hover{color: #0a9bff;}
   .popup-content{
       width: 80%;
   }
+}
+
+.popUpEnvio-content{
+  height: 80%;
+  overflow-y: scroll;
+}
+
+.footer-copyright{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  background: var(--green);
+  margin: 0;
+  padding: 1rem 0 3rem;
+  color: #fff;
+}
+
+.footer-description{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 3.125rem 0 0
+}
+
+.copy{
+  color: var(--dark);
+}
+
+.copy:active{
+  color: #000 !important;
+}
+
+.copy:hover{
+  color: white;
+  border-bottom: 3px solid white;
+}
+
+.footer-copyright-main{
+  margin-top: 20px;
+  /* width: 100%; */
+  /* background: var(--green); */
+  /* margin: 0; */
+  /* padding: 1rem 0 3rem; */
+}
+
+.footer-description-main{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--dark);
+  font-size: 12px;
+  font-weight: 500;
+  /* margin: 3.125rem 0 0 */
+}
+
+.copy-main{
+  color: var(--dark);
+}
+
+.copy-main:active{
+  color: #000 !important;
+}
+
+.copy-main:hover{
+  color: var(--green);
+  border-bottom: 3px solid var(--green);
+}
+
+.footer-copyright-main-corretor{
+  margin-top: 15px;
+  /* width: 100%; */
+  /* background: var(--green); */
+  /* margin: 0; */
+  /* padding: 1rem 0 3rem; */
+}
+
+.footer-description-main-corretor{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--dark);
+  font-size: 12px;
+  font-weight: 500;
+  /* margin: 3.125rem 0 0 */
+}
+
+.copy-main-corretor{
+  color: var(--dark);
+}
+
+.copy-main-corretor:active{
+  color: #000 !important;
+}
+
+.copy-main-corretor:hover{
+  color: #fff;
+  border-bottom: 3px solid #fff;
 }
