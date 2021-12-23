@@ -364,25 +364,25 @@ function Correcao({ redacaoProps, session }: any) {
 
   if (isLoading) return <PreLoader />;
 
-//   const handlerResetarRedacao = async () => {
-//     debugPrint(
-//       "handlerEnviarCorrecao",
-//       "preenchidos ===> ",
-//       competenciasOffline.length,
-//       " ===> "
-//     );
+  const handlerResetarRedacao = async () => {
+    debugPrint(
+      "handlerEnviarCorrecao",
+      "preenchidos ===> ",
+      competenciasOffline.length,
+      " ===> "
+    );
     
-//     resetCredit();
-//   };
+    resetCredit();
+  };
 
-//   const resetCredit = async () => {
-//     setIsloadingSending(true);
-//     const response = await removerCorrecao(id as string, session);
-//     const responseReset = await removerRedacao(subscription, redacao.id, Token)
-//     console.log(response)
+  const resetCredit = async () => {
+    setIsloadingSending(true);
+    const response = await removerCorrecao(id as string, session);
+    // const responseReset = await removerRedacao(subscription : ISubscription, redacao.id, Token)
+    console.log(response)
 
-//     router.replace("/painel/corretor");
-//   }
+    router.replace("/painel/corretor");
+  }
 
 
 
@@ -555,38 +555,8 @@ function Correcao({ redacaoProps, session }: any) {
                 </div>
                 <div className="redacao">
                   <TransformWrapper initialScale={1}>
-   
-                 {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+                 {() => (
                       <React.Fragment>
-                        <div className="button-tools">
-                          <button
-                            className="button-zoom"
-                            onClick={() => zoomIn()}
-                            style={{
-                              border: "1px solid red",
-                            }}
-                          >
-                            Zoom +
-                          </button>
-                          <button
-                            className="button-zoom"
-                            onClick={() => zoomOut()}
-                            style={{
-                              border: "1px solid red",
-                            }}
-                          >
-                            Zoom -
-                          </button>
-                          <button
-                            className="button-zoom"
-                            onClick={() => resetTransform()}
-                            style={{
-                              border: "1px solid red",
-                            }}
-                          >
-                            Resetar
-                          </button>
-                        </div>
                         <TransformComponent>
                           <Annotation
                             src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
@@ -736,9 +706,9 @@ function Correcao({ redacaoProps, session }: any) {
                   </button>
                 </span>
                 <span className="botao">
-                  {/* <button onClick={handlerResetarRedacao}>
+                  <button onClick={handlerResetarRedacao}>
                     Resetar Redação
-                  </button> */}
+                  </button>
                 </span>
               </span>
             </>
