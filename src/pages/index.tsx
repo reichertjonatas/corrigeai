@@ -12,8 +12,9 @@ import {
 } from '../components/icons'
 import Strapi from 'strapi-sdk-js'
 import { planosQuery } from '../graphql/query';
-import React, { useState } from 'react';
+import React, { useState, useEffect, Component } from "react";
 import Seo from '../components/layout/Seo';
+import List from './List';
 
 export async function getServerSideProps(ctx: any) {
   const strapi = new Strapi({
@@ -29,6 +30,21 @@ export async function getServerSideProps(ctx: any) {
 
 function Home({ planos }: any) {
   const [menuOpened, setMenuOpened] = useState(false)
+
+  const ListLoading = (List);
+  const [appState, setAppState] = useState({
+    planos: null,
+  });
+
+  useEffect(() => {
+    setAppState({planos:null});
+    const apiUrl = `https://api.corrigeai.com/planos`;
+    fetch(apiUrl)
+      .then((res) => res.json())
+      .then((planos) => {
+        setAppState({planos: planos });
+      });
+  }, [setAppState]);
 
   return (
     <>
@@ -204,37 +220,7 @@ function Home({ planos }: any) {
         </div>
       </div>
 
-      <div id="precos">
-        <div className="container">
-          <div className="columns">
-
-            {planos && planos.length > 0 && planos.map((plano: any, index: number) =>
-              <div className="column" key={index}>
-                <span className="periodo">{plano.name}</span>
-                <span className="boxPreco">
-                  <span className="parcelas">{plano.parcelamentoTexto}</span>
-                  <span className="preco">{plano.totalTexto}</span>
-                </span>
-                <div className="lista">
-                  <ul>
-                    {plano.infos.length > 0 && plano.infos.map((info: any, index: number) => (
-                      <li key={index}>
-                        <span className="icon">
-                          <Image src={check} className="img-responsive" alt="" /></span>
-                          {info}
-                      </li>))}
-                  </ul>
-                  <span className="botao">
-                    <Link href={`/checkout/${plano.id}`}>Comprar agora</Link>
-                  </span>
-                </div>
-              </div>
-            )}
-
-
-          </div>
-        </div>
-      </div>
+      <ListLoading planos={appState.planos} />
 
       <div className="footer-copyright">
         <div className="footer-description">
