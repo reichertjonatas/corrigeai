@@ -17,7 +17,7 @@ export default function Whatsapp() {
 
   return (
     <div>
-      {showMenu && (
+      {/* {showMenu && (
         <div className="whatsapp-widget">
           <div className="whatsapp-content">
             <div className="whatsapp-dev">
@@ -32,9 +32,11 @@ export default function Whatsapp() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       <div className="whatsapp" onClick={toggle}>
-        <Image src={IconWhatsapp}></Image>
+        <a href="https://api.whatsapp.com/send?phone=5551990089449" target="_blank" rel="noreferrer">
+          <Image src={IconWhatsapp}></Image>
+        </a>
       </div>
     </div>
   );

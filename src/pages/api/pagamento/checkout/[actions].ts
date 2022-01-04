@@ -221,7 +221,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           return res.status(204).send({});
         } catch (error) {
-          return res.status(500).send({ error: true, errorMessage: error.message });
+          return res.status(500).send({ error: true, errorMessage: error });
         }
       } else {
         return res.send({ error: true, errorMessage: ERROR_NOT_LOGGED })

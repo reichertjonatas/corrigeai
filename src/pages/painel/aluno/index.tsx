@@ -33,6 +33,7 @@ import { useRedacaoStore } from "../../../hooks/redacaoStore";
 import { mediaCorrigeAi, redacaoPerUser } from "../../../graphql/query";
 import EnviarRedacao from "../../../components/EnviarRedacao";
 import Cookies from "universal-cookie";
+import Whatsapp from "../../../components/layout/Whatsapp";
 
 export async function getServerSideProps(ctx: any) {
   const session = await getSession(ctx);
@@ -411,7 +412,6 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
               />
             </Popup>
           </div>
-
           <div className="themes">
             <ul>
               <li>
@@ -425,6 +425,7 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
             </ul>
           </div>
         </div>
+        <Whatsapp></Whatsapp>
       </div>
     </MainLayout>
   );

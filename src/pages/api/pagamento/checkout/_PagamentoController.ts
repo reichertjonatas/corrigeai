@@ -34,7 +34,7 @@ const startAssinatura = async (
         });
         return response;
     } catch (error) {
-        return error.message;
+        return error;
     }
 }
 
@@ -60,7 +60,7 @@ const capturarPagamento = async (
         });
         return response;
     } catch (error) {
-        return error.message;
+        return error;
     }
 }
 
@@ -106,7 +106,7 @@ const createTransaction = async (
         });
         return response;
     } catch (error) {
-        return error.message;
+        return error;
     }
 }
 

@@ -1062,9 +1062,9 @@ ul.react-autosuggest__suggestions-list li:hover {
   height: 70px;
   padding: 10px;
   background-color: #d1d1d1;
-  position: absolute;
-  bottom: -85px;
-  right: 20px;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
