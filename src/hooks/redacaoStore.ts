@@ -67,28 +67,32 @@ const redacaoStore = create < IRedacaoStore > ((set, get) => ({
 
    removerRedacao: async (subscription : ISubscription, id : string, token : string | unknown) => {
     
-    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTYzOTU3NjMzNiwiZXhwIjoxNjQyMTY4MzM2fQ.Obu6Hxht9GFJuAIntp_pfr6O6yqJOVk7DY6z68Es7go";  
+    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTY0MTQ5NDgyOSwiZXhwIjoxNjQ0MDg2ODI5fQ.Tt-VHZfouCchH1Ui_932C6iqIf83NZmyRYf9H4wFlrQ";  
     
-    if (subscription.envios >= 1) {
-         const response: any = await strapi(token).delete("redacaos", id)
+    
+         const response: any = await strapi(token).delete("correcao", id)
+         const nRetorno = subscription.envios + 1;
 
-         if (response) {
-            const nRetorno = subscription.envios + 1;
-            await strapi(token).update("subscriptions", subscription.id, {
-               envios: nRetorno > 0 ? 0 : nRetorno
+         await strapi(token).update("subscriptions", subscription.id, {
+               envios: subscription.envios + 1
             });
 
-            await get().updateRedacoes(id, token);
-            console.log("id", subscription.id, "envios", subscription.envios)
+         // if (response) {
+            
+         //    console.log(nRetorno)
+            
 
-            return {
-               error: false,
-               data: {
-                  message: 'Redação Resetada',
-                  redacaoId: response.id
-               }
-            }
-         }
+         //    await get().updateRedacoes(id, token);
+         //    console.log("id", subscription.id, "envios", subscription.envios)
+
+         //    return {
+         //       error: false,
+         //       data: {
+         //          message: 'Redação Resetada',
+         //          redacaoId: response.id
+         //       }
+         //    }
+         // }
 
          return {
             error: true,
@@ -96,13 +100,6 @@ const redacaoStore = create < IRedacaoStore > ((set, get) => ({
                message: 'Error ao resetar redação!'
             }
          }
-      }
-      return {
-         error: true,
-         data: {
-            message: 'Não deu certo'
-         }
-      };
    }
 }))
 

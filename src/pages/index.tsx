@@ -21,7 +21,8 @@ export async function getServerSideProps(ctx: any) {
   const strapi = new Strapi({
     url: `${process.env.NEXT_PUBLIC_URL_API}`,
   });
-  const planos = await strapi.request("get", "/planos");
+  const planos = await strapi.graphql({ query: planosQuery });
+
   return {
     props: {
       planos,
@@ -29,25 +30,24 @@ export async function getServerSideProps(ctx: any) {
   };
 }
 
-
 function Home({ planos }: any) {
   const [menuOpened, setMenuOpened] = useState(false);
 
-  // const ListLoading = (List);
-  // const [appState, setAppState] = useState({
-  //   planos: null,
-  // });
+  const ListLoading = (List);
+  const [appState, setAppState] = useState({
+    planos: null,
+  });
 
-  // useEffect(() => {
-  //   setAppState({planos:null});
-  //   const apiUrl = `https://api.corrigeai.com/planos`;
-  //   fetch(apiUrl)
-  //     .then((res) => res.json())
-  //     .then((planos) => {
-  //       setAppState({planos: planos });
-  //     });
-  // }, [setAppState]);
-
+  useEffect(() => {
+    setAppState({planos:null});
+    const apiUrl = `https://api.corrigeai.com/planos`;
+    fetch(apiUrl)
+      .then((res) => res.json())
+      .then((planos) => {
+        setAppState({planos: planos });
+      });
+  }, [setAppState]);
+  
   return (
     <>
       <Seo />
@@ -297,44 +297,7 @@ function Home({ planos }: any) {
         </div>
       </div>
 
-      {/* <ListLoading planos={appState.planos} /> */}
-      <div id="precos">
-        <div className="container">
-          <div className="columns">
-            {planos &&
-              planos.length > 0 &&
-              planos.map((plano: any, index: number) => (
-                <div className="column" key={index}>
-                  <span className="periodo">{plano.name}</span>
-                  <span className="boxPreco">
-                    <span className="parcelas">{plano.parcelamentoTexto}</span>
-                    <span className="preco">{plano.totalTexto}</span>
-                  </span>
-                  <div className="lista">
-                    <ul>
-                      {plano.infos.length > 0 &&
-                        plano.infos.map((info: any, index: number) => (
-                          <li key={index}>
-                            <span className="icon">
-                              <Image
-                                src={check}
-                                className="img-responsive"
-                                alt=""
-                              />
-                            </span>
-                            {info}
-                          </li>
-                        ))}
-                    </ul>
-                    <span className="botao">
-                      <Link href={`/checkout/${plano.id}`}>Comprar agora</Link>
-                    </span>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
-      </div>
+      <ListLoading planos={appState.planos} />
 
       <div className="footer-copyright">
         <div className="footer-description">
@@ -348,8 +311,7 @@ function Home({ planos }: any) {
               href="https://www.cupcode.com.br"
               title="Cupcode - Agência de Marketing Digital e Desenvolvimento"
               className="copy"
-              target="_blank"
-              rel="noreferrer"
+              target="_blank" rel="noreferrer"
             >
               <strong>Cupcode</strong> - Marketing e Desenvolvimento
             </a>

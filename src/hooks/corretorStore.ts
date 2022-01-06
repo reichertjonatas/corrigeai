@@ -272,11 +272,11 @@ const corretorStore = create < {
                : any | undefined | unknown) => {
                   try {
 
-                     session = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTYzOTU3NjMzNiwiZXhwIjoxNjQyMTY4MzM2fQ.Obu6Hxht9GFJuAIntp_pfr6O6yqJOVk7DY6z68Es7go"
+                     session = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTY0MTQ5NDgyOSwiZXhwIjoxNjQ0MDg2ODI5fQ.Tt-VHZfouCchH1Ui_932C6iqIf83NZmyRYf9H4wFlrQ"
 
                      console.log("idRedacao", idRedacao)
 
-                     // const novaCorrecao: any = await strapi(session).delete('redacaos', idRedacao);
+                     const novaCorrecao: any = await strapi(session).delete('redacaos', idRedacao);
                      // // console.log("novaCorrecao", novaCorrecao)
                      // if (! novaCorrecao ?. id) 
                      //    throw new Error("Erro ao salvar correção.")

@@ -370,6 +370,7 @@ a:hover {
 }
 
 .footer-copyright-main{
+  position: absolute;
   margin-top: 20px;
   /* width: 100%; */
   /* background: var(--green); */
@@ -396,8 +397,8 @@ a:hover {
 }
 
 .copy-main:hover{
-  color: var(--green);
-  border-bottom: 3px solid var(--green);
+  color: var(--white);
+  border-bottom: 3px solid var(--white);
 }
 
 .footer-copyright-main-corretor{

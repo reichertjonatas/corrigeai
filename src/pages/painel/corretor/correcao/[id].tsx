@@ -38,7 +38,7 @@ import Popup from "reactjs-popup";
 import RowObsEnem from "../../../../components/editor/RowObsEnem";
 import Seo from "../../../../components/layout/Seo";
 import { Token } from "graphql";
-import {ISubscription} from "../../../../hooks/subscriptionStore";
+import {useSubscriptionStore} from "../../../../hooks/subscriptionStore";
 
 export async function getServerSideProps(ctx: any) {
   const session = await getSession(ctx);
@@ -68,6 +68,14 @@ function Correcao({ redacaoProps, session }: any) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingDiscrepancia, setIsloadingDiscrepancia] = useState(false);
   const [isLoadingSending, setIsloadingSending] = useState(false);
+
+  const subscription = useSubscriptionStore((state) => state.subscription);
+  const setSubscription = useSubscriptionStore(
+    (state) => state.setSubscription
+  );
+  const updateSubscription = useSubscriptionStore(
+    (state) => state.updateSubscription
+  );
 
   const [currentDiscrepancia, setCurrentDiscrepancia] = useState("");
 
@@ -376,9 +384,15 @@ function Correcao({ redacaoProps, session }: any) {
   };
 
   const resetCredit = async () => {
+    const Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTY0MTQ5MjAxMywiZXhwIjoxNjQ0MDg0MDEzfQ.64JhpsG203p_tA2Dt8RQFy9ZakWXTzplyTGKu6gqyYM"
     setIsloadingSending(true);
     const response = await removerCorrecao(id as string, session);
-    // const responseReset = await removerRedacao(subscription : ISubscription, redacao.id, Token)
+    const sucess = await removerRedacao(
+        subscription!,
+        redacao.id,
+        Token
+    )
+    
     console.log(response)
 
     router.replace("/painel/corretor");
