@@ -47,6 +47,7 @@ function DashboardCorretor({ redacoesProps, session }: any) {
   const setNullRedacoes = useCorretorStore((state) => state.setNullRedacoes);
   const router = useRouter();
 
+  const notify = () => toast.error("Você já corrigiu essa redação!");
   React.useEffect(() => {
     console.log("==> ", session);
     setRedacoes(redacoesProps);
@@ -80,24 +81,77 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             )}
             {redacoes?.length > 0 &&
               redacoes.map((redacao: any, index: number) => {
-                // console.log("redacao => ", redacao)
-                // console.log('redacaosPerUser.redacoes', redacaosPerUser.redacoes);
-                // return redacaosPerUser.redacoes.map((redacao: any, index: number) => {
-                const date = Moment(redacao.createdAt);
-                return (
-                  <a onClick={() => getUrl(redacao)} key={index}>
-                    <div className="item" style={{ cursor: "pointer" }}>
-                      <div className="data">{`${date.format("DD/MM")}`}</div>
-                      <div className="tema">{redacao.tema.titulo}</div>
-                      <div className="estudante">{redacao.user.email}</div>
-
-                      {/* <div className="circle">
-                                            <span className="ic" style={redacao.status_correcao == "correcao_um" ? { "background": "#c60501" } : { "background": "#72b01e" }}>&nbsp;</span>
-                                        </div> */}
-                    </div>
-                  </a>
+                // console.log("redacao => ", redacao.correcaos)
+                const corrigida: any = [];
+                const corretorRedacaoGetID = redacao.correcaos;
+                const idCorretorCorrigida = corretorRedacaoGetID.forEach(
+                  (element: any) => {
+                    corrigida.push(element.corretor.id);
+                  }
                 );
-                // });
+                const getOrNotify = (redacao: any) => {
+                  if (corrigida == session.id) {
+                    notify();
+                  }
+                };
+                const date = Moment(redacao.createdAt);
+                if (corrigida == session.id) {
+                  return (
+                    <a onClick={() => getOrNotify(redacao)} key={index}>
+                      <div
+                        className="item-finished"
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="line-finished"></div>
+                        <div className="data-finished">{`${date.format(
+                          "DD/MM"
+                        )}`}</div>
+                        <div className="tema-finished">
+                          {redacao.tema.titulo}
+                        </div>
+                        <div className="estudante-finished">
+                          {redacao.user.email}
+                        </div>
+
+                        <div className="circle">
+                          <span
+                            className="ic"
+                            style={
+                              redacao.status_correcao == "correcao_um"
+                                ? { background: "#c60501" }
+                                : { background: "#72b01e" }
+                            }
+                          >
+                            &nbsp;
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                } else {
+                  return (
+                    <a onClick={() => getUrl(redacao)} key={index}>
+                      <div className="item" style={{ cursor: "pointer" }}>
+                        <div className="data">{`${date.format("DD/MM")}`}</div>
+                        <div className="tema">{redacao.tema.titulo}</div>
+                        <div className="estudante">{redacao.user.email}</div>
+
+                        <div className="circle">
+                          <span
+                            className="ic"
+                            style={
+                              redacao.status_correcao == "correcao_um"
+                                ? { background: "#c60501" }
+                                : { background: "#72b01e" }
+                            }
+                          >
+                            &nbsp;
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                }
               })}
           </div>
         </div>
@@ -209,6 +263,70 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             height: 1.375rem;
             border-radius: 50%;
             border: none;
+          }
+
+          .redacoes-box .content .list-item .item-finished {
+            display: flex;
+            width: 100%;
+            gap: 1rem;
+            margin: 0 0 1rem;
+          }
+          .redacoes-box .content .list-item .item-finished .data-finished {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--dark);
+            background: #e74c3c;
+            min-height: 2.4375rem;
+            border-radius: 0.9rem;
+          }
+          .redacoes-box .content .list-item .item-finished .tema-finished {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 7;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--dark);
+            background: #e74c3c;
+            min-height: 2.4375rem;
+            border-radius: 0.9rem;
+          }
+          .redacoes-box .content .list-item .item-finished .estudante-finished {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 2;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--dark);
+            background: #e74c3c;
+            min-height: 2.4375rem;
+            border-radius: 0.9rem;
+          }
+          .redacoes-box .content .list-item .item-finished .circle {
+            display: flex;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+          }
+          .redacoes-box .content .list-item .item-finished .circle .ic {
+            display: block;
+            width: 1.375rem;
+            height: 1.375rem;
+            border-radius: 50%;
+            border: none;
+          }
+
+          .line-finished {
+            position: absolute;
+            width: 88.4%;
+            height: 2px;
+            background-color: black;
+            margin-top: 15px;
           }
 
           @media (max-width: 400px) {

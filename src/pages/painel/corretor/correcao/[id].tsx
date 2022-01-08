@@ -569,8 +569,6 @@ function Correcao({ redacaoProps, session }: any) {
                 </div>
                 <div className="redacao">
                   <TransformWrapper initialScale={1}>
-                 {() => (
-                      <React.Fragment>
                         <TransformComponent>
                           <Annotation
                             src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
@@ -588,8 +586,6 @@ function Correcao({ redacaoProps, session }: any) {
                             className="img-responsive"
                           />
                         </TransformComponent>
-                      </React.Fragment>
-                    )}
                   </TransformWrapper>
                 </div>
               </>
