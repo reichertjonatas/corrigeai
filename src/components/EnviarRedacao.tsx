@@ -192,6 +192,7 @@ function EnviarRedacao({ session, selected, temasProps, closeModal }: any) {
                   <textarea
                     onChange={(e) => setAlunoObs(e.target.value)}
                     placeholder="Digite Aqui!"
+                    maxLength={200}
                   />
                 </span>
                 <br />

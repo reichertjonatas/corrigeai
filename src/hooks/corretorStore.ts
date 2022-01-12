@@ -1,4 +1,4 @@
-import { Token } from 'graphql';
+import {Token} from 'graphql';
 import create from "zustand";
 import {ICompetencias, ICorrecoes, IObsEnem, IRedacoes} from "../models/User";
 import {API} from "../services/api";
@@ -172,8 +172,6 @@ const corretorStore = create < {
                   //     }
                   // }
                   try {
-
-
                      console.log("idRedacao", idRedacao)
 
                      const novaCorrecao: any = await strapi((session as any).jwt).create('correcaos', {
@@ -185,18 +183,14 @@ const corretorStore = create < {
                      if (! novaCorrecao ?. id) 
                         throw new Error("Erro ao salvar correção.")
 
-
                      
-
 
                      const redacao: any = await strapi((session as any).jwt).findOne('redacaos', idRedacao)
                      // console.log("redacao ====> above", redacao)
                      if (! redacao ?. id) 
                         throw new Error("A redação não foi encontrada no sistema para salvar a correção.")
 
-
                      
-
 
                      // console.log("redacao ====> before ", redacao)
 
@@ -271,73 +265,37 @@ const corretorStore = create < {
                : string, session
                : any | undefined | unknown) => {
                   try {
-
-                     session = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTY0MTQ5NDgyOSwiZXhwIjoxNjQ0MDg2ODI5fQ.Tt-VHZfouCchH1Ui_932C6iqIf83NZmyRYf9H4wFlrQ"
-
                      console.log("idRedacao", idRedacao)
+                     const redacao: any = await strapi((session as any).jwt).findOne('redacaos', idRedacao)
+                     const correcoes: any[] = redacao.correcaos;
+                     let novoStatus
 
-                     const novaCorrecao: any = await strapi(session).delete('redacaos', idRedacao);
-                     // // console.log("novaCorrecao", novaCorrecao)
-                     // if (! novaCorrecao ?. id) 
-                     //    throw new Error("Erro ao salvar correção.")
+                     if (redacao.status_correcao) {
+                        switch (redacao.status_correcao) {
+                           case "redacao_simples": novoStatus = "rejeitada"
+                              break;
 
-                     // console.log("redacao ====> before ", redacao)
+                           case "correcao_um": novoStatus = "rejeitada"
+                              break;
 
-                     // const correcoes: any[] = redacao.correcaos;
-                     // // console.log("salvarCorrecao: ===> ", correcoes)
-                     // correcoes.push(novaCorrecao.id);
-                     // // console.log("salvarCorrecao: ===> ", correcoes)
+                           case "correcao_dois": novoStatus = "rejeitada"
+                              break;
+                        }
+                     }
+                     
+                     console.log(novoStatus)
 
-                     // let novoStatus
-                     // const oldStatus = redacao.status_correcao;
-                     // if (redacao.status_correcao) {
-                     //    switch (redacao.status_correcao) {
-                     //       case "redacao_simples": novoStatus = "finalizada"
-                     //          break;
+                     const updated: any = await strapi((session as any).jwt).update('redacaos', idRedacao, {
+                        status_correcao: novoStatus,
+                        correcaos: correcoes
+                     })
 
-                     //       case "correcao_um": novoStatus = "correcao_dois"
-                     //          break;
+                     if (! updated ?. id) 
+                        throw new Error("Redação não foi rejeitada!")
 
-                     //       case "correcao_dois":
-                     //          var discrepancia = false
+                     get().updateRedacoes((session as any).role.type, (session as any).jwt);
 
-                     //          // console.log("aqui vai calc discrepancia");
-
-                     //          novoStatus = discrepancia ? "discrepancia" : "finalizada"
-                     //          break;
-                     //    }
-                     // }
-                     // // console.log("before switch")
-
-                     // const updated: any = await strapi((session as any).jwt).update('redacaos', idRedacao, {
-                     //    status_correcao: novoStatus,
-                     //    correcaos: correcoes
-                     // })
-
-                     // if (novoStatus == "finalizada") {
-                     //    const redacaoFinalStatus = await strapi((session as any).jwt).findOne('redacaos', redacao.id);
-                     //    await strapi((session as any).jwt).update('redacaos', redacao.id, {nota_final: notaTotalRedacao(redacaoFinalStatus)})
-
-                     //    if (oldStatus == 'correcao_dois') {
-                     //       const discrepante = checkDiscrepancia(redacaoFinalStatus, 100);
-                     //       if (discrepante) {
-                     //          await strapi((session as any).jwt).update('redacaos', idRedacao, {
-                     //             status_correcao: 'discrepancia',
-                     //             correcaos: correcoes
-                     //          })
-
-                     //          const redacaoFinalStatus = await strapi((session as any).jwt).findOne('redacaos', redacao.id);
-                     //          await strapi((session as any).jwt).update('redacaos', redacao.id, {nota_final: notaTotalRedacao(redacaoFinalStatus)})
-                     //       }
-                     //    }
-                     // }
-
-                     // if (!updated ?. id) 
-                     //    throw new Error("Correção não foi salva!")
-
-                     // get().updateRedacoes((session as any).role.type, (session as any).jwt);
-
-                     return {error: false, message: "Redação deletada com sucesso!"}
+                     return {error: false, message: "Redação rejeitada com sucesso!"}
 
                   } catch (error) { // @ts-ignore
                      return {error: true, message: error.message}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import Image from 'next/image'
 import { LogoLogin } from '../../components/icons'
 import { useRouter } from 'next/router';
@@ -7,6 +7,19 @@ import Seo from '../../components/layout/Seo';
 
 function AguardandoPagamento() {
     const router = useRouter();
+    useEffect(() => {
+        import('react-facebook-pixel')
+          .then((x) => x.default)
+          .then((ReactPixel) => {
+            ReactPixel.init('389741909374975') // facebookPixelId
+            ReactPixel.pageView()
+            ReactPixel.track('Purchase')
+    
+            router.events.on('routeChangeComplete', () => {
+              ReactPixel.pageView()
+            })
+          })
+      }, [router.events])
 
     const { boletoUrl } = router.query;
 

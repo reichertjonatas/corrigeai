@@ -14,8 +14,10 @@ import {
 import shallow from "zustand/shallow";
 
 // @ts-ignore
-import {PointSelector,RectangleSelector,} from "react-image-annotation/lib/selectors";
-
+import {
+  PointSelector,
+  RectangleSelector,
+} from "react-image-annotation/lib/selectors";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 // @ts-ignore
@@ -38,7 +40,7 @@ import Popup from "reactjs-popup";
 import RowObsEnem from "../../../../components/editor/RowObsEnem";
 import Seo from "../../../../components/layout/Seo";
 import { Token } from "graphql";
-import {useSubscriptionStore} from "../../../../hooks/subscriptionStore";
+import { useSubscriptionStore } from "../../../../hooks/subscriptionStore";
 
 export async function getServerSideProps(ctx: any) {
   const session = await getSession(ctx);
@@ -213,6 +215,18 @@ function Correcao({ redacaoProps, session }: any) {
     }
   }, [editorType]);
 
+  const [rotate, setRotatePlus] = useState(0);
+
+  let rotateNumber = rotate;
+
+  if (rotateNumber < 0) {
+    const rotation = `rotate(-${rotateNumber}deg),
+      overflowX: scroll,  
+    `;
+  }
+
+  const rotation = `rotate(${rotateNumber}deg)`;
+
   if (!redacao) return <h1></h1>;
 
   function renderPopUp({ annotation }: any) {
@@ -329,8 +343,6 @@ function Correcao({ redacaoProps, session }: any) {
     }
   };
 
-  
-
   const checkErrorValidations = () => {
     var errorMessage: string[] = [];
 
@@ -379,26 +391,21 @@ function Correcao({ redacaoProps, session }: any) {
       competenciasOffline.length,
       " ===> "
     );
-    
+
+    // const response = await removerCorrecao(id as string, session);
     resetCredit();
+    // router.replace("/painel/corretor");
   };
 
   const resetCredit = async () => {
-    const Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTY0MTQ5MjAxMywiZXhwIjoxNjQ0MDg0MDEzfQ.64JhpsG203p_tA2Dt8RQFy9ZakWXTzplyTGKu6gqyYM"
+    const Token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTY0MTQ5MjAxMywiZXhwIjoxNjQ0MDg0MDEzfQ.64JhpsG203p_tA2Dt8RQFy9ZakWXTzplyTGKu6gqyYM";
     setIsloadingSending(true);
-    const response = await removerCorrecao(id as string, session);
-    const sucess = await removerRedacao(
-        subscription!,
-        redacao.id,
-        Token
-    )
-    
-    console.log(response)
-
-    router.replace("/painel/corretor");
-  }
-
-
+    // const sucess = await removerRedacao(subscription!, redacao.id, Token);
+    // console.log(response);
+    console.log(subscription)
+    // router.replace("/painel/corretor");
+  };
 
   return (
     <MainLayout menuType={2} role="corretor">
@@ -567,32 +574,61 @@ function Correcao({ redacaoProps, session }: any) {
                     <span className="text">Destacar texto</span>
                   </span>
                 </div>
+                <div className="tasks">
+                  <span
+                    onClick={() => setRotatePlus(rotate + 45)}
+                    className={editorType == 3 ? `task` : "task"}
+                    style={{
+                      border:
+                        editorType == 3
+                          ? `2px solid ${getColorActivite(competencia)}`
+                          : "none",
+                    }}
+                  >
+                    <span className="text">Rotacionar para direita</span>
+                  </span>
+                  <span
+                    onClick={() => setRotatePlus(rotate - 45)}
+                    className={editorType == 3 ? `task` : "task"}
+                    style={{
+                      border:
+                        editorType == 3
+                          ? `2px solid ${getColorActivite(competencia)}`
+                          : "none",
+                    }}
+                  >
+                    <span className="text">Rotacionar para esquerda</span>
+                  </span>
+                </div>
                 <div className="redacao">
                   <TransformWrapper initialScale={1}>
-                        <TransformComponent>
-                          <Annotation
-                            src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
-                            alt=""
-                            annotations={annotations}
-                            renderOverlay={RenderOverlay}
-                            renderContent={renderPopUp}
-                            renderHighlight={RenderHighlight}
-                            renderSelector={RenderSelector}
-                            renderEditor={RenderEditor}
-                            type={type}
-                            value={annotation}
-                            onChange={onChange}
-                            onSubmit={onSubmit}
-                            className="img-responsive"
-                          />
-                        </TransformComponent>
+                    <TransformComponent>
+                      <Annotation
+                        src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
+                        alt=""
+                        annotations={annotations}
+                        renderOverlay={RenderOverlay}
+                        renderContent={renderPopUp}
+                        renderHighlight={RenderHighlight}
+                        renderSelector={RenderSelector}
+                        renderEditor={RenderEditor}
+                        type={type}
+                        value={annotation}
+                        onChange={onChange}
+                        onSubmit={onSubmit}
+                        className="img-responsive"
+                        style={{
+                          overflow: scroll,
+                          transform: `${rotation}`,
+                        }}
+                      />
+                    </TransformComponent>
                   </TransformWrapper>
                 </div>
               </>
             )}
           </div>
         </div>
-
         <div className="notas">
           {isLoadingSending && <PreLoader />}
           {!isLoadingSending && (
@@ -717,7 +753,7 @@ function Correcao({ redacaoProps, session }: any) {
                 </span>
                 <span className="botao">
                   <button onClick={handlerResetarRedacao}>
-                    Resetar Redação
+                    Rejeitar Redação
                   </button>
                 </span>
               </span>
@@ -1039,4 +1075,3 @@ function Correcao({ redacaoProps, session }: any) {
 }
 
 export default Correcao;
-

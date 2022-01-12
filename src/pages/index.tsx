@@ -774,14 +774,15 @@ function Home({ planos }: any) {
             max-width: 85%;
           }
           #precos .columns {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 3rem;
+            display: 'flex',
+            justify-content: space-around;
           }
           .column {
             background: #f2f2f2;
             border-radius: 2rem;
             padding: 2rem;
+            margin-left: 10px;
+            margin-right: 10px;
           }
           .column .periodo {
             display: block;
@@ -805,7 +806,7 @@ function Home({ planos }: any) {
             font-size: 1.2rem;
           }
           .column .boxPreco .preco {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
           }
           .column .lista {
@@ -831,6 +832,14 @@ function Home({ planos }: any) {
           .column .botao a {
             background: var(--dark);
             color: var(--white);
+            padding: 1rem 1.3rem;
+            border-radius: 1.5rem;
+          }
+
+          .column .botao a:hover {
+            background: var(--white);
+            color: var(--dark);
+            border: 4px solid var(--dark);
             padding: 1rem 1.3rem;
             border-radius: 1.5rem;
           }

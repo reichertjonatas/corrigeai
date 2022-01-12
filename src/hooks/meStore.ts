@@ -20,6 +20,7 @@ const meStore = create<IMeInterface>((set, get) => ({
     user: null,
 
     setMe: async (token: string | undefined | unknown) => {
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTY0MTg0MDI3MCwiZXhwIjoxNjQ0NDMyMjcwfQ.drmLCQSXN4BaGg0B250MfdzwCOAxWnrDqLHDoVaeIDI"
         const response = await strapi(token).find('users/me');
         const user: any = response as any;
         if (user) {

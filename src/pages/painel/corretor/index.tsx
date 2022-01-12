@@ -49,7 +49,7 @@ function DashboardCorretor({ redacoesProps, session }: any) {
 
   const notify = () => toast.error("Você já corrigiu essa redação!");
   React.useEffect(() => {
-    console.log("==> ", session);
+    // console.log("==> ", session);
     setRedacoes(redacoesProps);
     return () => setNullRedacoes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,8 +69,7 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             <div className="data">Data</div>
             <div className="tema">Tema</div>
             <div className="estudante">Estudante</div>
-
-            {/* <div className="circle">Segunda Correção</div> */}
+            <div className="circle">Status</div>
           </div>
 
           <div className="list-item">
@@ -102,7 +101,6 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         className="item-finished"
                         style={{ cursor: "pointer" }}
                       >
-                        <div className="line-finished"></div>
                         <div className="data-finished">{`${date.format(
                           "DD/MM"
                         )}`}</div>
@@ -114,16 +112,28 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         </div>
 
                         <div className="circle">
-                          <span
-                            className="ic"
-                            style={
-                              redacao.status_correcao == "correcao_um"
-                                ? { background: "#c60501" }
-                                : { background: "#72b01e" }
-                            }
-                          >
-                            &nbsp;
-                          </span>
+                          <div className="dual_bals">
+                            <span
+                              className="ic"
+                              style={
+                                redacao.status_correcao == "correcao_um"
+                                  ? { background: "#DEC90D" }
+                                  : { background: "#72b01e" }
+                              }
+                            >
+                              &nbsp;
+                            </span>
+                            <span
+                              className="ic"
+                              style={
+                                redacao.status_correcao == "correcao_dois"
+                                  ? { background: "#DEC90D" }
+                                  : { background: "#72b01e" }
+                              }
+                            >
+                              &nbsp;
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </a>
@@ -137,16 +147,28 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         <div className="estudante">{redacao.user.email}</div>
 
                         <div className="circle">
-                          <span
-                            className="ic"
-                            style={
-                              redacao.status_correcao == "correcao_um"
-                                ? { background: "#c60501" }
-                                : { background: "#72b01e" }
-                            }
-                          >
-                            &nbsp;
-                          </span>
+                          <div className="dual_bals">
+                            <span
+                              className="ic"
+                              style={
+                                redacao.status_correcao == "correcao_um"
+                                  ? { background: "#DEC90D" }
+                                  : { background: "#72b01e" }
+                              }
+                            >
+                              &nbsp;
+                            </span>
+                            <span
+                              className="ic"
+                              style={
+                                redacao.status_correcao == "correcao_um"
+                                  ? { background: "#DEC90D" }
+                                  : { background: "#72b01e" }
+                              }
+                            >
+                              &nbsp;
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </a>
@@ -154,6 +176,12 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                 }
               })}
           </div>
+        </div>
+        <div className="caption">
+          <span className="ic-yellow">&nbsp;</span>
+          <h1>Esperando</h1>
+          <span className="ic-green">&nbsp;</span> <h1>Corrigida</h1>
+          <span className="ic-red">&nbsp;</span> <h1>Rejeitada</h1>
         </div>
         <Whatsapp></Whatsapp>
       </div>
@@ -202,13 +230,6 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             justify-content: center;
             flex: 2;
           }
-          .redacoes-box .content .head .circle {
-            display: flex;
-            justify-content: center;
-            flex: 1;
-            text-align: center;
-          }
-
           .redacoes-box .content .list-item .item {
             display: flex;
             width: 100%;
@@ -257,14 +278,6 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             justify-content: center;
             align-items: center;
           }
-          .redacoes-box .content .list-item .item .circle .ic {
-            display: block;
-            width: 1.375rem;
-            height: 1.375rem;
-            border-radius: 50%;
-            border: none;
-          }
-
           .redacoes-box .content .list-item .item-finished {
             display: flex;
             width: 100%;
@@ -278,8 +291,8 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             flex: 1;
             font-size: 1.125rem;
             font-weight: 500;
-            color: var(--dark);
-            background: #e74c3c;
+            color: white;
+            background: var(--green);
             min-height: 2.4375rem;
             border-radius: 0.9rem;
           }
@@ -290,8 +303,8 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             flex: 7;
             font-size: 1.125rem;
             font-weight: 500;
-            color: var(--dark);
-            background: #e74c3c;
+            color: white;
+            background: var(--green);
             min-height: 2.4375rem;
             border-radius: 0.9rem;
           }
@@ -302,25 +315,11 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             flex: 2;
             font-size: 1.125rem;
             font-weight: 500;
-            color: var(--dark);
-            background: #e74c3c;
+            color: white;
+            background: var(--green);
             min-height: 2.4375rem;
             border-radius: 0.9rem;
           }
-          .redacoes-box .content .list-item .item-finished .circle {
-            display: flex;
-            flex: 1;
-            justify-content: center;
-            align-items: center;
-          }
-          .redacoes-box .content .list-item .item-finished .circle .ic {
-            display: block;
-            width: 1.375rem;
-            height: 1.375rem;
-            border-radius: 50%;
-            border: none;
-          }
-
           .line-finished {
             position: absolute;
             width: 88.4%;
