@@ -57,7 +57,7 @@ const corretorStore = create < {
    setObs: (obs : string, index : number) => void,
 
    salvarCorrecao: (idRedacao : string, session : any | undefined | unknown) => Promise<{ error: boolean, message: string}>,
-   removerCorrecao: (idRedacao : string, session : any | undefined | unknown) => Promise<{ error: boolean, message: string}>,
+   removerCorrecao: (idRedacao : string, session : any | undefined | unknown, message:any) => Promise<{ error: boolean, message: string}>,
 
    setCorrecaoNull: () => void,
 
@@ -183,14 +183,18 @@ const corretorStore = create < {
                      if (! novaCorrecao ?. id) 
                         throw new Error("Erro ao salvar correção.")
 
+
                      
+
 
                      const redacao: any = await strapi((session as any).jwt).findOne('redacaos', idRedacao)
                      // console.log("redacao ====> above", redacao)
                      if (! redacao ?. id) 
                         throw new Error("A redação não foi encontrada no sistema para salvar a correção.")
 
+
                      
+
 
                      // console.log("redacao ====> before ", redacao)
 
@@ -261,10 +265,20 @@ const corretorStore = create < {
                   // return { error: true, message: 'Erro ao salvar sua correção!'}
                },
 
+
                removerCorrecao: async (idRedacao
                : string, session
-               : any | undefined | unknown) => {
+               : any | undefined | unknown, message) => {
                   try {
+                     // const novaCorrecao: any = await strapi((session as any).jwt).create('correcaos', {
+                     //    msg_rejeicao: message,
+                     //    corretor: (session as any).id
+                     // });
+
+                     // const updated: any = await strapi((session as any).jwt).update('redacaos', id, {
+                     //
+                     // })
+
                      console.log("idRedacao", idRedacao)
                      const redacao: any = await strapi((session as any).jwt).findOne('redacaos', idRedacao)
                      const correcoes: any[] = redacao.correcaos;
@@ -282,12 +296,13 @@ const corretorStore = create < {
                               break;
                         }
                      }
-                     
+
                      console.log(novoStatus)
 
                      const updated: any = await strapi((session as any).jwt).update('redacaos', idRedacao, {
                         status_correcao: novoStatus,
-                        correcaos: correcoes
+                        correcaos: correcoes,
+                        msg_rejeicao: message
                      })
 
                      if (! updated ?. id) 

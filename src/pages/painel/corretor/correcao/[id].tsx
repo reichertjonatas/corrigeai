@@ -130,6 +130,7 @@ function Correcao({ redacaoProps, session }: any) {
   );
 
   const removerRedacao = useRedacaoStore((state) => state.removerRedacao);
+  const [messageRejection, setMessageRejection] = useState("");
 
   React.useEffect(() => {
     setRedacao(redacaoProps);
@@ -385,26 +386,21 @@ function Correcao({ redacaoProps, session }: any) {
   if (isLoading) return <PreLoader />;
 
   const handlerResetarRedacao = async () => {
-    debugPrint(
-      "handlerEnviarCorrecao",
-      "preenchidos ===> ",
-      competenciasOffline.length,
-      " ===> "
-    );
-
-    // const response = await removerCorrecao(id as string, session);
     resetCredit();
-    // router.replace("/painel/corretor");
   };
 
   const resetCredit = async () => {
     const Token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWY5ZjcxMjE3ZWNiMWI2MGUyNmRmNSIsImlhdCI6MTY0MTQ5MjAxMywiZXhwIjoxNjQ0MDg0MDEzfQ.64JhpsG203p_tA2Dt8RQFy9ZakWXTzplyTGKu6gqyYM";
     setIsloadingSending(true);
-    // const sucess = await removerRedacao(subscription!, redacao.id, Token);
-    // console.log(response);
-    console.log(subscription)
-    // router.replace("/painel/corretor");
+    const response = await removerCorrecao(
+      id as string,
+      session,
+      messageRejection
+    );
+    const sucess = await removerRedacao(subscription!, redacao.id, Token);
+    console.log(redacao);
+    router.replace("/painel/corretor");
   };
 
   return (
@@ -751,6 +747,21 @@ function Correcao({ redacaoProps, session }: any) {
                     Enviar correção
                   </button>
                 </span>
+                {
+                  <textarea
+                    className="messageRejection"
+                    maxLength={200}
+                    onChange={(e) => {
+                      setMessageRejection(e.target.value);
+                    }}
+                    rows={5}
+                    style={{
+                      width: "100%",
+                      marginTop: "12px",
+                      borderRadius: "0.5rem",
+                    }}
+                  ></textarea>
+                }
                 <span className="botao">
                   <button onClick={handlerResetarRedacao}>
                     Rejeitar Redação

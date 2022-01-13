@@ -2,6 +2,8 @@ import {Subscription} from "react-hook-form/dist/utils/Subject";
 import create from "zustand";
 import {redacaoById, redacaoPerUser} from "../graphql/query";
 import {IRedacoes} from "../models/User";
+import { userSubscription } from "../pages/api/painel/_helpers";
+import Redacao from "../pages/painel/aluno/seus-envios/redacao/[id]";
 import {API} from "../services/api";
 import {strapi} from "../services/strapi";
 import {ISubscription} from "./subscriptionStore";
@@ -66,13 +68,20 @@ const redacaoStore = create < IRedacaoStore > ((set, get) => ({
    },
 
    removerRedacao: async (subscription : ISubscription, id : string, token : string | unknown) => {
-      console.log(subscription)
+      const idRedacaoGet:any = await strapi(token).findOne('redacaos', id)
+      const idClient = idRedacaoGet.user.id;
+      const clientSubcriptionId = idRedacaoGet.user.subscription
 
-      // const nRetorno = subscription.envios + 1;
+      const subscriptionGet:any = await strapi(token).findOne('subscriptions', clientSubcriptionId)
 
-      // await strapi(token).update("subscriptions", subscription.id, {
-      //    envios: subscription.envios + 1
-      // });
+      console.log(idRedacaoGet)
+      console.log(subscriptionGet)
+      
+      const nRetorno = subscriptionGet.envios + 1;
+
+      await strapi(token).update("subscriptions", clientSubcriptionId, {
+         envios: nRetorno
+      });
 
       return {
          error: false,

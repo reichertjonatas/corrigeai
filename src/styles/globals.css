@@ -15,6 +15,7 @@ html {
 }
 
 * {
+  font-family: 'Poppins', sans-serif !important;
   scrollbar-width: auto;
   scrollbar-color: #002400 #fff;
 }
@@ -1129,6 +1130,132 @@ ul.react-autosuggest__suggestions-list li:hover {
   padding: 15px;
 }
 
+.redacoes-box .content .head .data {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+.redacoes-box .content .head .tema {
+  display: flex;
+  justify-content: center;
+  flex: 7;
+}
+.redacoes-box .content .head .estudante {
+  display: flex;
+  justify-content: center;
+  flex: 2;
+}
+.redacoes-box .content .list-item .item {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  margin: 0 0 1rem;
+}
+.redacoes-box .content .list-item .item .data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--dark);
+  background: var(--gray50);
+  min-height: 2.4375rem;
+  border-radius: 0.9rem;
+}
+.redacoes-box .content .list-item .item .tema {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 7;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--dark);
+  background: var(--gray50);
+  min-height: 2.4375rem;
+  border-radius: 0.9rem;
+}
+.redacoes-box .content .list-item .item .estudante {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 250px;
+  width: auto;
+  padding: 0 20px;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--dark);
+  background: var(--gray50);
+  min-height: 2.4375rem;
+  border-radius: 0.9rem;
+  -webkit-border-radius: 0.9rem;
+  -moz-border-radius: 0.9rem;
+  -ms-border-radius: 0.9rem;
+  -o-border-radius: 0.9rem;
+}
+.redacoes-box .content .list-item .item .circle {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+.redacoes-box .content .list-item .item-finished {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  margin: 0 0 1rem;
+}
+.redacoes-box .content .list-item .item-finished .data-finished {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: white;
+  background: var(--green);
+  min-height: 2.4375rem;
+  border-radius: 0.9rem;
+  -webkit-border-radius: 0.9rem;
+  -moz-border-radius: 0.9rem;
+  -ms-border-radius: 0.9rem;
+  -o-border-radius: 0.9rem;
+}
+.redacoes-box .content .list-item .item-finished .tema-finished {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 7;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: white;
+  background: var(--green);
+  min-height: 2.4375rem;
+  border-radius: 0.9rem;
+  -webkit-border-radius: 0.9rem;
+  -moz-border-radius: 0.9rem;
+  -ms-border-radius: 0.9rem;
+  -o-border-radius: 0.9rem;
+}
+.redacoes-box .content .list-item .item-finished .estudante-finished {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 250px;
+  width: auto;
+  padding: 0 20px;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: white;
+  background: var(--green);
+  min-height: 2.4375rem;
+  border-radius: 0.9rem;
+  -webkit-border-radius: 0.9rem;
+  -moz-border-radius: 0.9rem;
+  -ms-border-radius: 0.9rem;
+  -o-border-radius: 0.9rem;
+}
+
 .circle {
   display: flex;
   justify-content: center;
@@ -1168,7 +1295,7 @@ ul.react-autosuggest__suggestions-list li:hover {
 .caption{
   display: flex;
   width: 100%;
-  justify-content: flex-start;
+  justify-content: flex-end;
   font-size: 10px;
   align-items: center;
 }
@@ -1213,4 +1340,26 @@ ul.react-autosuggest__suggestions-list li:hover {
   margin-left: 5px;
   margin-right: 5px;
   background-color: red;
+}
+
+.messageRejection{
+  padding: 10px;
+  border: none;
+  resize: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 05s ease;
+  -webkit-transition: all 05s ease;
+  -moz-transition: all 05s ease;
+  -ms-transition: all 05s ease;
+  -o-transition: all 05s ease;
+}
+
+.messageRejection:focus-visible, .messageRejection:focus, .messageRejection:focus-within{
+  outline: none !important; 
+}
+
+.messageRejection:focus{
+  box-shadow: 1px 1px 15px rgba(0, 36, 0, 0.219);
+  border: 1px solid #002400;
 }

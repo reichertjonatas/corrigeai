@@ -71,6 +71,7 @@ export interface ICorrecoes {
   _id: string;
   competencias: ICompetencias[];
   marcacoes: any[];
+  msg_rejeicao: string;
   corretor: string;
   createdAt: string;
 }

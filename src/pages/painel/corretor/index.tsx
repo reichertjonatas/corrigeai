@@ -48,6 +48,7 @@ function DashboardCorretor({ redacoesProps, session }: any) {
   const router = useRouter();
 
   const notify = () => toast.error("Você já corrigiu essa redação!");
+  const notifyReset = () => toast.error("Redação rejeitada!");
   React.useEffect(() => {
     // console.log("==> ", session);
     setRedacoes(redacoesProps);
@@ -80,8 +81,9 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             )}
             {redacoes?.length > 0 &&
               redacoes.map((redacao: any, index: number) => {
-                // console.log("redacao => ", redacao.correcaos)
                 const corrigida: any = [];
+                let backgroundColor = ""
+                const correcaoStatus:string = redacao.status_correcao
                 const corretorRedacaoGetID = redacao.correcaos;
                 const idCorretorCorrigida = corretorRedacaoGetID.forEach(
                   (element: any) => {
@@ -91,9 +93,23 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                 const getOrNotify = (redacao: any) => {
                   if (corrigida == session.id) {
                     notify();
+                  }else{
+                    notifyReset();
                   }
                 };
                 const date = Moment(redacao.createdAt);
+
+                switch (correcaoStatus){
+                  case "correcao_dois":
+                    backgroundColor = "#72b01e"
+                    break;
+                  case "rejeitada":
+                    backgroundColor = "#ff0000"
+                    break;
+                  default:
+                    backgroundColor = "#DEC90D" 
+                }
+
                 if (corrigida == session.id) {
                   return (
                     <a onClick={() => getOrNotify(redacao)} key={index}>
@@ -112,12 +128,36 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         </div>
 
                         <div className="circle">
-                          <div className="dual_bals">
+                          {redacao.status_correcao != "rejeitada" ? (
+                            <div className="dual_bals">
                             <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "correcao_um"
+                                    ? { background: "#DEC90D" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "correcao_dois"
+                                    ? { background: "#DEC90D" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="dual_bals">
+                          <span
                               className="ic"
                               style={
-                                redacao.status_correcao == "correcao_um"
-                                  ? { background: "#DEC90D" }
+                                redacao.status_correcao == "rejeitada"
+                                  ? { background: "#ff0000" }
                                   : { background: "#72b01e" }
                               }
                             >
@@ -126,19 +166,80 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                             <span
                               className="ic"
                               style={
-                                redacao.status_correcao == "correcao_dois"
-                                  ? { background: "#DEC90D" }
+                                redacao.status_correcao == "rejeitada"
+                                  ? { background: "#ff0000" }
                                   : { background: "#72b01e" }
                               }
                             >
                               &nbsp;
                             </span>
                           </div>
+                          )}
                         </div>
                       </div>
                     </a>
                   );
-                } else {
+                } else if(redacao.status_correcao == "rejeitada"){
+                  return (
+                    <a onClick={() => getOrNotify(redacao)} key={index}>
+                      <div className="item" style={{ cursor: "pointer" }}>
+                        <div className="data">{`${date.format("DD/MM")}`}</div>
+                        <div className="tema">{redacao.tema.titulo}</div>
+                        <div className="estudante">{redacao.user.email}</div>
+
+                        <div className="circle">
+                        {redacao.status_correcao != "rejeitada" ? (
+                            <div className="dual_bals">
+                            <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "correcao_um"
+                                    ? { background: "#DEC90D" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "correcao_dois"
+                                    ? { background: "#DEC90D" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="dual_bals">
+                          <span
+                              className="ic"
+                              style={
+                                redacao.status_correcao == "rejeitada"
+                                  ? { background: "#ff0000" }
+                                  : { background: "#72b01e" }
+                              }
+                            >
+                              &nbsp;
+                            </span>
+                            <span
+                              className="ic"
+                              style={
+                                redacao.status_correcao == "rejeitada"
+                                  ? { background: "#ff0000" }
+                                  : { background: "#72b01e" }
+                              }
+                            >
+                              &nbsp;
+                            </span>
+                          </div>
+                          )}
+                        </div>
+                      </div>
+                    </a>
+                  );
+                }else {
                   return (
                     <a onClick={() => getUrl(redacao)} key={index}>
                       <div className="item" style={{ cursor: "pointer" }}>
@@ -147,12 +248,36 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         <div className="estudante">{redacao.user.email}</div>
 
                         <div className="circle">
-                          <div className="dual_bals">
+                        {redacao.status_correcao != "rejeitada" ? (
+                            <div className="dual_bals">
                             <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "correcao_um"
+                                    ? { background: "#DEC90D" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao != "correcao_dois"
+                                    ? { background: "#DEC90D" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="dual_bals">
+                          <span
                               className="ic"
                               style={
-                                redacao.status_correcao == "correcao_um"
-                                  ? { background: "#DEC90D" }
+                                redacao.status_correcao == "rejeitada"
+                                  ? { background: "#ff0000" }
                                   : { background: "#72b01e" }
                               }
                             >
@@ -161,14 +286,15 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                             <span
                               className="ic"
                               style={
-                                redacao.status_correcao == "correcao_um"
-                                  ? { background: "#DEC90D" }
+                                redacao.status_correcao == "rejeitada"
+                                  ? { background: "#ff0000" }
                                   : { background: "#72b01e" }
                               }
                             >
                               &nbsp;
                             </span>
                           </div>
+                          )}
                         </div>
                       </div>
                     </a>
@@ -214,118 +340,6 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             font-weight: 500;
             color: var(--dark);
             margin: 0 0 1rem;
-          }
-          .redacoes-box .content .head .data {
-            display: flex;
-            justify-content: center;
-            flex: 1;
-          }
-          .redacoes-box .content .head .tema {
-            display: flex;
-            justify-content: center;
-            flex: 7;
-          }
-          .redacoes-box .content .head .estudante {
-            display: flex;
-            justify-content: center;
-            flex: 2;
-          }
-          .redacoes-box .content .list-item .item {
-            display: flex;
-            width: 100%;
-            gap: 1rem;
-            margin: 0 0 1rem;
-          }
-          .redacoes-box .content .list-item .item .data {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 1;
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: var(--dark);
-            background: var(--gray50);
-            min-height: 2.4375rem;
-            border-radius: 0.9rem;
-          }
-          .redacoes-box .content .list-item .item .tema {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 7;
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: var(--dark);
-            background: var(--gray50);
-            min-height: 2.4375rem;
-            border-radius: 0.9rem;
-          }
-          .redacoes-box .content .list-item .item .estudante {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 2;
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: var(--dark);
-            background: var(--gray50);
-            min-height: 2.4375rem;
-            border-radius: 0.9rem;
-          }
-          .redacoes-box .content .list-item .item .circle {
-            display: flex;
-            flex: 1;
-            justify-content: center;
-            align-items: center;
-          }
-          .redacoes-box .content .list-item .item-finished {
-            display: flex;
-            width: 100%;
-            gap: 1rem;
-            margin: 0 0 1rem;
-          }
-          .redacoes-box .content .list-item .item-finished .data-finished {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 1;
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: white;
-            background: var(--green);
-            min-height: 2.4375rem;
-            border-radius: 0.9rem;
-          }
-          .redacoes-box .content .list-item .item-finished .tema-finished {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 7;
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: white;
-            background: var(--green);
-            min-height: 2.4375rem;
-            border-radius: 0.9rem;
-          }
-          .redacoes-box .content .list-item .item-finished .estudante-finished {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 2;
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: white;
-            background: var(--green);
-            min-height: 2.4375rem;
-            border-radius: 0.9rem;
-          }
-          .line-finished {
-            position: absolute;
-            width: 88.4%;
-            height: 2px;
-            background-color: black;
-            margin-top: 15px;
           }
 
           @media (max-width: 400px) {
