@@ -50,6 +50,8 @@ import graf3_side from "../../../public/images/graf3-side.png"
 import IconRedacoes from "../../../public/images/icon-redacoes.png"
 import IconWhatsapp from '../../../public/images/whatsapp.png'
 import IconDev from '../../../public/images/suporte-tecnico.png'
+import IconLeft from '../../../public/images/seta-para-cima (1).png'
+import IconRight from '../../../public/images/seta-para-cima.png';
 
 export {
     IconRedacoes,
@@ -93,5 +95,7 @@ export {
     LogoLogin,
     TemaEnem,
     TemaCorrigeAi,
-    IconWhatsapp
+    IconWhatsapp,
+    IconLeft,
+    IconRight
 };

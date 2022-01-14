@@ -90,10 +90,49 @@ body {
   padding: 0 !important;
 }
 
+.rotation-button{
+  padding: 10px;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -ms-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  background: var(--white);
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  -ms-border-radius: 15px;
+  -o-border-radius: 15px;
+}
+
+.rotation-button:hover{
+  box-shadow: 1px 1px 15px rgba(0, 36, 0, 0.119);
+  border: 1px solid #002400;
+  cursor: pointer;
+  transform: scale(0.9);
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  -o-transform: scale(0.9);
+}
+
 .img-responsive {
   display: inline-block !important;
-  max-width: 100%;
-  height: auto
+  max-width: 100% !important;
+  height: auto !important;
+  transition: all 0.5s ease-in-out;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
 }
 
 .bg-green {
@@ -1348,11 +1387,11 @@ ul.react-autosuggest__suggestions-list li:hover {
   resize: none;
   font-size: 15px;
   font-weight: 500;
-  transition: all 05s ease;
-  -webkit-transition: all 05s ease;
-  -moz-transition: all 05s ease;
-  -ms-transition: all 05s ease;
-  -o-transition: all 05s ease;
+  transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -ms-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
 }
 
 .messageRejection:focus-visible, .messageRejection:focus, .messageRejection:focus-within{
@@ -1363,3 +1402,4 @@ ul.react-autosuggest__suggestions-list li:hover {
   box-shadow: 1px 1px 15px rgba(0, 36, 0, 0.219);
   border: 1px solid #002400;
 }
+

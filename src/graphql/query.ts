@@ -264,7 +264,7 @@ const redacaoParaCorrigir = (turma: string) => `query RedacoesCorrecao {
 
 
  const redacaoParaCorrigirNovoMetodo = `query RedacoesCorrecao {
-  redacaos(where: { status_correcao: ["correcao_um", "correcao_dois", "rejeitada"]}, sort: "createdAt:asc", limit: 20){
+  redacaos(where: { status_correcao: ["correcao_um", "correcao_dois", "rejeitada"]}, sort: "createdAt:asc"){
     id
     in_review
     nota_final

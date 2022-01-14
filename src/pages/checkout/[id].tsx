@@ -83,23 +83,24 @@ function CheckoutPage({ planoDados }: any) {
     openCheckout(data);
   };
 
+  useEffect(() => {
+    import('react-facebook-pixel')
+      .then((x) => x.default)
+      .then((ReactPixel) => {
+        ReactPixel.init('389741909374975') // facebookPixelId
+        ReactPixel.pageView()
+        ReactPixel.track('InitateCheckout')
+
+        router.events.on('routeChangeComplete', () => {
+          ReactPixel.pageView()
+        })
+      })
+  }, [router.events])
+
   useScript("https://assets.pagar.me/checkout/1.1.0/checkout.js");
 
   const openCheckout = async (data: any) => {
-    useEffect(() => {
-        import('react-facebook-pixel')
-          .then((x) => x.default)
-          .then((ReactPixel) => {
-            ReactPixel.init('389741909374975') // facebookPixelId
-            ReactPixel.pageView()
-            ReactPixel.track('InitateCheckout')
-    
-            router.events.on('routeChangeComplete', () => {
-              ReactPixel.pageView()
-            })
-          })
-      }, [router.events])
-    
+
     setTimeout(() => {
       setIsLoading(true);
     }, 800);
@@ -119,15 +120,19 @@ function CheckoutPage({ planoDados }: any) {
                 response.data.data.status == "paid" &&
                 response.data.data.payment_method == "credit_card"
               ) {
+                console.log("verificar email", response)
                 toast.success("Pagamento recebido com sucesso!");
                 router.replace("/painel/verificar-email");
               } else if (response.data.data.status == "waiting_payment") {
+                console.log("Esperando Pagamento", response)
                 toast.info("Aguardando pagamento!");
                 router.replace(`/checkout/aguardando`);
               } else if (response.data.data.status == "nao_autorizada") {
+                console.log("Não autorizado", response)
                 toast.error("Pagamento rejeitado!");
                 router.replace(`/checkout/rejeitado`);
               } else if (response.data.data.status == "waiting_payment") {
+                console.log("Esperando Pagamento 2", response)
                 toast.info("Aguardando pagamento!");
                 router.replace(`/checkout/aguardando`);
               }
@@ -143,17 +148,21 @@ function CheckoutPage({ planoDados }: any) {
               }
             );
             if (response.status == 200) {
+              console.log("200", response.data.data)
               //console.log(" ===> ", response.data.data)
               if (
                 response.data.data.status == "paid" ||
                 response.data.data.status == "authorized"
               ) {
+                console.log("Pagamento Recebido", response)
                 toast.success("Pagamento recebido com sucesso!");
                 router.replace("/painel/verificar-email");
               } else if (response.data.data.status == "processing") {
+                console.log("Processando", response)
                 toast.info("Processando pagamento!");
                 router.replace(`/checkout/processando`);
               } else if (response.data.data.status == "waiting_payment") {
+                console.log("Aguardando", response)
                 toast.info("Aguardando pagamento!");
                 router.replace(
                   `/checkout/aguardando?boletoUrl=${encodeURI(
@@ -161,15 +170,18 @@ function CheckoutPage({ planoDados }: any) {
                   )}`
                 );
               } else if (response.data.data.status == "nao_autorizada") {
+                console.log("Rejeitado", response)
                 toast.error("Pagamento rejeitado!");
                 router.replace(`/checkout/rejeitado`);
               } else if (response.data.data.status == "waiting_payment") {
+                console.log("aguardando 2", response)
                 toast.info("Aguardando pagamento!");
                 router.replace(`/checkout/aguardando`);
               }
             }
           }
         } else {
+          console.log("Deu erro total")
           setOnPayment(false);
           setIsLoading(false);
         }
@@ -762,26 +774,7 @@ function CheckoutPage({ planoDados }: any) {
           }
         `}
       </style>
-      <Script
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-          !function(f,b,e,v,n,t,s)
-          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-          n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t,s)}(window, document,'script',
-          'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '389741909374975');
-          fbq('track', 'PageView');
-          fbq('track', 'InitiateCheckout');              
-                `,
-        }}
-      />
-      <Image height={1} width={1} className="Image-facebook" src="https://www.facebook.com/tr?id=389741909374975&ev=PageView&noscript=1" />
-    </div>
+      </div>
   );
 }
 

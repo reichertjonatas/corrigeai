@@ -57,7 +57,7 @@ const corretorStore = create < {
    setObs: (obs : string, index : number) => void,
 
    salvarCorrecao: (idRedacao : string, session : any | undefined | unknown) => Promise<{ error: boolean, message: string}>,
-   removerCorrecao: (idRedacao : string, session : any | undefined | unknown, message:any) => Promise<{ error: boolean, message: string}>,
+   removerCorrecao: (idRedacao : string, session : any | undefined | unknown, message: string) => Promise<{ error: boolean, message: string}>,
 
    setCorrecaoNull: () => void,
 
@@ -268,16 +268,20 @@ const corretorStore = create < {
 
                removerCorrecao: async (idRedacao
                : string, session
-               : any | undefined | unknown, message) => {
+               : any | undefined | unknown, message:string) => {
                   try {
-                     // const novaCorrecao: any = await strapi((session as any).jwt).create('correcaos', {
-                     //    msg_rejeicao: message,
-                     //    corretor: (session as any).id
-                     // });
+                     const messageDefault = `
+                        Fala, cara pálida!
+                        A gente não conseguiu corrigir sua redação por algum motivo específico. 
+                        Não se preocupe, o seu crédito já foi inserido novamente. Cuide no próximo envio!
+                        Qualquer dúvida, você pode contatar nosso suporte!
+                        Até já, 
+                        Corrige Aí
 
-                     // const updated: any = await strapi((session as any).jwt).update('redacaos', id, {
-                     //
-                     // })
+
+                        Motivo:
+                           ${message}
+                     `
 
                      console.log("idRedacao", idRedacao)
                      const redacao: any = await strapi((session as any).jwt).findOne('redacaos', idRedacao)
@@ -302,7 +306,7 @@ const corretorStore = create < {
                      const updated: any = await strapi((session as any).jwt).update('redacaos', idRedacao, {
                         status_correcao: novoStatus,
                         correcaos: correcoes,
-                        msg_rejeicao: message
+                        msg_rejeicao: messageDefault
                      })
 
                      if (! updated ?. id) 

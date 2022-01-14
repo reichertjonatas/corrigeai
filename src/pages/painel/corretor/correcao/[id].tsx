@@ -4,6 +4,8 @@ import {
   CloseIcon,
   PencilIcon,
   RedacaoPreview,
+  IconLeft,
+  IconRight,
 } from "../../../../components/icons";
 import MainLayout from "../../../../components/layout/MainLayout";
 import {
@@ -41,6 +43,7 @@ import RowObsEnem from "../../../../components/editor/RowObsEnem";
 import Seo from "../../../../components/layout/Seo";
 import { Token } from "graphql";
 import { useSubscriptionStore } from "../../../../hooks/subscriptionStore";
+import { Checkbox } from "./checkbox";
 
 export async function getServerSideProps(ctx: any) {
   const session = await getSession(ctx);
@@ -130,8 +133,27 @@ function Correcao({ redacaoProps, session }: any) {
   );
 
   const removerRedacao = useRedacaoStore((state) => state.removerRedacao);
-  const [messageRejection, setMessageRejection] = useState("");
+  const [checked, setChecked] = useState(false);
+  const [checked2, setChecked2] = useState(false);
+  const [checked3, setChecked3] = useState(false);
+  const [checked4, setChecked4] = useState(false);
+  let [messageRejection, setMessageRejection] = useState("");
 
+  const handleClickCheck = () => {
+    setChecked(!checked);
+  };
+
+  const handleClickCheck2 = () => {
+    setChecked2(!checked2);
+  };
+
+  const handleClickCheck3 = () => {
+    setChecked3(!checked3);
+  };
+
+  const handleClickCheck4 = () => {
+    setChecked4(!checked4);
+  };
   React.useEffect(() => {
     setRedacao(redacaoProps);
 
@@ -571,9 +593,9 @@ function Correcao({ redacaoProps, session }: any) {
                   </span>
                 </div>
                 <div className="tasks">
-                  <span
+                  <div
                     onClick={() => setRotatePlus(rotate + 45)}
-                    className={editorType == 3 ? `task` : "task"}
+                    className="rotation-button"
                     style={{
                       border:
                         editorType == 3
@@ -581,11 +603,20 @@ function Correcao({ redacaoProps, session }: any) {
                           : "none",
                     }}
                   >
+                    <span className="img">
+                      <Image
+                        src={IconRight}
+                        className="img-responsive"
+                        alt=""
+                        height="40px"
+                        width="40px"
+                      />
+                    </span>
                     <span className="text">Rotacionar para direita</span>
-                  </span>
-                  <span
+                  </div>
+                  <div
                     onClick={() => setRotatePlus(rotate - 45)}
-                    className={editorType == 3 ? `task` : "task"}
+                    className="rotation-button"
                     style={{
                       border:
                         editorType == 3
@@ -593,8 +624,17 @@ function Correcao({ redacaoProps, session }: any) {
                           : "none",
                     }}
                   >
+                    <span className="img">
+                      <Image
+                        src={IconLeft}
+                        className="img-responsive"
+                        alt=""
+                        height="40px"
+                        width="40px"
+                      />
+                    </span>
                     <span className="text">Rotacionar para esquerda</span>
-                  </span>
+                  </div>
                 </div>
                 <div className="redacao">
                   <TransformWrapper initialScale={1}>
@@ -747,7 +787,7 @@ function Correcao({ redacaoProps, session }: any) {
                     Enviar correção
                   </button>
                 </span>
-                {
+                {/* {
                   <textarea
                     className="messageRejection"
                     maxLength={200}
@@ -761,7 +801,70 @@ function Correcao({ redacaoProps, session }: any) {
                       borderRadius: "0.5rem",
                     }}
                   ></textarea>
-                }
+                } */}
+
+                <div>
+                  <label htmlFor="check1">
+                    <input
+                      name="check1"
+                      type="checkbox"
+                      onClick={() => {
+                        handleClickCheck();
+                        return setMessageRejection("Qualidade da imagem");
+                      }}
+                      checked={checked}
+                    />
+                    Qualidade da Imagem
+                  </label>
+                </div>
+
+                <div>
+                  <label htmlFor="check2">
+                    <input
+                      name="check2"
+                      type="checkbox"
+                      onClick={() => {
+                        handleClickCheck2();
+                        return setMessageRejection("Letra ilegível");
+                      }}
+                      checked={checked2}
+                    />
+                    Letra Ilegível
+                  </label>
+                </div>
+
+                <div>
+                  <label htmlFor="check3">
+                    <input
+                      name="check3"
+                      type="checkbox"
+                      onClick={() => {
+                        handleClickCheck3();
+                        return setMessageRejection("Redação repetida");
+                      }}
+                      checked={checked3}
+                    />
+                    Redação Repetida
+                  </label>
+                </div>
+
+                <div>
+                  <label htmlFor="check4">
+                    <input
+                      name="check4"
+                      type="checkbox"
+                      onClick={() => {
+                        handleClickCheck4();
+                        return setMessageRejection(
+                          "Texto ausente ou incompleto"
+                        );
+                      }}
+                      checked={checked4}
+                    />
+                    Texto Ausente ou Incompleto
+                  </label>
+                </div>
+
                 <span className="botao">
                   <button onClick={handlerResetarRedacao}>
                     Rejeitar Redação
