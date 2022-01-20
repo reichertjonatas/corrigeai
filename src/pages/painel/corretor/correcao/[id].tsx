@@ -16,10 +16,7 @@ import {
 import shallow from "zustand/shallow";
 
 // @ts-ignore
-import {
-  PointSelector,
-  RectangleSelector,
-} from "react-image-annotation/lib/selectors";
+import {PointSelector,RectangleSelector} from "react-image-annotation/lib/selectors";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 // @ts-ignore
@@ -43,7 +40,6 @@ import RowObsEnem from "../../../../components/editor/RowObsEnem";
 import Seo from "../../../../components/layout/Seo";
 import { Token } from "graphql";
 import { useSubscriptionStore } from "../../../../hooks/subscriptionStore";
-import { Checkbox } from "./checkbox";
 
 export async function getServerSideProps(ctx: any) {
   const session = await getSession(ctx);
@@ -137,23 +133,40 @@ function Correcao({ redacaoProps, session }: any) {
   const [checked2, setChecked2] = useState(false);
   const [checked3, setChecked3] = useState(false);
   const [checked4, setChecked4] = useState(false);
+  const [checkedNone, setCheckedNone] = useState(false);
   let [messageRejection, setMessageRejection] = useState("");
+  const [messageObs, setMessageObs] = useState("");
 
   const handleClickCheck = () => {
     setChecked(!checked);
   };
-
   const handleClickCheck2 = () => {
     setChecked2(!checked2);
   };
-
   const handleClickCheck3 = () => {
     setChecked3(!checked3);
   };
-
   const handleClickCheck4 = () => {
     setChecked4(!checked4);
   };
+  const handleClickCheckNone = () => {
+    setCheckedNone(!checkedNone);
+  };
+
+  async function handlerGetMessage() {
+    const redacaoId: any = await strapi(session.jwt).findOne(
+      "redacaos",
+      redacao?.id
+    );
+    setMessageObs(redacaoId.msg_aluno);
+  }
+
+  const [openMessage, setOpenMessage] = useState(false);
+  const openModal = async () => {
+    handlerGetMessage();
+    setOpenMessage(true);
+  };
+
   React.useEffect(() => {
     setRedacao(redacaoProps);
 
@@ -421,7 +434,6 @@ function Correcao({ redacaoProps, session }: any) {
       messageRejection
     );
     const sucess = await removerRedacao(subscription!, redacao.id, Token);
-    console.log(redacao);
     router.replace("/painel/corretor");
   };
 
@@ -635,10 +647,22 @@ function Correcao({ redacaoProps, session }: any) {
                     </span>
                     <span className="text">Rotacionar para esquerda</span>
                   </div>
+                  <div
+                    onClick={(e) => openModal()}
+                    className="rotation-button"
+                    style={{
+                      border:
+                        editorType == 3
+                          ? `2px solid ${getColorActivite(competencia)}`
+                          : "none",
+                    }}
+                  >
+                    <span className="text">Visualizar Mensagem do Aluno</span>
+                  </div>
                 </div>
-                <div className="redacao">
-                  <TransformWrapper initialScale={1}>
-                    <TransformComponent>
+                <TransformWrapper initialScale={1}>
+                  <TransformComponent>
+                    <div className="redacao">
                       <Annotation
                         src={`${process.env.NEXT_PUBLIC_URL_API}${redacao?.redacao.url}`}
                         alt=""
@@ -658,14 +682,20 @@ function Correcao({ redacaoProps, session }: any) {
                           transform: `${rotation}`,
                         }}
                       />
-                    </TransformComponent>
-                  </TransformWrapper>
-                </div>
+                    </div>
+                  </TransformComponent>
+                </TransformWrapper>
               </>
             )}
           </div>
         </div>
         <div className="notas">
+          {openMessage == true && (
+            <div className="msg_aluno">
+              <h1>Mensagem do Aluno</h1>
+              <h3>{`${messageObs}`}</h3>
+            </div>
+          )}
           {isLoadingSending && <PreLoader />}
           {!isLoadingSending && (
             <>
@@ -787,22 +817,6 @@ function Correcao({ redacaoProps, session }: any) {
                     Enviar correção
                   </button>
                 </span>
-                {/* {
-                  <textarea
-                    className="messageRejection"
-                    maxLength={200}
-                    onChange={(e) => {
-                      setMessageRejection(e.target.value);
-                    }}
-                    rows={5}
-                    style={{
-                      width: "100%",
-                      marginTop: "12px",
-                      borderRadius: "0.5rem",
-                    }}
-                  ></textarea>
-                } */}
-
                 <div>
                   <label htmlFor="check1">
                     <input
@@ -864,6 +878,36 @@ function Correcao({ redacaoProps, session }: any) {
                     Texto Ausente ou Incompleto
                   </label>
                 </div>
+
+                <div>
+                  <label htmlFor="check4">
+                    <input
+                      name="check4"
+                      type="checkbox"
+                      onClick={() => {
+                        handleClickCheckNone();
+                      }}
+                      checked={checkedNone}
+                    />
+                    Outro
+                  </label>
+                </div>
+
+                {
+                  <textarea
+                    className="messageRejection"
+                    maxLength={200}
+                    onChange={(e) => {
+                      setMessageRejection(e.target.value);
+                    }}
+                    rows={5}
+                    style={{
+                      width: "100%",
+                      marginTop: "12px",
+                      borderRadius: "0.5rem",
+                    }}
+                  ></textarea>
+                }
 
                 <span className="botao">
                   <button onClick={handlerResetarRedacao}>

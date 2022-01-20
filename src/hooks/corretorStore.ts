@@ -271,7 +271,7 @@ const corretorStore = create < {
                : any | undefined | unknown, message:string) => {
                   try {
                      const messageDefault = `
-                        Fala, cara pálida!
+                        <h2>Fala, cara pálida!</h2>
                         A gente não conseguiu corrigir sua redação por algum motivo específico. 
                         Não se preocupe, o seu crédito já foi inserido novamente. Cuide no próximo envio!
                         Qualquer dúvida, você pode contatar nosso suporte!

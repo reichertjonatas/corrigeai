@@ -84,7 +84,7 @@ function SeusEnvios( { redacoes  } : any) {
                         {envios?.length > 0 && envios.slice(0, 10).map((envio, index) => {
                             return (
                                 <div className="list-item" key={index}>
-                                    <Link href={envio.status_correcao === 'finalizada' ? `/painel/aluno/seus-envios/redacao/${envio.id}` : '/painel/aluno/seus-envios'} passHref>
+                                    <Link href={`/painel/aluno/seus-envios/redacao/${envio.id}`} passHref>
 
                                         {/* {index % 4 == 0 && <div className="ballon-left">
                                             <div className="conteudo-ballon">
@@ -95,7 +95,7 @@ function SeusEnvios( { redacoes  } : any) {
                                             </div>
                                         </div>} */}
 
-                                        <div onClick={envio.status_correcao != 'finalizada'  ? () => toast.info("A redação ainda não foi corrigida!"): () => {}}  className="item" style={{ cursor: 'pointer' }}>
+                                        <div className="item" style={{ cursor: 'pointer' }}>
                                             <div className="data">{Moment(envio.createdAt).format('DD/MM')}</div>
                                             <div className="tema">{envio.tema.titulo}</div>
                                             <div className="nota">{envio.status_correcao != 'finalizada' ? '---' : notaTotalRedacao(envio) == 0 ? '---' : notaTotalRedacao(envio)}</div>

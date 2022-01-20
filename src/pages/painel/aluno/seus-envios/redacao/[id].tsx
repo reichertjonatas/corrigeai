@@ -39,7 +39,7 @@ export async function getServerSideProps(ctx : any) {
         query: redacaoById(id)
     })
 
-    if(redacaoProps?.status_correcao != 'finalizada' || redacaoProps == null ){
+    if(redacaoProps == null ){
         return {
             redirect: {
                 permanent: false,

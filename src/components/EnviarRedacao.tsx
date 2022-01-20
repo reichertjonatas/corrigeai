@@ -60,42 +60,49 @@ function EnviarRedacao({ session, selected, temasProps, closeModal }: any) {
     setIsLoading(true);
     e.preventDefault();
 
-    const body = new FormData();
-    body.append("files.redacao", file);
-
-    const data: any = {};
-    data["user"] = (session?.id as string) ?? "";
-    data["tema"] = tema ?? "";
-    data["msg_aluno"] = alunoObs ?? "";
-    data["status_correcao"] =
-      subscription?.plano.plano_type === "enem"
-        ? "correcao_um"
-        : "redacao_simples";
-    body.append("data", JSON.stringify(data));
-
-    if (session) {
-      const success = await createRedacao(
-        body,
-        subscription!,
-        session!.id as string,
-        session!.jwt
-      );
-      if (!success.error) {
-        updateSubscription(subscription?.id ?? "", session.jwt);
-        toast.success(success.data.message);
-      } else {
-        toast.error(success.data.message);
-      }
+    if (file.size > 4097152) {
+      setFile(null);
+      setCreateObjectURL(null);
+      toast.error("Limite de envio é 4Mb. Por favor diminua o tamanho do seu arquivo!", {
+        autoClose: false,
+      })
+      closeModal();
     } else {
-      toast.error("Precisa efetuar o login para enviar a redação!");
+      const body = new FormData();
+      body.append("files.redacao", file);
+
+      const data: any = {};
+      data["user"] = (session?.id as string) ?? "";
+      data["tema"] = tema ?? "";
+      data["msg_aluno"] = alunoObs ?? "";
+      data["status_correcao"] =
+        subscription?.plano.plano_type === "enem"
+          ? "correcao_um"
+          : "redacao_simples";
+      body.append("data", JSON.stringify(data));
+
+      if (session) {
+        const success = await createRedacao(
+          body,
+          subscription!,
+          session!.id as string,
+          session!.jwt
+        );
+        if (!success.error) {
+          updateSubscription(subscription?.id ?? "", session.jwt);
+          toast.success(success.data.message);
+        } else {
+          toast.error(success.data.message);
+        }
+      } else {
+        toast.error("Precisa efetuar o login para enviar a redação!");
+      }
+
+      // modal
+      closeModal();
+      remove();
+      setIsLoading(false);
     }
-
-    console.log(body)
-
-    // modal
-    closeModal();
-    remove();
-    setIsLoading(false);
   };
 
   const remove = () => {
@@ -169,6 +176,7 @@ function EnviarRedacao({ session, selected, temasProps, closeModal }: any) {
                   accept=".jpeg, .png, .jpg"
                   onChange={uploadFileClient}
                   disabled={tema == null}
+                  size={2000}
                 />
                 <label className="custom-file-upload">ESCOLHER ARQUIVO</label>
               </span>

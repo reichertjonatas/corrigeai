@@ -1381,6 +1381,24 @@ ul.react-autosuggest__suggestions-list li:hover {
   background-color: red;
 }
 
+.msg_aluno {
+  background-color: var(--white);
+  box-shadow: 1px 1px 15px rgba(0, 36, 0, 0.219);
+  text-align: center;
+  margin-bottom: 20px;
+  color: #002400;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  padding: 20px;
+}
+
+.msg_aluno>h1{
+  margin-bottom: 15px;
+}
+
 .messageRejection{
   padding: 10px;
   border: none;
