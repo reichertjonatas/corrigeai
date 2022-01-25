@@ -421,7 +421,17 @@ function Correcao({ redacaoProps, session }: any) {
   if (isLoading) return <PreLoader />;
 
   const handlerResetarRedacao = async () => {
-    resetCredit();
+    if(checked == false && checked2 == false && checked3 == false && checked4 == false){
+      if(checkedNone == true){
+        resetCredit();
+      }else{
+        toast.error("Por favor digite um motivo para rejeição")
+      }
+    }else if(checked == true || checked2 == true || checked3 == true || checked4 == true){
+      resetCredit();
+    }else{
+      toast.error("Por favor selecione um motivo para rejeição")
+    }
   };
 
   const resetCredit = async () => {
@@ -894,7 +904,12 @@ function Correcao({ redacaoProps, session }: any) {
                 </div>
 
                 {
-                  <textarea
+                  checkedNone == false ? (
+                    <div>
+
+                    </div>
+                  ) : (
+                    <textarea
                     className="messageRejection"
                     maxLength={200}
                     onChange={(e) => {
@@ -906,7 +921,8 @@ function Correcao({ redacaoProps, session }: any) {
                       marginTop: "12px",
                       borderRadius: "0.5rem",
                     }}
-                  ></textarea>
+                    ></textarea>
+                  )
                 }
 
                 <span className="botao">

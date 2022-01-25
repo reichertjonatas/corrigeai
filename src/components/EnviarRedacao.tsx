@@ -70,7 +70,7 @@ function EnviarRedacao({ session, selected, temasProps, closeModal }: any) {
     } else {
       const body = new FormData();
       body.append("files.redacao", file);
-
+      
       const data: any = {};
       data["user"] = (session?.id as string) ?? "";
       data["tema"] = tema ?? "";
@@ -79,6 +79,8 @@ function EnviarRedacao({ session, selected, temasProps, closeModal }: any) {
         subscription?.plano.plano_type === "enem"
           ? "correcao_um"
           : "redacao_simples";
+
+      console.log(data)
       body.append("data", JSON.stringify(data));
 
       if (session) {

@@ -46,6 +46,10 @@ function MeuPerfil({ session, plano, transacaos }: any) {
     const [isLoading, setIsLoading] = useState(true)
     const [isLoadingUpload, setIsLoadingUpload] = useState(false)
 
+    const handlerGetName = () => {
+        console.log(user?.id)
+    }
+
     React.useEffect(() => {
         //console.log("useEffect ==>", isLoading)
         const initLoad = async () => {
@@ -120,7 +124,10 @@ function MeuPerfil({ session, plano, transacaos }: any) {
 
                             {!isLoadingUpload && <img src={user?.image ? `${process.env.NEXT_PUBLIC_URL_API}${user?.image}` : "/upload/perfil/no-foto.png"} className="imgAvatar" id="output" width="200" alt="" />}
                         </div>
-                        <h1>{capitalizeTxt(user.name)}</h1>
+                        <button onClick={handlerGetName}>
+awda    
+                        </button>
+                        {/* <h1>{capitalizeTxt(user.name)}</h1> */}
                         <p>E-mail: {user.email}</p>
                         <p>Data de Registro: {moment(user.createdAt).format('DD/MM/YYYY')}</p>
                         <span className="desc">
@@ -239,7 +246,7 @@ function MeuPerfil({ session, plano, transacaos }: any) {
 
                                         return (<span className="row" key={index}>
                                             <span>{moment(transacao.updatedAt).format('DD/MM/YYYY')}</span>
-                                            <span>{transacao?.data?.transaction?.items.length > 0 ? transacao?.data?.transaction?.items[0].title : ''}</span>
+                                            <span>{transacao?.data?.transaction?.items > 0 ? transacao?.data?.transaction?.items[0].title : ''}</span>
                                             <span>{transacao?.metodo == 'credit_card' ? 'Cartão de crédito' : 'Boleto bancário'}</span>
                                             <span>{
                                                 transacao?.metodo == 'credit_card' ?
