@@ -82,8 +82,8 @@ function DashboardCorretor({ redacoesProps, session }: any) {
             {redacoes?.length > 0 &&
               redacoes.map((redacao: any, index: number) => {
                 const corrigida: any = [];
-                let backgroundColor = ""
-                const correcaoStatus:string = redacao.status_correcao
+                let backgroundColor = "";
+                const correcaoStatus: string = redacao.status_correcao;
                 const corretorRedacaoGetID = redacao.correcaos;
                 const idCorretorCorrigida = corretorRedacaoGetID.forEach(
                   (element: any) => {
@@ -93,21 +93,21 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                 const getOrNotify = (redacao: any) => {
                   if (corrigida == session.id) {
                     notify();
-                  }else{
+                  } else {
                     notifyReset();
                   }
                 };
                 const date = Moment(redacao.createdAt);
 
-                switch (correcaoStatus){
+                switch (correcaoStatus) {
                   case "correcao_dois":
-                    backgroundColor = "#72b01e"
+                    backgroundColor = "#72b01e";
                     break;
                   case "rejeitada":
-                    backgroundColor = "#ff0000"
+                    backgroundColor = "#ff0000";
                     break;
                   default:
-                    backgroundColor = "#DEC90D" 
+                    backgroundColor = "#DEC90D";
                 }
 
                 if (corrigida == session.id) {
@@ -130,11 +130,34 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         <div className="circle">
                           {redacao.status_correcao != "rejeitada" ? (
                             <div className="dual_bals">
-                            <span
+                              <span
                                 className="ic"
                                 style={
-                                  redacao.status_correcao == "correcao_um"
-                                    ? { background: "#DEC90D" }
+                                  redacao.status_correcao == "correcao_dois"
+                                  ? { background: "#72b01e" }
+                                    : { background: "#DEC90D" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "finalizada"
+                                  ? { background: "#72b01e" }
+                                  : { background: "#DEC90D" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="dual_bals">
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "rejeitada"
+                                    ? { background: "#ff0000" }
                                     : { background: "#72b01e" }
                                 }
                               >
@@ -143,43 +166,20 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                               <span
                                 className="ic"
                                 style={
-                                  redacao.status_correcao == "correcao_dois"
-                                    ? { background: "#DEC90D" }
+                                  redacao.status_correcao == "rejeitada"
+                                    ? { background: "#ff0000" }
                                     : { background: "#72b01e" }
                                 }
                               >
                                 &nbsp;
                               </span>
                             </div>
-                          ) : (
-                            <div className="dual_bals">
-                          <span
-                              className="ic"
-                              style={
-                                redacao.status_correcao == "rejeitada"
-                                  ? { background: "#ff0000" }
-                                  : { background: "#72b01e" }
-                              }
-                            >
-                              &nbsp;
-                            </span>
-                            <span
-                              className="ic"
-                              style={
-                                redacao.status_correcao == "rejeitada"
-                                  ? { background: "#ff0000" }
-                                  : { background: "#72b01e" }
-                              }
-                            >
-                              &nbsp;
-                            </span>
-                          </div>
                           )}
                         </div>
                       </div>
                     </a>
                   );
-                } else if(redacao.status_correcao == "rejeitada"){
+                } else if (redacao.status_correcao == "rejeitada") {
                   return (
                     <a onClick={() => getOrNotify(redacao)} key={index}>
                       <div className="item" style={{ cursor: "pointer" }}>
@@ -188,9 +188,9 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         <div className="estudante">{redacao.user.email}</div>
 
                         <div className="circle">
-                        {redacao.status_correcao != "rejeitada" ? (
+                          {redacao.status_correcao != "rejeitada" ? (
                             <div className="dual_bals">
-                            <span
+                              <span
                                 className="ic"
                                 style={
                                   redacao.status_correcao == "correcao_um"
@@ -213,33 +213,33 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                             </div>
                           ) : (
                             <div className="dual_bals">
-                          <span
-                              className="ic"
-                              style={
-                                redacao.status_correcao == "rejeitada"
-                                  ? { background: "#ff0000" }
-                                  : { background: "#72b01e" }
-                              }
-                            >
-                              &nbsp;
-                            </span>
-                            <span
-                              className="ic"
-                              style={
-                                redacao.status_correcao == "rejeitada"
-                                  ? { background: "#ff0000" }
-                                  : { background: "#72b01e" }
-                              }
-                            >
-                              &nbsp;
-                            </span>
-                          </div>
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "rejeitada"
+                                    ? { background: "#ff0000" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "rejeitada"
+                                    ? { background: "#ff0000" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                            </div>
                           )}
                         </div>
                       </div>
                     </a>
                   );
-                }else {
+                } else if (redacao.status_correcao != "rejeitada") {
                   return (
                     <a onClick={() => getUrl(redacao)} key={index}>
                       <div className="item" style={{ cursor: "pointer" }}>
@@ -248,9 +248,9 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                         <div className="estudante">{redacao.user.email}</div>
 
                         <div className="circle">
-                        {redacao.status_correcao != "rejeitada" ? (
+                          {redacao.status_correcao != "rejeitada" ? (
                             <div className="dual_bals">
-                            <span
+                              <span
                                 className="ic"
                                 style={
                                   redacao.status_correcao == "correcao_um"
@@ -263,9 +263,10 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                               <span
                                 className="ic"
                                 style={
-                                  redacao.status_correcao != "correcao_dois"
-                                    ? { background: "#DEC90D" }
-                                    : { background: "#72b01e" }
+                                  redacao.status_correcao == "correcao_dois" &&
+                                  redacao.correcaos.length >= 2
+                                    ? { background: "#72b01e" }
+                                    : { background: "#DEC90D" }
                                 }
                               >
                                 &nbsp;
@@ -273,27 +274,56 @@ function DashboardCorretor({ redacoesProps, session }: any) {
                             </div>
                           ) : (
                             <div className="dual_bals">
-                          <span
-                              className="ic"
-                              style={
-                                redacao.status_correcao == "rejeitada"
-                                  ? { background: "#ff0000" }
-                                  : { background: "#72b01e" }
-                              }
-                            >
-                              &nbsp;
-                            </span>
-                            <span
-                              className="ic"
-                              style={
-                                redacao.status_correcao == "rejeitada"
-                                  ? { background: "#ff0000" }
-                                  : { background: "#72b01e" }
-                              }
-                            >
-                              &nbsp;
-                            </span>
-                          </div>
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "rejeitada"
+                                    ? { background: "#ff0000" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                              <span
+                                className="ic"
+                                style={
+                                  redacao.status_correcao == "rejeitada"
+                                    ? { background: "#ff0000" }
+                                    : { background: "#72b01e" }
+                                }
+                              >
+                                &nbsp;
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </a>
+                  );
+                } else if (redacao.status_correcao == "finalizada") {
+                  return (
+                    <a onClick={() => getUrl(redacao)} key={index}>
+                      <div className="item" style={{ cursor: "pointer" }}>
+                        <div className="data">{`${date.format("DD/MM")}`}</div>
+                        <div className="tema">{redacao.tema.titulo}</div>
+                        <div className="estudante">{redacao.user.email}</div>
+
+                        <div className="circle">
+                          {redacao.status_correcao != "rejeitada" && (
+                            <div className="dual_bals">
+                              <span
+                                className="ic"
+                                style={{ background: "#72b01e" }}
+                              >
+                                &nbsp;
+                              </span>
+                              <span
+                                className="ic"
+                                style={{ background: "#72b01e" }}
+                              >
+                                &nbsp;
+                              </span>
+                            </div>
                           )}
                         </div>
                       </div>

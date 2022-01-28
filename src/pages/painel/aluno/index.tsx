@@ -370,11 +370,11 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
                   ? "---"
                   : Math.round(mediaCorrigeAi)}
               </li>
-              <li className="desempenho">
+              {/* <li className="desempenho">
                 <Link href="/painel/aluno/desempenho">
                   VER DESEMPENHO COMPLETO
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 

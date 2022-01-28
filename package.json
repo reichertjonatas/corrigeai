@@ -10,6 +10,9 @@
     "export": "npm run build && next export -o _static"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.17",
     "@nivo/core": "^0.73.0",
     "@nivo/line": "^0.73.0",
     "@phuocng/react-pdf-viewer": "^1.7.0",

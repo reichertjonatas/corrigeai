@@ -31,7 +31,7 @@ import IcPen from "../../../public/images/pen.png"
 import IcTrash from "../../../public/images/trash.png"
 import IcEnvios from "../../../public/images/envios.png"
 
-import TheKingHenrique from "../../../public/images/henrique.png"
+import TheKingHenrique from "../../../public/images/foto site.png"
 import LogoCorrige from "../../../public/images/logo_corrige.png"
 import passo1_img from "../../../public/images/passo1_img.png"
 import passo2_img from "../../../public/images/passo2_img.png"
@@ -52,6 +52,7 @@ import IconWhatsapp from '../../../public/images/whatsapp.png'
 import IconDev from '../../../public/images/suporte-tecnico.png'
 import IconLeft from '../../../public/images/seta-para-cima (1).png'
 import IconRight from '../../../public/images/seta-para-cima.png';
+import ImageTips from '../../../public/images/Photo_Corrigeai-01.jpg'
 
 export {
     IconRedacoes,
@@ -97,5 +98,6 @@ export {
     TemaCorrigeAi,
     IconWhatsapp,
     IconLeft,
-    IconRight
+    IconRight,
+    ImageTips,
 };

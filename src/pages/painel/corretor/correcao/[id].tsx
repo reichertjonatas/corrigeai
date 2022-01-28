@@ -421,16 +421,26 @@ function Correcao({ redacaoProps, session }: any) {
   if (isLoading) return <PreLoader />;
 
   const handlerResetarRedacao = async () => {
-    if(checked == false && checked2 == false && checked3 == false && checked4 == false){
-      if(checkedNone == true){
+    if (
+      checked == false &&
+      checked2 == false &&
+      checked3 == false &&
+      checked4 == false
+    ) {
+      if (checkedNone == true) {
         resetCredit();
-      }else{
-        toast.error("Por favor digite um motivo para rejeição")
+      } else {
+        toast.error("Por favor digite um motivo para rejeição");
       }
-    }else if(checked == true || checked2 == true || checked3 == true || checked4 == true){
+    } else if (
+      checked == true ||
+      checked2 == true ||
+      checked3 == true ||
+      checked4 == true
+    ) {
       resetCredit();
-    }else{
-      toast.error("Por favor selecione um motivo para rejeição")
+    } else {
+      toast.error("Por favor selecione um motivo para rejeição");
     }
   };
 
@@ -828,8 +838,9 @@ function Correcao({ redacaoProps, session }: any) {
                   </button>
                 </span>
                 <div>
-                  <label htmlFor="check1">
+                  <label htmlFor="check1" className="checkBoxRejectionLabel">
                     <input
+                      className="checkBoxRejection"
                       name="check1"
                       type="checkbox"
                       onClick={() => {
@@ -843,8 +854,9 @@ function Correcao({ redacaoProps, session }: any) {
                 </div>
 
                 <div>
-                  <label htmlFor="check2">
+                  <label htmlFor="check2" className="checkBoxRejectionLabel">
                     <input
+                      className="checkBoxRejection"
                       name="check2"
                       type="checkbox"
                       onClick={() => {
@@ -858,8 +870,9 @@ function Correcao({ redacaoProps, session }: any) {
                 </div>
 
                 <div>
-                  <label htmlFor="check3">
+                  <label htmlFor="check3" className="checkBoxRejectionLabel">
                     <input
+                      className="checkBoxRejection"
                       name="check3"
                       type="checkbox"
                       onClick={() => {
@@ -873,8 +886,9 @@ function Correcao({ redacaoProps, session }: any) {
                 </div>
 
                 <div>
-                  <label htmlFor="check4">
+                  <label htmlFor="check4" className="checkBoxRejectionLabel">
                     <input
+                      className="checkBoxRejection"
                       name="check4"
                       type="checkbox"
                       onClick={() => {
@@ -890,8 +904,9 @@ function Correcao({ redacaoProps, session }: any) {
                 </div>
 
                 <div>
-                  <label htmlFor="check4">
+                  <label htmlFor="check4" className="checkBoxRejectionLabel">
                     <input
+                      className="checkBoxRejection"
                       name="check4"
                       type="checkbox"
                       onClick={() => {
@@ -903,13 +918,10 @@ function Correcao({ redacaoProps, session }: any) {
                   </label>
                 </div>
 
-                {
-                  checkedNone == false ? (
-                    <div>
-
-                    </div>
-                  ) : (
-                    <textarea
+                {checkedNone == false ? (
+                  <div></div>
+                ) : (
+                  <textarea
                     className="messageRejection"
                     maxLength={200}
                     onChange={(e) => {
@@ -921,9 +933,8 @@ function Correcao({ redacaoProps, session }: any) {
                       marginTop: "12px",
                       borderRadius: "0.5rem",
                     }}
-                    ></textarea>
-                  )
-                }
+                  ></textarea>
+                )}
 
                 <span className="botao">
                   <button onClick={handlerResetarRedacao}>

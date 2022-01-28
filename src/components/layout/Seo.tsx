@@ -21,7 +21,7 @@ export default function Seo({ title, description } : SeoProps ) {
                 { title  ?? 'Corrige Aí | Correção de Redação para o ENEM'}
             </title>
             <meta name="description" content={ description ?? "A única plataforma de correção de redação para o ENEM que possui dois corretores para cada envio e uma terceira correção em casos de discrepância!"} />
-            <meta name="author" content="InoveWeb.pt | Kellvem Barbosa e Pedro Mamare" />
+            <meta name="author" content="Desenvolvido por Cupcode | Marketing e Desenvolvimento" />
             <link rel="icon" href="/favicon.ico" />
 
     

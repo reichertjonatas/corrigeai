@@ -9,8 +9,11 @@ import Popup from "reactjs-popup";
 import Link from "next/link";
 import PreLoader from "../PreLoader";
 import { useMeStore } from "../../hooks/meStore";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faInbox } from '@fortawesome/free-solid-svg-icons'
 
 import TagManager from "react-gtm-module";
+import Notification from "./notifications";
 const tagManagerArgs = {
   gtmId: "GTM-T7GCH9D",
 };
@@ -34,6 +37,7 @@ const MainLayout = ({
   const [loadingPerfil, setLoadingPerfil] = React.useState(true);
   const user = useMeStore((state) => state.user);
   const setMe = useMeStore((state) => state.setMe);
+  const [isOpen, setOpen] = React.useState(false);
 
   React.useEffect(() => {
     const checkRoles = () => {
@@ -96,6 +100,14 @@ const MainLayout = ({
             </h1>
             <span className="user">
               <ul>
+                <li>
+                  <button onClick={() => setOpen(!isOpen)} className="icon_inbox">
+                    <FontAwesomeIcon icon={faInbox}></FontAwesomeIcon>
+                  </button>
+                  <div className={`inbox_panel ${isOpen ? "open" : "close"}`}>
+                    <Notification></Notification>
+                  </div>
+                </li>
                 <li>
                   <span className="message">
                     <span className="welcomeOla">Olá, </span>

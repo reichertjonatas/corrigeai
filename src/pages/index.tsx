@@ -9,10 +9,11 @@ import {
   passo3_discrepancia,
   passo3_match,
   TheKingHenrique,
+  ImageTips,
 } from "../components/icons";
 import Strapi from "strapi-sdk-js";
 import { planosQuery } from "../graphql/query";
-import React, { useState, useEffect, Component } from "react";
+import React, { useState, useEffect} from "react";
 import Seo from "../components/layout/Seo";
 import { strapi } from "../services/strapi";
 import List from "./List";
@@ -54,12 +55,17 @@ function Home({ planos }: any) {
         <div className="main" id="top">
           <div className="banner">
             <div className="information">
-              <div className="foto">
-                <Image
-                  src={TheKingHenrique}
-                  className="img-responsive"
-                  alt=""
-                />
+              <div className="foto-header">
+                <div className="foto">
+                  <Image
+                    src={TheKingHenrique}
+                    className="img-responsive"
+                    alt=""
+                  />
+                </div>
+                <div className="text-foto">
+                  <h2>A plataforma do Prof. Henrique Araújo</h2>
+                </div>
               </div>
               <div className="texto">
                 <div className="subtitle">
@@ -76,6 +82,43 @@ function Home({ planos }: any) {
                   <strong>dois corretores</strong> em cada correção.
                 </div>
                 <div className="line"></div>
+              </div>
+            </div>
+          </div>
+          <div id="tips">
+            <div className="tips_header">
+              <h1 className="comofunciona_text">Nossa Plataforma</h1>
+              <div className="line_header"></div>
+
+              <div className="tips_information5">
+                <div className="tips5">
+                  A Corrige Aí surgiu para combater esse mercado massificado das
+                  plataformas de ensino, que corrigem redação de forma apressada
+                  e sem critério, com alta rotatividade de corretores
+                  desqualificados e sem formação.
+                </div>
+              </div>
+            </div>
+            <div className="tips_box">
+              <div className="tips_information1">
+                <div className="image_tips1">
+                  <Image src={ImageTips} alt="" />
+                </div>
+                <div className="tips1">
+                  A mente por trás dessa plataforma é do{" "}
+                  <span>Prof. Henrique Araujo</span>, professor conhecido no
+                  mercado como um dos que mais{" "}
+                  <span>possui estudantes 900+ no ENEM.</span>
+                </div>
+                <div className="tips2">
+                  É a única no mercado que corrige EXATAMENTE como o ENEM, com{" "}
+                  <span>duas correções para cada redação.</span>
+                </div>
+              </div>
+              <div className="tips_information3">
+                <div className="line_tips"></div>
+                <div className="tips3">Sua aprovação é nossa meta.</div>
+                <div className="line_tips"></div>
               </div>
             </div>
           </div>
@@ -230,7 +273,12 @@ const Panel = () => {
         <div className={`panel ${isOpen ? "open" : "close"}`}>
           <ul>
             <li>
-              <a className="uls" href="#top">Corrige Aí</a>
+              <a className="uls" href="#top">
+                Corrige Aí
+              </a>
+            </li>
+            <li>
+              <a href="#tips">Nossa Plataforma</a>
             </li>
             <li>
               <a href="#comofunciona">Como funciona</a>
@@ -256,6 +304,9 @@ const Panel = () => {
           <a href="#top">
             <h2>Corrige Aí</h2>
           </a>
+          <a href="#tips">
+            <h2>Nossa Plataforma</h2>
+          </a>
           <a href="#comofunciona">
             <h2>Como Funciona</h2>
           </a>
@@ -272,273 +323,3 @@ const Panel = () => {
     </div>
   );
 };
-/* 
-        <header className="desktop">
-        <div className="container">
-          <a
-            onClick={() => setMenuOpened(!menuOpened)}
-            className="toogle"
-            style={{ cursor: "pointer" }}
-          >
-            Menu
-          </a>
-          <div
-            className="menu"
-            style={{ display: menuOpened ? "none" : "block" }}
-          >
-            <ul>
-              <li>
-                <a href="#">Como funciona</a>
-              </li>
-              <li>
-                <a href="#passos">Corrige Aí</a>
-              </li>
-              <li>
-                <a href="#precos">Planos e preços</a>
-              </li>
-              <li>
-                <Link href="/painel" passHref>
-                  <a id="login">Área do aluno</a>
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </header>
-      <header className="mob">
-        <div className="container">
-          <a
-            onClick={() => setMenuOpened(!menuOpened)}
-            className="toogle"
-            style={{ cursor: "pointer" }}
-          >
-            Menu
-          </a>
-          <div
-            className="menu"
-            style={{ display: menuOpened ? "block" : "none" }}
-          >
-            <ul>
-              <li>
-                <a href="#">Como funciona</a>
-              </li>
-              <li>
-                <a href="#passos">Corrige Aí</a>
-              </li>
-              <li>
-                <a href="#precos">Planos e preços</a>
-              </li>
-              <li>
-                <Link href="/painel" passHref>
-                  <a id="login">Área do aluno</a>
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </header>
-
-      <div className="banner">
-        <div className="container-full">
-          <div className="gridtwo">
-            <div className="foto">
-              <Image src={TheKingHenrique} className="img-responsive" alt="" />
-            </div>
-            <div className="texto">
-              <div className="subtitle">
-                Chegou a <strong>plataforma que te escuta.</strong>
-              </div>
-              <div className="logo">
-                <Image src={LogoCorrige} className="img-responsive" alt="" />
-              </div>
-              <div className="desc">
-                A única plataforma que corrige
-                <br />
-                EXATAMENTE como o ENEM, com
-                <br />
-                <strong>dois corretores</strong> em cada correção.
-              </div>
-              <hr />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="passos">
-        <div className="container-full">
-          <div className="row1">
-            <div className="passo">
-              <span className="img">
-                <Image src={passo1_img} className="img-responsive" alt="" />
-              </span>
-              <div className="box">
-                <span className="tit">Passo 1</span>
-                <span className="desc">
-                  Você escolhe um tema de nossa plataforma e envia para
-                  correção. Você também tem um espaço para dúvidas, pois
-                  queremos lhe ouvir.
-                </span>
-              </div>
-            </div>
-
-            <div className="passo2">
-              <span className="img">
-                <Image src={passo2_img} className="img-responsive" alt="" />
-              </span>
-              <div className="box">
-                <span className="tit">Passo 2</span>
-                <span className="desc">
-                  Sua correção chega na caixa de dois corretores
-                  <br />
-                  diferentes, que a avaliam de forma independente <br />
-                  a partir dos critérios de correção do ENEM, <br />
-                  exibidos para você.
-                  <br />
-                  <br />
-                  Na Corrige Aí, todos os corretores possuem
-                  <br />
-                  formação em Letras – e as correções são
-                  <br />
-                  pelos gostos do corretor, mas pelas exigências
-                  <br />
-                  da banca do ENEM.
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="row2">
-            <div className="passo3">
-              <div className="box">
-                <span className="tit">Passo 3</span>
-                <span className="borda">&nbsp;</span>
-                <span className="podem">Aqui podem acontecer duas coisas</span>
-              </div>
-            </div>
-          </div>
-          <div className="row1">
-            <div className="coluna">
-              <span className="subtitle">Discrepância</span>
-              <span className="img">
-                <Image
-                  src={passo3_discrepancia}
-                  className="img-responsive"
-                  alt=""
-                />
-              </span>
-              <span className="desc">
-                Assim como no ENEM, as discrepâncias são
-                <br />
-                previstas. Elas acontecem quando a nota entre
-                <br />
-                os dois corretores varia em mais de 100 pontos.
-                <br />
-                Nesses casos, entra uma terceira correção, feita
-                <br />
-                por um de nossos coordenadores - corretores
-                <br />
-                oficiais do ENEM -, que decide quem estava certo.
-              </span>
-            </div>
-            <div className="coluna match">
-              <span className="subtitle right">Match</span>
-              <span className="img">
-                <Image src={passo3_match} className="img-responsive" alt="" />
-              </span>
-              <span className="desc">
-                Se não houver discrepância, você já recebe
-                <br />
-                sua redação com as duas correções. Tanto a<br />
-                sua nota final quanto a sua nota de cada
-                <br />
-                competência serão sempre as médias simples das duas correções,{" "}
-                <strong>
-                  exatamente
-                  <br />
-                  como no ENEM.
-                </strong>
-              </span>
-            </div>
-          </div>
-          <div className="row1">
-            <div className="passo3">&nbsp;</div>
-            <div className="passo4">
-              <span className="tit">Passo 4</span>
-
-              <div className="box">
-                <span className="img">
-                  <Image src={passo1_img} className="img-responsive" alt="" />
-                </span>
-                <span className="desc">
-                  Você consegue acompanhar suas notas finais e<br />
-                  de cada competência no seu desempenho e na
-                  <br />
-                  sua evolução, com muitos gráficos e análises,
-                  <br />
-                  tudo para você arrasar no ENEM.
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="corrigeai">
-        <div className="container">
-          <div className="circle" id="one">
-            A mente por trás dessa plataforma é do Prof. Henrique Araujo,
-            professor conhecido no mercado como um dos que mais possui
-            estudantes 900+ no ENEM.
-          </div>
-
-          <div className="circle" id="two">
-            É a única no mercado que corrige EXATAMENTE como o ENEM, com duas
-            correções para cada redação.
-          </div>
-
-          <div className="circle" id="three">
-            Sua aprovação é nossa meta.
-          </div>
-
-          <div className="circle" id="four">
-            Somos novos no mercado e somos pequenos.
-            <br />E isso é uma qualidade!
-          </div>
-
-          <div className="circle" id="five">
-            A Corrige Aí surgiu para combater esse mercado massificado das
-            plataformas de ensino, que corrigem redação de forma apressada e sem
-            critério, com alta rotatividade de corretores desqualificados e sem
-            formação.
-          </div>
-
-          <div className="circle" id="six">
-            Entendemos que o estudante precisa CONFIAR na correção que recebe –
-            e jamais ter dúvidas se ela está certa. Por isso, queremos escutar
-            você, e por isso seguimos à risca a grade do ENEM.
-          </div>
-        </div>
-      </div>
-
-      <ListLoading planos={appState.planos} />
-
-      <div className="footer-copyright">
-        <div className="footer-description">
-          <div>
-            &copy; 2021 <strong>CorrigeAí</strong> - Todos os direitos
-            reservados
-          </div>
-          <div>
-            Desenvolvido por{" "}
-            <a
-              href="https://www.cupcode.com.br"
-              title="Cupcode - Agência de Marketing Digital e Desenvolvimento"
-              className="copy"
-              target="_blank" rel="noreferrer"
-            >
-              <strong>Cupcode</strong> - Marketing e Desenvolvimento
-            </a>
-            .
-          </div>
-        </div>
-      </div>
-*/
