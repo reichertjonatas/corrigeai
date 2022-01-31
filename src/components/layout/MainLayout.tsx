@@ -2,18 +2,19 @@
 import { getSession, session, signOut, useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { IcPainelAlunoGlobal, IcPhoto } from "../icons";
 import Sidebar from "./Sidebar";
 import Popup from "reactjs-popup";
 import Link from "next/link";
 import PreLoader from "../PreLoader";
 import { useMeStore } from "../../hooks/meStore";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInbox } from '@fortawesome/free-solid-svg-icons'
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInbox } from "@fortawesome/free-solid-svg-icons";
 import TagManager from "react-gtm-module";
-import Notification from "./notifications";
+import { strapi } from "../../services/strapi";
+import { redacaoPerUser } from "../../graphql/query";
+
 const tagManagerArgs = {
   gtmId: "GTM-T7GCH9D",
 };
@@ -68,6 +69,17 @@ const MainLayout = ({
     checkRoles();
   }, [session]);
 
+  const [notification, setNotification]: any = useState([]);
+
+  const handlerGetNotification = async () => {
+    setOpen(!isOpen)
+    const redacaoId: any = await strapi(session?.jwt).graphql({
+      query: redacaoPerUser(session?.id),
+    });
+
+    setNotification(redacaoId);
+  };
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) return null;
 
@@ -100,14 +112,45 @@ const MainLayout = ({
             </h1>
             <span className="user">
               <ul>
-                <li>
-                  <button onClick={() => setOpen(!isOpen)} className="icon_inbox">
-                    <FontAwesomeIcon icon={faInbox}></FontAwesomeIcon>
-                  </button>
-                  <div className={`inbox_panel ${isOpen ? "open" : "close"}`}>
-                    <Notification></Notification>
+                {/* <li>
+                  <div className="button_inbox">
+                    <button
+                      onClick={handlerGetNotification}
+                      className="icon_inbox"
+                    >
+                      <FontAwesomeIcon icon={faInbox}></FontAwesomeIcon>
+                    </button>
+                    <div className={`inbox_panel ${isOpen ? "open" : "close"}`}>
+                      <div className="inbox_content">
+                        {notification.map((envio: any, index: number) => {
+                          if (envio.status_correcao === "rejeitada") {
+                            console.log(envio);
+                            return (
+                              <div className="notification" key={index}>
+                                <p>
+                                  <strong>Motivo:</strong> {envio.msg_rejeicao}
+                                </p>
+                                <h1>
+                                  Infelizmente sua redação foi{" "}
+                                  <strong>Rejeitada</strong>
+                                </h1>
+                                <p>
+                                  <strong>Tema:</strong> {envio.tema.titulo}
+                                </p>
+                              </div>
+                            );
+                          } else {
+                            return (
+                              <div>
+                                <h1>Nenhuma Notificação</h1>
+                              </div>
+                            );
+                          }
+                        })}
+                      </div>
+                    </div>
                   </div>
-                </li>
+                </li> */}
                 <li>
                   <span className="message">
                     <span className="welcomeOla">Olá, </span>

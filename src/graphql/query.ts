@@ -16,6 +16,7 @@ const redacaoPerUser = (id: any) => `query{
         }
         discrepante
       }
+      msg_rejeicao
       tema {
         titulo
       }

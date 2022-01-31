@@ -215,9 +215,10 @@ body {
   color: var(--white);
 }
 
-@media (max-width: 1480px) {
+@media (max-width: 1070px) {
   .header-logo-nav {
     display: flex;
+    justify-content: flex-end;
   }
 
   .hamburger-button {
@@ -244,6 +245,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 80px;
+}
+
+.navbar a {
+  margin: 0 15px;
 }
 
 .navbar h2 {
@@ -284,7 +290,7 @@ body {
   color: var(--white);
 }
 
-@media (min-width: 1490px) {
+@media (min-width: 1070px) {
   .header-nav {
     display: flex;
   }
@@ -316,7 +322,7 @@ body {
 }
 
 .foto {
-  width: 850px;
+  width: 750px;
 }
 
 .text-foto {
@@ -328,13 +334,13 @@ body {
   align-items: center;
   padding: 20px;
   font-size: 35px;
-  width: 570px;
+  width: 470px;
   border-radius: 40px;
   -webkit-border-radius: 40px;
   -moz-border-radius: 40px;
   -ms-border-radius: 40px;
   -o-border-radius: 40px;
-  margin-left: 290px;
+  margin-left: 270px;
   margin-top: -140px;
 }
 
@@ -346,7 +352,7 @@ body {
     -moz-transform: scale(0.55);
     -ms-transform: scale(0.55);
     -o-transform: scale(0.55);
-  }
+}
 }
 
 @media (max-width: 450px) {
@@ -367,7 +373,7 @@ body {
   }
 }
 
-@media (max-width: 1550px) {
+@media (max-width: 1350px) {
   .information {
     flex-wrap: wrap;
   }
@@ -386,6 +392,10 @@ body {
 .information .texto .subtitle {
   font-size: 35px;
   color: var(--dark);
+}
+
+.information .texto .logo{
+  margin-bottom: -70px;
 }
 
 .line {
@@ -678,7 +688,7 @@ body {
   padding: 10px;
   width: 100%;
   max-width: 550px;
-  font-size: 20px;
+  font-size: 30px;
   color: white;
 }
 
@@ -993,6 +1003,16 @@ body {
 
 /* Aluno Page */
 
+.button_inbox{
+  text-align: left;
+  width: auto;
+}
+
+.button_inbox h1{
+  margin: 10px 0;
+  color: var(--dark) !important;
+}
+
 .icon_inbox{
   width: 50px;
   height: 50px;
@@ -1026,22 +1046,30 @@ body {
 }
 
 .inbox_panel.open{
+  z-index: 9999;
   margin-top: 5px;
+  margin-left: -140px;
   display: block;
   position: absolute;
-  width: 150px;
-  height: auto;
+  padding: 0 10px;
+  width: 350px;
+  max-height: 400px;
+  overflow-y: scroll;
   background-color: white;
-  border-radius: 20px;
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  -ms-border-radius: 20px;
-  -o-border-radius: 20px;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
   transition: all 0.3s ease;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
   -ms-transition: all 0.3s ease;
   -o-transition: all 0.3s ease;
+}
+
+.notification{
+  margin: 10px 0;
 }
 
 /* Aluno Page */

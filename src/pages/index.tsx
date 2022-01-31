@@ -24,6 +24,7 @@ export async function getServerSideProps(ctx: any) {
   });
   const planos = await strapi.graphql({ query: planosQuery });
 
+
   return {
     props: {
       planos,
@@ -179,14 +180,14 @@ function Home({ planos }: any) {
                       alt=""
                     />
                     <div className="text_information_passo3">
-                      <h1>
+                      <p>
                         Assim como no ENEM, as discrepâncias são previstas. Elas
                         acontecem quando a nota entre os dois corretores varia
                         em mais de 100 pontos. Nesses casos, entra uma terceira
                         correção, feita por um de nossos coordenadores -
                         corretores oficiais do ENEM -, que decide quem estava
                         certo.
-                      </h1>
+                      </p>
                     </div>
                   </div>
                   <div className="text_passo3">
@@ -196,12 +197,12 @@ function Home({ planos }: any) {
                       alt=""
                     />
                     <div className="text_information_passo3">
-                      <h1>
+                      <p>
                         Se não houver discrepância, você já recebe sua redação
                         com as duas correções. Tanto a sua nota final quanto a
                         sua nota de cada competência serão sempre as médias
                         simples das duas correções, exatamente como no ENEM.
-                      </h1>
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -264,7 +265,6 @@ const Panel = () => {
     <div>
       <div className="header-logo-mobile">
         <div className="header-logo-nav">
-          <Image src={LogoCorrige} alt=""></Image>
           <button
             onClick={() => setOpen(!isOpen)}
             className={`hamburger-button ${isOpen ? "open" : "close"}`}
@@ -297,9 +297,6 @@ const Panel = () => {
         </div>
       </div>
       <div className="header-nav">
-        <div className="header-logo">
-          <Image src={LogoCorrige} alt=""></Image>
-        </div>
         <div className="navbar">
           <a href="#top">
             <h2>Corrige Aí</h2>

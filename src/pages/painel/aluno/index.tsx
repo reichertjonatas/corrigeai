@@ -34,6 +34,8 @@ import { mediaCorrigeAi, redacaoPerUser } from "../../../graphql/query";
 import EnviarRedacao from "../../../components/EnviarRedacao";
 import Cookies from "universal-cookie";
 import Whatsapp from "../../../components/layout/Whatsapp";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInbox } from "@fortawesome/free-solid-svg-icons";
 
 export async function getServerSideProps(ctx: any) {
   const session = await getSession(ctx);
@@ -370,11 +372,6 @@ function Aluno({ redacoesProps, temasProps, mediaCorrigeAi }: any) {
                   ? "---"
                   : Math.round(mediaCorrigeAi)}
               </li>
-              {/* <li className="desempenho">
-                <Link href="/painel/aluno/desempenho">
-                  VER DESEMPENHO COMPLETO
-                </Link>
-              </li> */}
             </ul>
           </div>
 

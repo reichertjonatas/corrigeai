@@ -82,9 +82,6 @@ function Sidebar(props : any) {
                   <ItemMenu href="/painel/aluno"
                      icon={IcPainelAluno}
                      name="Painel do Aluno"/>
-                  <ItemMenu href="/painel/aluno/desempenho"
-                     icon={IcDesempenho}
-                     name="Desempenho"/>
                   <ItemMenu href="/painel/aluno/seus-envios"
                      icon={IcEnvios}
                      name="Envios"/>
